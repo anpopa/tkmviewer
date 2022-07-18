@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=tkmviewer
+Exec=tkmviewer
+Icon=ro.fxdata.taskmonitor.viewer
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

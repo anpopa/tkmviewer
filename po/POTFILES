@@ -1,0 +1,7 @@
+data/ro.fxdata.taskmonitor.viewer.desktop.in
+data/ro.fxdata.taskmonitor.viewer.appdata.xml.in
+data/ro.fxdata.taskmonitor.viewer.gschema.xml
+src/tkmviewer-window.ui
+src/main.c
+src/tkmviewer-window.c
+
