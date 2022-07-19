@@ -1,4 +1,4 @@
-/* tkmviewer-application.h
+/* tkmv-processes-view.h
  *
  * Copyright 2022 Alin Popa
  *
@@ -18,15 +18,12 @@
 
 #pragma once
 
-#include <adwaita.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define TKMVIEWER_TYPE_APPLICATION (tkmviewer_application_get_type())
+#define TKMV_TYPE_PROCESSES_VIEW (tkmv_processes_view_get_type())
 
-G_DECLARE_FINAL_TYPE (TkmViewerApplication, tkmviewer_application, TKMVIEWER, APPLICATION, AdwApplication)
-
-TkmViewerApplication *tkmviewer_application_new (gchar *application_id,
-                                                 GApplicationFlags  flags);
+G_DECLARE_FINAL_TYPE (TkmvProcessesView, tkmv_processes_view, TKMV, PROCESSES_VIEW, GtkBox)
 
 G_END_DECLS

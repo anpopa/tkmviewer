@@ -1,4 +1,4 @@
-/* tkmviewer-window.c
+/* tkmv-systeminfo-view.c
  *
  * Copyright 2022 Alin Popa
  *
@@ -16,32 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "tkmviewer-config.h"
-#include "tkmviewer-window.h"
+#include "tkmv-systeminfo-view.h"
 
-struct _TkmViewerWindow
+struct _TkmvSysteminfoView
 {
-  GtkApplicationWindow  parent_instance;
+  GtkBox  parent_instance;
 
   /* Template widgets */
-  GtkHeaderBar        *header_bar;
-  GtkLabel            *label;
 };
 
-G_DEFINE_TYPE (TkmViewerWindow, tkmviewer_window, GTK_TYPE_APPLICATION_WINDOW)
+G_DEFINE_TYPE (TkmvSysteminfoView, tkmv_systeminfo_view, GTK_TYPE_BOX)
 
 static void
-tkmviewer_window_class_init (TkmViewerWindowClass *klass)
+tkmv_systeminfo_view_class_init (TkmvSysteminfoViewClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/ro/fxdata/taskmonitor/viewer/gtk/tkmviewer-window.ui");
-  gtk_widget_class_bind_template_child (widget_class, TkmViewerWindow, header_bar);
-  gtk_widget_class_bind_template_child (widget_class, TkmViewerWindow, label);
+  gtk_widget_class_set_template_from_resource (widget_class, "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-systeminfo-view.ui");
 }
 
 static void
-tkmviewer_window_init (TkmViewerWindow *self)
+tkmv_systeminfo_view_init (TkmvSysteminfoView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
 }

@@ -18,14 +18,14 @@
 
 #include <glib/gi18n.h>
 
-#include "tkmviewer-config.h"
-#include "tkmviewer-application.h"
+#include "tkmv-config.h"
+#include "tkmv-application.h"
 
 int
 main (int   argc,
       char *argv[])
 {
-	g_autoptr(TkmViewerApplication) app = NULL;
+	g_autoptr(TkmvApplication) app = NULL;
 	int ret;
 
 	/* Set up gettext translations */
@@ -38,7 +38,7 @@ main (int   argc,
 	 * application windows, integration with the window manager/compositor, and
 	 * desktop features such as file opening and single-instance applications.
 	 */
-	app = tkmviewer_application_new ("ro.fxdata.taskmonitor.viewer", G_APPLICATION_FLAGS_NONE);
+	app = tkmv_application_new ("ro.fxdata.taskmonitor.viewer", G_APPLICATION_FLAGS_NONE);
 
 	/*
 	 * Run the application. This function will block until the application

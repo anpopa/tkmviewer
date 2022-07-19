@@ -1,4 +1,4 @@
-/* tkmviewer-window.h
+/* tkmv-types.h
  *
  * Copyright 2022 Alin Popa
  *
@@ -18,12 +18,16 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
-#define TKMVIEWER_TYPE_WINDOW (tkmviewer_window_get_type())
+#ifndef TKM_UNUSED
+#define TKM_UNUSED(x) (void)(x)
+#endif
 
-G_DECLARE_FINAL_TYPE (TkmViewerWindow, tkmviewer_window, TKMVIEWER, WINDOW, GtkApplicationWindow)
+#define TKM_EVENT_SOURCE(x) (GSource *)(x)
+
+typedef enum _TkmStatus { TKM_STATUS_ERROR = -1, TKM_STATUS_OK } TkmlStatus;
 
 G_END_DECLS
