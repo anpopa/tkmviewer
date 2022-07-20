@@ -138,13 +138,101 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Events</property>
+                    <property name="label" translatable="yes">Events Count</property>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkDrawingArea" id="history_events_drawing_area">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">20</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">True</property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes"> Fork </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#a5a51d1d2d2d"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes"> Exec </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#1a1a5f5fb4b4"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes"> Exit </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#2626a2a26969"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes"> UID </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#616135358383"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes"> GID </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#c6c646460000"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDrawingArea" id="history_events_drawing_area">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -246,9 +334,73 @@
               </object>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="history_cpu_drawing_area">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">20</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> All </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#a5a51d1d2d2d"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> User </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#1a1a5f5fb4b4"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> System </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#2626a2a26969"/>
+                        </attributes>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkDrawingArea" id="history_cpu_drawing_area">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
@@ -266,15 +418,103 @@
               </object>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="history_mem_drawing_area">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">20</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> MemTotal </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#a5a51d1d2d2d"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> MemFree </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#1a1a5f5fb4b4"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> MemAvail </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#2626a2a26969"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> SwapTotal </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#616135358383"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> SwapFree </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#c6c646460000"/>
+                        </attributes>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkDrawingArea" id="history_mem_drawing_area">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
         </child>
         <child>
-          <object class="GtkFrame" id="history_swp_frame">
+          <object class="GtkFrame" id="history_psi_frame">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label-xalign">0.03</property>
@@ -286,9 +526,109 @@
               </object>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="history_psi_drawing_area">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">5</property>
+                    <property name="margin-end">20</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="hexpand">True</property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> CPUSome10 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#a5a51d1d2d2d"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> CPUSome60 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#1a1a5f5fb4b4"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> MEMSome10 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#2626a2a26969"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> MEMSome60 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#616135358383"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> IOSome10 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#c6c646460000"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> IOSome60 </property>
+                        <attributes>
+                          <attribute name="scale" value="0.5"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#e5e5a5a50a0a"/>
+                        </attributes>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkDrawingArea" id="history_psi_drawing_area">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
