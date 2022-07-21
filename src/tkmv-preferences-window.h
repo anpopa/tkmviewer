@@ -1,6 +1,6 @@
-/* tkmv-processes-view.h
+/* tkmv-preferences-window.h
  *
- * Copyright 2022 Alin Popa
+ * Copyright 2021 Alin Popa
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,16 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
 #include <adwaita.h>
 
 G_BEGIN_DECLS
 
-#define TKMV_TYPE_PROCESSES_VIEW (tkmv_processes_view_get_type())
+#define TKMV_TYPE_PREFERENCES_WINDOW (tkmv_preferences_window_get_type ())
 
-G_DECLARE_FINAL_TYPE (TkmvProcessesView, tkmv_processes_view, TKMV, PROCESSES_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (TkmvPreferencesWindow,
+                      tkmv_preferences_window,
+                      TKMV,
+                      TKMV_PREFERENCES_WINDOW,
+                      AdwPreferencesWindow)
 
 G_END_DECLS

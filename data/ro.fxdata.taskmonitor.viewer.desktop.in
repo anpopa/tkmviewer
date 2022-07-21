@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=tkmviewer
+Name=TkmViewer
 Exec=tkmviewer
 Icon=ro.fxdata.taskmonitor.viewer
 Terminal=false

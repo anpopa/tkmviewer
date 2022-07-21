@@ -4,12 +4,16 @@ tkmv_sources = [
   'main.c',
   'tkmv-window.c',
   'tkmv-application.c',
+  'tkmv-preferences-window.c',
+  'model/tkmv-settings.c',
+  'model/tkmv-settings-recent-file.c',
   'views/tkmv-dashboard-view.c',
   'views/tkmv-processes-view.c',
   'views/tkmv-systeminfo-view.c',
 ]
 
 tkmv_c_include_dirs = [
+  'model',
   'libkplot',
 ]
 

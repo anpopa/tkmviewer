@@ -18,6 +18,8 @@
 
 #include "tkmv-processes-view.h"
 
+static void tkmv_processes_view_widgets_init (TkmvProcessesView *self);
+
 struct _TkmvProcessesView
 {
   GtkBox  parent_instance;
@@ -39,4 +41,13 @@ static void
 tkmv_processes_view_init (TkmvProcessesView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
+  tkmv_processes_view_widgets_init(self);
 }
+
+static void
+tkmv_processes_view_widgets_init (TkmvProcessesView *self)
+{
+
+}
+
+

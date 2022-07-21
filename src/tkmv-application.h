@@ -20,6 +20,9 @@
 
 #include <adwaita.h>
 
+#include "tkmv-window.h"
+#include "tkmv-settings.h"
+
 G_BEGIN_DECLS
 
 #define TKMV_TYPE_APPLICATION (tkmv_application_get_type())
@@ -28,5 +31,9 @@ G_DECLARE_FINAL_TYPE (TkmvApplication, tkmv_application, TKMV, APPLICATION, AdwA
 
 TkmvApplication *tkmv_application_new (gchar *application_id,
                                                  GApplicationFlags  flags);
+TkmvApplication *tkmv_application_instance (void);
+TkmvWindow *tkmv_application_get_main_window (TkmvApplication *app);
+TkmvSettings *tkmv_application_get_settings (TkmvApplication *app);
+void tkmv_application_open_files (TkmvApplication *app, GList *paths);
 
 G_END_DECLS

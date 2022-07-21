@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="tkmviewer">
 	<schema id="ro.fxdata.taskmonitor.viewer" path="/ro/fxdata/taskmonitor/viewer/">
+    <key name="window-width" type="i">
+      <default>800</default>
+      <summary>Default window width</summary>
+      <description>Default window width</description>
+    </key>
+    <key name="window-height" type="i">
+      <default>600</default>
+      <summary>Default window height</summary>
+      <description>Default window height</description>
+    </key>
+	  <key name="recent-files" type="s">
+      <default>""</default>
+      <summary>Recent open files</summary>
+      <description>Recent open files</description>
+    </key>
 	</schema>
 </schemalist>
