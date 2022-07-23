@@ -27,7 +27,8 @@ G_BEGIN_DECLS
 
 #define RECENT_FILES_MAX 5
 
-typedef struct _TkmvSettings {
+typedef struct _TkmvSettings
+{
   GSettings *gsettings;
 
   GList *recent_files;
@@ -42,11 +43,14 @@ void tkmv_settings_unref (TkmvSettings *tkms);
 
 void tkmv_settings_save (TkmvSettings *tkms);
 
-void tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width, gint *height);
-void tkmv_settings_set_main_window_size (TkmvSettings *tkms, gint width, gint height);
+void tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width,
+                                         gint *height);
+void tkmv_settings_set_main_window_size (TkmvSettings *tkms, gint width,
+                                         gint height);
 
 GList *tkmv_settings_get_recent_files (TkmvSettings *tkms);
-void tkmv_settings_add_recent_file (TkmvSettings *tkms, TkmvSettingsRecentFile *rf);
+void tkmv_settings_add_recent_file (TkmvSettings *tkms,
+                                    TkmvSettingsRecentFile *rf);
 gsize tkmv_settings_recent_files_count (TkmvSettings *tkms);
 
 void tkmv_settings_load_general_settings (TkmvSettings *tkms);

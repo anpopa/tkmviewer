@@ -22,8 +22,9 @@
 
 G_BEGIN_DECLS
 
-#define TKMV_TYPE_DASHBOARD_VIEW (tkmv_dashboard_view_get_type())
+#define TKMV_TYPE_DASHBOARD_VIEW (tkmv_dashboard_view_get_type ())
 
-G_DECLARE_FINAL_TYPE (TkmvDashboardView, tkmv_dashboard_view, TKMV, DASHBOARD_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (TkmvDashboardView, tkmv_dashboard_view, TKMV,
+                      DASHBOARD_VIEW, GtkBox)
 
 G_END_DECLS

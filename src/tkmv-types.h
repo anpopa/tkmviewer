@@ -28,6 +28,10 @@ G_BEGIN_DECLS
 
 #define TKM_EVENT_SOURCE(x) (GSource *)(x)
 
-typedef enum _TkmStatus { TKM_STATUS_ERROR = -1, TKM_STATUS_OK } TkmlStatus;
+typedef enum _TkmStatus
+{
+  TKM_STATUS_ERROR = -1,
+  TKM_STATUS_OK
+} TkmlStatus;
 
 G_END_DECLS

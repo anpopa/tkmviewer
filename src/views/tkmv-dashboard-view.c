@@ -16,22 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "tkmv-types.h"
 #include "tkmv-dashboard-view.h"
+#include "tkmv-types.h"
 
-#include <math.h>
 #include "libkplot/kplot.h"
+#include <math.h>
 
 static void tkmv_dashboard_view_widgets_init (TkmvDashboardView *self);
-static void cpu_history_draw_function (GtkDrawingArea *area,
-                                       cairo_t        *cr,
-                                       int             width,
-                                       int             height,
-                                       gpointer        data);
+static void cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
+                                       int width, int height, gpointer data);
 
 struct _TkmvDashboardView
 {
-  GtkBox  parent_instance;
+  GtkBox parent_instance;
 
   /* Template widgets */
   GtkDrawingArea *history_events_drawing_area;
@@ -47,48 +44,43 @@ tkmv_dashboard_view_class_init (TkmvDashboardViewClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-dashboard-view.ui");
-  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView, history_events_drawing_area);
-  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView, history_cpu_drawing_area);
-  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView, history_mem_drawing_area);
-  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView, history_psi_drawing_area);
+  gtk_widget_class_set_template_from_resource (
+      widget_class,
+      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-dashboard-view.ui");
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        history_events_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        history_cpu_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        history_mem_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        history_psi_drawing_area);
 }
 
 static void
 tkmv_dashboard_view_init (TkmvDashboardView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-  tkmv_dashboard_view_widgets_init(self);
+  tkmv_dashboard_view_widgets_init (self);
 }
 
 static void
 tkmv_dashboard_view_widgets_init (TkmvDashboardView *self)
 {
-  TKM_UNUSED(self);
+  TKM_UNUSED (self);
   gtk_drawing_area_set_draw_func (self->history_events_drawing_area,
-                                  cpu_history_draw_function,
-                                  self,
-                                  NULL);
+                                  cpu_history_draw_function, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_cpu_drawing_area,
-                                  cpu_history_draw_function,
-                                  self,
-                                  NULL);
+                                  cpu_history_draw_function, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_mem_drawing_area,
-                                  cpu_history_draw_function,
-                                  self,
-                                  NULL);
+                                  cpu_history_draw_function, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_psi_drawing_area,
-                                  cpu_history_draw_function,
-                                  self,
-                                  NULL);
+                                  cpu_history_draw_function, self, NULL);
 }
 
 static void
-cpu_history_draw_function (GtkDrawingArea *area,
-                           cairo_t        *cr,
-                           int             width,
-                           int             height,
-                           gpointer        data)
+cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
+                           int height, gpointer data)
 {
   struct kpair points1[50];
   struct kplotcfg plotcfg;
@@ -100,20 +92,21 @@ cpu_history_draw_function (GtkDrawingArea *area,
   TKM_UNUSED (area);
   TKM_UNUSED (data);
 
-  for (i = 0; i < 50; i++) {
-    points1[i].x = i;
-    points1[i].y = i;
-  }
-  d1 = kdata_array_alloc(points1, 50);
+  for (i = 0; i < 50; i++)
+    {
+      points1[i].x = i;
+      points1[i].y = i;
+    }
+  d1 = kdata_array_alloc (points1, 50);
 
-  kplotcfg_defaults(&plotcfg);
+  kplotcfg_defaults (&plotcfg);
 
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
   plotcfg.extrema_ymax = 100;
 
-  p = kplot_alloc(&plotcfg);
+  p = kplot_alloc (&plotcfg);
 
   kdatacfg_defaults (&d1_cfg);
   d1_cfg.line.sz = 1.0;
@@ -121,10 +114,10 @@ cpu_history_draw_function (GtkDrawingArea *area,
   d1_cfg.line.clr.rgba[2] = 1.0;
   d1_cfg.line.clr.rgba[3] = 1.0;
 
-  kplot_attach_data(p, d1, KPLOT_LINES, &d1_cfg);
-  kdata_destroy(d1);
+  kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+  kdata_destroy (d1);
 
-  kplot_draw(p, width, height, cr);
+  kplot_draw (p, width, height, cr);
 
-  kplot_free(p);
+  kplot_free (p);
 }

@@ -18,13 +18,14 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
 #include <adwaita.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define TKMV_TYPE_PROCESSES_VIEW (tkmv_processes_view_get_type())
+#define TKMV_TYPE_PROCESSES_VIEW (tkmv_processes_view_get_type ())
 
-G_DECLARE_FINAL_TYPE (TkmvProcessesView, tkmv_processes_view, TKMV, PROCESSES_VIEW, GtkBox)
+G_DECLARE_FINAL_TYPE (TkmvProcessesView, tkmv_processes_view, TKMV,
+                      PROCESSES_VIEW, GtkBox)
 
 G_END_DECLS

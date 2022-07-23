@@ -20,7 +20,7 @@
 
 struct _TkmvSysteminfoView
 {
-  GtkBox  parent_instance;
+  GtkBox parent_instance;
 
   /* Template widgets */
 };
@@ -32,7 +32,9 @@ tkmv_systeminfo_view_class_init (TkmvSysteminfoViewClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-systeminfo-view.ui");
+  gtk_widget_class_set_template_from_resource (
+      widget_class,
+      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-systeminfo-view.ui");
 }
 
 static void

@@ -24,10 +24,7 @@ G_BEGIN_DECLS
 
 #define TKMV_TYPE_PREFERENCES_WINDOW (tkmv_preferences_window_get_type ())
 
-G_DECLARE_FINAL_TYPE (TkmvPreferencesWindow,
-                      tkmv_preferences_window,
-                      TKMV,
-                      TKMV_PREFERENCES_WINDOW,
-                      AdwPreferencesWindow)
+G_DECLARE_FINAL_TYPE (TkmvPreferencesWindow, tkmv_preferences_window, TKMV,
+                      TKMV_PREFERENCES_WINDOW, AdwPreferencesWindow)
 
 G_END_DECLS

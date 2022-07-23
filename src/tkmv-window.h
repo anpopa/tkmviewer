@@ -18,14 +18,15 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
 #include <adwaita.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-#define TKMV_TYPE_WINDOW (tkmv_window_get_type())
+#define TKMV_TYPE_WINDOW (tkmv_window_get_type ())
 
-G_DECLARE_FINAL_TYPE (TkmvWindow, tkmv_window, TKMV, WINDOW, AdwApplicationWindow)
+G_DECLARE_FINAL_TYPE (TkmvWindow, tkmv_window, TKMV, WINDOW,
+                      AdwApplicationWindow)
 
 void tkmv_window_progress_spinner_start (TkmvWindow *window);
 void tkmv_window_progress_spinner_stop (TkmvWindow *window);

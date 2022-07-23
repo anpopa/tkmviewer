@@ -23,7 +23,8 @@
 static void
 load_recent_files (TkmvSettings *tkms)
 {
-  g_autofree gchar *setstr_base = g_settings_get_string (tkms->gsettings, "recent-files");
+  g_autofree gchar *setstr_base
+      = g_settings_get_string (tkms->gsettings, "recent-files");
   g_autofree guchar *setstr = NULL;
   gsize file_count = 0;
   gsize len;
@@ -39,7 +40,8 @@ load_recent_files (TkmvSettings *tkms)
 
           for (gint j = 0; fields[j]; j++)
             {
-              g_autoptr (TkmvSettingsRecentFile) file = tkmv_settings_recent_file_new (fields[0], fields[1]);
+              g_autoptr (TkmvSettingsRecentFile) file
+                  = tkmv_settings_recent_file_new (fields[0], fields[1]);
 
               if (tkmv_settings_recent_file_valid (file))
                 {
@@ -55,7 +57,8 @@ load_recent_files (TkmvSettings *tkms)
   TKM_UNUSED (len);
   if ((len) > 0 && (file_count == 0))
     {
-      g_warning ("Recent files string is invalid. Reset recent files encoded string");
+      g_warning (
+          "Recent files string is invalid. Reset recent files encoded string");
       g_settings_set_string (tkms->gsettings, "recent-files", "");
     }
 }
@@ -70,13 +73,15 @@ add_files_to_encoding (gpointer _rf, gpointer _str)
   g_assert (rf);
   g_assert (str);
 
-  filestr = g_strdup_printf (
-    "%s$KVP$%s", tkmv_settings_recent_file_get_name (rf), tkmv_settings_recent_file_get_path (rf));
+  filestr
+      = g_strdup_printf ("%s$KVP$%s", tkmv_settings_recent_file_get_name (rf),
+                         tkmv_settings_recent_file_get_path (rf));
 
   if (strlen (str) > 0)
     {
       g_autofree gchar *oldstr = g_strdup (str);
-      g_snprintf (str, NAME_MAX * PATH_MAX * RECENT_FILES_MAX, "%s$FILE$%s", oldstr, filestr);
+      g_snprintf (str, NAME_MAX * PATH_MAX * RECENT_FILES_MAX, "%s$FILE$%s",
+                  oldstr, filestr);
     }
   else
     g_snprintf (str, NAME_MAX * PATH_MAX * RECENT_FILES_MAX, "%s", filestr);
@@ -146,7 +151,8 @@ tkmv_settings_unref (TkmvSettings *tkms)
 }
 
 void
-tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width, gint *height)
+tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width,
+                                    gint *height)
 {
   g_assert (tkms);
   g_assert (width);
@@ -157,7 +163,8 @@ tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width, gint *heigh
 }
 
 void
-tkmv_settings_set_main_window_size (TkmvSettings *tkms, gint width, gint height)
+tkmv_settings_set_main_window_size (TkmvSettings *tkms, gint width,
+                                    gint height)
 {
   g_assert (tkms);
   g_settings_set_int (tkms->gsettings, "window-width", width);
@@ -179,8 +186,9 @@ recent_files_lookup (gpointer _rf, gpointer _lookup)
 void
 tkmv_settings_add_recent_file (TkmvSettings *tkms, TkmvSettingsRecentFile *rf)
 {
-  RecentFileLookup lookup
-    = { .name = tkmv_settings_recent_file_get_name (rf), .found = FALSE, .index = 0 };
+  RecentFileLookup lookup = { .name = tkmv_settings_recent_file_get_name (rf),
+                              .found = FALSE,
+                              .index = 0 };
   GList *first = NULL;
 
   g_assert (tkms);
@@ -204,7 +212,8 @@ tkmv_settings_add_recent_file (TkmvSettings *tkms, TkmvSettingsRecentFile *rf)
     }
 
   tkmv_settings_recent_file_set_index (rf, tkms->recent_files_count);
-  tkms->recent_files = g_list_append (tkms->recent_files, tkmv_settings_recent_file_ref (rf));
+  tkms->recent_files
+      = g_list_append (tkms->recent_files, tkmv_settings_recent_file_ref (rf));
   tkms->recent_files_count++;
 }
 

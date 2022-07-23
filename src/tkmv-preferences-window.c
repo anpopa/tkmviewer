@@ -22,7 +22,8 @@
 #include "tkmv-application.h"
 #include "tkmv-settings.h"
 
-struct _TkmvPreferencesWindow {
+struct _TkmvPreferencesWindow
+{
   AdwPreferencesWindow parent_instance;
 
   /* General */
@@ -34,8 +35,8 @@ G_DEFINE_TYPE (TkmvPreferencesWindow, tkmv_preferences_window,
 static void
 tkmv_preferences_window_finalize (GObject *object)
 {
-  TkmvSettings *settings = tkmv_application_get_settings (
-    tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
 
   tkmv_settings_save (settings);
 
@@ -50,15 +51,16 @@ tkmv_preferences_window_class_init (TkmvPreferencesWindowClass *klass)
 
   object_class->finalize = tkmv_preferences_window_finalize;
 
-  gtk_widget_class_set_template_from_resource (widget_class,
-                                               "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-preferences-window.ui");
+  gtk_widget_class_set_template_from_resource (
+      widget_class,
+      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-preferences-window.ui");
 }
 
 static void
 tkmv_preferences_window_load_settings (TkmvPreferencesWindow *self)
 {
-  TkmvSettings *settings = tkmv_application_get_settings (
-    tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
 
   g_assert (self);
 

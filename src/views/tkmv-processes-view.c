@@ -22,7 +22,7 @@ static void tkmv_processes_view_widgets_init (TkmvProcessesView *self);
 
 struct _TkmvProcessesView
 {
-  GtkBox  parent_instance;
+  GtkBox parent_instance;
 
   /* Template widgets */
 };
@@ -34,20 +34,19 @@ tkmv_processes_view_class_init (TkmvProcessesViewClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-  gtk_widget_class_set_template_from_resource (widget_class, "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-processes-view.ui");
+  gtk_widget_class_set_template_from_resource (
+      widget_class,
+      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-processes-view.ui");
 }
 
 static void
 tkmv_processes_view_init (TkmvProcessesView *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
-  tkmv_processes_view_widgets_init(self);
+  tkmv_processes_view_widgets_init (self);
 }
 
 static void
 tkmv_processes_view_widgets_init (TkmvProcessesView *self)
 {
-
 }
-
-
