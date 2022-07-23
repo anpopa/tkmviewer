@@ -7,6 +7,7 @@
         <property name="visible">True</property>
         <property name="can-focus">True</property>
         <property name="tab-pos">bottom</property>
+        <property name="show-border">False</property>
         <property name="hexpand">True</property>
         <child>
           <object class="GtkTreeView">
