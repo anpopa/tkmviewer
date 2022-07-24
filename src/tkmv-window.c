@@ -143,9 +143,9 @@ static void
 tools_visible_child_changed (GObject *stack, GParamSpec *pspec,
                              TkmvWindow *self)
 {
-  TKM_UNUSED (stack);
-  TKM_UNUSED (pspec);
-  TKM_UNUSED (self);
+  TKMV_UNUSED (stack);
+  TKMV_UNUSED (pspec);
+  TKMV_UNUSED (self);
 }
 
 static void
@@ -169,7 +169,7 @@ close_window_signal (TkmvWindow *self, gpointer user_data)
   gint width, height;
 
   g_assert (self);
-  TKM_UNUSED (user_data);
+  TKMV_UNUSED (user_data);
 
   gtk_window_get_default_size (GTK_WINDOW (self), &width, &height);
   tkmv_settings_set_main_window_size (settings, width, height);
@@ -274,7 +274,7 @@ open_button_clicked (GtkButton *self, gpointer user_data)
   g_autoptr (GtkFileFilter) filter = NULL;
   GtkWidget *dialog;
 
-  TKM_UNUSED (self);
+  TKMV_UNUSED (self);
 
   dialog = gtk_file_chooser_dialog_new (
       "Open File", GTK_WINDOW (user_data), GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -298,7 +298,7 @@ notify_system_supports_color_schemes_cb (TkmvWindow *self)
   gboolean supports
       = adw_style_manager_get_system_supports_color_schemes (manager);
 
-  TKM_UNUSED (self);
+  TKMV_UNUSED (self);
 
   if (supports)
     adw_style_manager_set_color_scheme (manager, ADW_COLOR_SCHEME_DEFAULT);

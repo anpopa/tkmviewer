@@ -113,8 +113,8 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
       "/ro/fxdata/taskmonitor/viewer/assets/icons/scalable/application/"
       "tkmviewer-icon.svg");
 
-  TKM_UNUSED (action);
-  TKM_UNUSED (parameter);
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
   g_return_if_fail (TKMV_IS_APPLICATION (self));
 
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
@@ -134,8 +134,8 @@ tkmv_application_show_preferences (GSimpleAction *action, GVariant *parameter,
   TkmvPreferencesWindow *preferences = NULL;
   GtkWindow *window = NULL;
 
-  TKM_UNUSED (action);
-  TKM_UNUSED (parameter);
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
   g_return_if_fail (TKMV_IS_APPLICATION (self));
 
   window = gtk_application_get_active_window (GTK_APPLICATION (self));

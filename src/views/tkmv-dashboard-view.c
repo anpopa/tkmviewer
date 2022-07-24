@@ -67,7 +67,7 @@ tkmv_dashboard_view_init (TkmvDashboardView *self)
 static void
 tkmv_dashboard_view_widgets_init (TkmvDashboardView *self)
 {
-  TKM_UNUSED (self);
+  TKMV_UNUSED (self);
   gtk_drawing_area_set_draw_func (self->history_events_drawing_area,
                                   cpu_history_draw_function, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_cpu_drawing_area,
@@ -89,8 +89,8 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   struct kplot *p;
   size_t i;
 
-  TKM_UNUSED (area);
-  TKM_UNUSED (data);
+  TKMV_UNUSED (area);
+  TKMV_UNUSED (data);
 
   for (i = 0; i < 50; i++)
     {

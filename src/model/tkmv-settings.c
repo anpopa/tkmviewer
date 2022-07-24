@@ -54,7 +54,7 @@ load_recent_files (TkmvSettings *tkms)
       g_strfreev (file_pairs);
     }
 
-  TKM_UNUSED (len);
+  TKMV_UNUSED (len);
   if ((len) > 0 && (file_count == 0))
     {
       g_warning (

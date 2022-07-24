@@ -1,4 +1,5 @@
 subdir('libkplot')
+subdir('libtkm')
 
 tkmv_sources = [
   'main.c',
@@ -15,14 +16,19 @@ tkmv_sources = [
 tkmv_c_include_dirs = [
   'model',
   'libkplot',
+  'libtkm',
 ]
 
-kplot_dep = declare_dependency(link_with : libkplot,
+libkplot_dep = declare_dependency(link_with : libkplot,
+include_directories : tkmv_c_include_dirs)
+
+libtkm_dep = declare_dependency(link_with : libtkm,
 include_directories : tkmv_c_include_dirs)
 
 tkmv_deps = [
   dependency('libadwaita-1', version: '>= 1.0'),
-  kplot_dep,
+  libkplot_dep,
+  libtkm_dep
 ]
 
 gnome = import('gnome')

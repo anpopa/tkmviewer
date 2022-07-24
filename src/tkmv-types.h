@@ -22,16 +22,8 @@
 
 G_BEGIN_DECLS
 
-#ifndef TKM_UNUSED
-#define TKM_UNUSED(x) (void)(x)
+#ifndef TKMV_UNUSED
+#define TKMV_UNUSED(x) (void)(x)
 #endif
-
-#define TKM_EVENT_SOURCE(x) (GSource *)(x)
-
-typedef enum _TkmStatus
-{
-  TKM_STATUS_ERROR = -1,
-  TKM_STATUS_OK
-} TkmlStatus;
 
 G_END_DECLS
