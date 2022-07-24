@@ -53,6 +53,7 @@ tkm_session_entry_new (gint idx)
   TkmSessionEntry *entry = g_new0 (TkmSessionEntry, 1);
 
   entry->idx = idx;
+  entry->active = FALSE;
   g_ref_count_init (&entry->rc);
 
   return entry;
@@ -114,7 +115,8 @@ tkm_session_entry_set_name (TkmSessionEntry *entry, const gchar *name)
 }
 
 guint
-tkm_session_entry_first_timestamp (TkmSessionEntry *entry, DataTimeSource type)
+tkm_session_entry_get_first_timestamp (TkmSessionEntry *entry,
+                                       DataTimeSource type)
 {
   g_assert (entry);
   switch (type)
@@ -152,7 +154,8 @@ tkm_session_entry_set_first_timestamp (TkmSessionEntry *entry,
 }
 
 guint
-tkm_session_entry_last_timestamp (TkmSessionEntry *entry, DataTimeSource type)
+tkm_session_entry_get_last_timestamp (TkmSessionEntry *entry,
+                                      DataTimeSource type)
 {
   g_assert (entry);
   switch (type)
@@ -203,6 +206,20 @@ tkm_session_entry_get_index (TkmSessionEntry *entry)
   return entry->idx;
 }
 
+void
+tkm_session_entry_set_active (TkmSessionEntry *entry, gboolean state)
+{
+  g_assert (entry);
+  entry->active = state;
+}
+
+gboolean
+tkm_session_entry_get_active (TkmSessionEntry *entry)
+{
+  g_assert (entry);
+  return entry->active;
+}
+
 static int
 session_sqlite_callback (void *data, int argc, char **argv, char **colname)
 {
@@ -213,7 +230,8 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
     case SESSION_GET_ENTRIES:
       {
         GPtrArray *entries = (GPtrArray *)querydata->response;
-        TkmSessionEntry *entry = tkm_session_entry_new (entries->len + 1);
+        g_autoptr (TkmSessionEntry) entry
+            = tkm_session_entry_new (entries->len + 1);
 
         for (gint i = 0; i < argc; i++)
           {
@@ -223,14 +241,13 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
               tkm_session_entry_set_hash (entry, argv[i]);
           }
 
-        g_ptr_array_add (entries, entry);
+        g_ptr_array_add (entries, tkm_session_entry_ref (entry));
         break;
       }
 
     case SESSION_GET_TIME_INTERVALS:
       {
         TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
-        ;
 
         for (gint i = 0; i < argc; i++)
           {
@@ -267,7 +284,7 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
       break;
     }
 
-  return (0);
+  return 0;
 }
 
 static void

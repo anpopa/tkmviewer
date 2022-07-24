@@ -44,6 +44,7 @@ TkmvSettings *tkmv_settings_ref (TkmvSettings *tkms);
 void tkmv_settings_unref (TkmvSettings *tkms);
 
 void tkmv_settings_save (TkmvSettings *tkms);
+TkmSettings *tkmv_settings_get_tkm_settings (TkmvSettings *tkms);
 
 void tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width,
                                          gint *height);

@@ -20,6 +20,7 @@
 
 #include <adwaita.h>
 
+#include "tkm-context.h"
 #include "tkmv-settings.h"
 #include "tkmv-window.h"
 
@@ -34,8 +35,12 @@ TkmvApplication *tkmv_application_new (gchar *application_id,
                                        GApplicationFlags flags);
 TkmvApplication *tkmv_application_instance (void);
 TkmvWindow *tkmv_application_get_main_window (TkmvApplication *app);
+TkmContext *tkmv_application_get_context (TkmvApplication *app);
 TkmvSettings *tkmv_application_get_settings (TkmvApplication *app);
 
-void tkmv_application_open_file (TkmvApplication *app, GList *paths);
+void tkmv_application_open_file (TkmvApplication *app, const gchar *path);
+void tkmv_application_load_sessions (TkmvApplication *app);
+void tkmv_application_load_data (TkmvApplication *app,
+                                 const gchar *session_hash, guint start_time);
 
 G_END_DECLS

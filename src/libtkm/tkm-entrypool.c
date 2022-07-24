@@ -215,6 +215,7 @@ static void
 do_load_sessions (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 {
   TkmActionStatusCallback callback = tkm_action_get_callback (event->action);
+  g_autoptr (GError) error = NULL;
 
   g_assert (entrypool);
   g_assert (event);
@@ -227,12 +228,22 @@ do_load_sessions (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
       entrypool->session_entries = NULL;
     }
 
-  /* TODO: Load sessions */
+  entrypool->session_entries
+      = tkm_session_entry_get_all (entrypool->input_database, &error);
 
   tkm_entrypool_data_unlock (entrypool);
 
-  if (callback != NULL)
-    callback (ACTION_STATUS_COMPLETE, event->action);
+  if (error != NULL)
+    {
+      g_warning ("Fail to load sessions %s", error->message);
+      if (callback != NULL)
+        callback (ACTION_STATUS_FAILED, event->action);
+    }
+  else
+    {
+      if (callback != NULL)
+        callback (ACTION_STATUS_COMPLETE, event->action);
+    }
 }
 
 static void
@@ -267,7 +278,7 @@ close_database (TkmEntryPool *entrypool)
 
   if (entrypool->input_database != NULL)
     {
-      sqlite3_close_v2 (entrypool->input_database);
+      sqlite3_close (entrypool->input_database);
       entrypool->input_database = NULL;
     }
 }
@@ -286,9 +297,10 @@ do_open_database_file (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 
   close_database (entrypool);
 
-  entrypool->input_file = g_strdup ((const gchar *)g_list_first (args));
-  if (!sqlite3_open_v2 (entrypool->input_file, &entrypool->input_database,
-                        SQLITE_OPEN_READONLY, NULL))
+  entrypool->input_file
+      = g_strdup ((const gchar *)(g_list_first (args)->data));
+  if (sqlite3_open_v2 (entrypool->input_file, &entrypool->input_database,
+                       SQLITE_OPEN_READONLY, NULL))
     {
       g_warning ("Cannot open database at path %s", entrypool->input_file);
       if (callback != NULL)

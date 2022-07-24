@@ -154,6 +154,13 @@ tkmv_settings_unref (TkmvSettings *tkms)
     }
 }
 
+TkmSettings *
+tkmv_settings_get_tkm_settings (TkmvSettings *tkms)
+{
+  g_assert (tkms);
+  return tkms->tkm_settings;
+}
+
 void
 tkmv_settings_get_main_window_size (TkmvSettings *tkms, gint *width,
                                     gint *height)
@@ -239,21 +246,22 @@ void
 tkmv_settings_load_general_settings (TkmvSettings *tkms)
 {
   g_assert (tkms);
-  tkmv_settings_set_time_source (tkms,
-                                     (DataTimeSource)g_settings_get_uint (tkms->gsettings, "default-time-source"));
-  tkmv_settings_set_time_interval (tkms,
-                                     (DataTimeInterval)g_settings_get_uint (tkms->gsettings, "default-time-interval"));
-
+  tkmv_settings_set_time_source (
+      tkms, (DataTimeSource)g_settings_get_uint (tkms->gsettings,
+                                                 "default-time-source"));
+  tkmv_settings_set_time_interval (
+      tkms, (DataTimeInterval)g_settings_get_uint (tkms->gsettings,
+                                                   "default-time-interval"));
 }
 
 void
 tkmv_settings_store_general_settings (TkmvSettings *tkms)
 {
   g_assert (tkms);
-  g_settings_set_uint (
-    tkms->gsettings, "default-time-source", (guint)tkmv_settings_get_time_source (tkms));
-  g_settings_set_uint (
-    tkms->gsettings, "default-time-interval", (guint)tkmv_settings_get_time_interval (tkms));
+  g_settings_set_uint (tkms->gsettings, "default-time-source",
+                       (guint)tkmv_settings_get_time_source (tkms));
+  g_settings_set_uint (tkms->gsettings, "default-time-interval",
+                       (guint)tkmv_settings_get_time_interval (tkms));
 }
 
 DataTimeSource

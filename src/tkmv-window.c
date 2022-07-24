@@ -42,6 +42,8 @@ static void tools_timestamp_scale_value_changed (GtkRange *self,
                                                  gpointer _tkmv_window);
 static void tools_play_toggle_button_toggled (GtkToggleButton *self,
                                               gpointer _tkmv_window);
+static void tools_set_timestamp_text (TkmvWindow *self, DataTimeSource source,
+                                      guint timestamp_sec);
 
 static void load_window_size (TkmvWindow *self);
 static void open_file_menu_add_file (gpointer _rf, gpointer _window);
@@ -83,6 +85,7 @@ struct _TkmvWindow
   GtkComboBoxText *session_list_combobox;
   GtkComboBoxText *time_source_combobox;
   GtkComboBoxText *time_interval_combobox;
+  GtkLabel *timestamp_label;
   GtkScale *timestamp_scale;
   GtkLabel *timestamp_text;
   GtkToggleButton *play_toggle_button;
@@ -115,6 +118,8 @@ tkmv_window_class_init (TkmvWindowClass *klass)
                                         time_source_combobox);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         time_interval_combobox);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        timestamp_label);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         timestamp_scale);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
@@ -232,7 +237,11 @@ window_toolbar_init (TkmvWindow *self)
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_interval_combobox),
                             (gint)tkmv_settings_get_time_interval (settings));
 
-  gtk_range_set_range (GTK_RANGE (self->timestamp_scale), 0, 0);
+  /* hide irelevant widgets */
+  gtk_widget_hide (GTK_WIDGET (self->timestamp_label));
+  gtk_widget_hide (GTK_WIDGET (self->timestamp_scale));
+  gtk_widget_hide (GTK_WIDGET (self->timestamp_text));
+  gtk_widget_hide (GTK_WIDGET (self->play_toggle_button));
 
   g_signal_connect (G_OBJECT (self->session_list_combobox), "changed",
                     G_CALLBACK (tools_session_list_changed), self);
@@ -338,8 +347,6 @@ update_open_button_menu (TkmvWindow *self)
 static void
 on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
 {
-  TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
   TkmvWindow *self = (TkmvWindow *)user_data;
 
   g_assert (self);
@@ -347,26 +354,13 @@ on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
   if (response == GTK_RESPONSE_ACCEPT)
     {
       GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-      g_autoptr (GListModel) files = gtk_file_chooser_get_files (chooser);
-      GList *paths = NULL;
+      GFile *file = gtk_file_chooser_get_file (chooser);
 
-      for (guint i = 0; i < g_list_model_get_n_items (files); i++)
-        {
-          GFile *file = g_list_model_get_item (files, i);
-          g_autoptr (TkmvSettingsRecentFile) rf
-              = tkmv_settings_recent_file_new (g_file_get_basename (file),
-                                               g_file_get_path (file));
+      if (file != NULL)
+        tkmv_application_open_file (tkmv_application_instance (),
+                                    g_file_get_path (file));
 
-          paths = g_list_append (paths, g_strdup (g_file_get_path (file)));
-          tkmv_settings_add_recent_file (settings, rf);
-
-          g_message ("File selected '%s'", g_file_get_path (file));
-
-          g_object_unref (file);
-        }
-
-      if (paths != NULL)
-        tkmv_application_open_file (tkmv_application_instance (), paths);
+      g_object_unref (file);
     }
 
   update_open_button_menu (self);
@@ -386,7 +380,7 @@ open_button_clicked (GtkButton *self, gpointer user_data)
   dialog = gtk_file_chooser_dialog_new (
       "Open File", GTK_WINDOW (user_data), GTK_FILE_CHOOSER_ACTION_OPEN,
       "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
-  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), TRUE);
+  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), FALSE);
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_pattern (filter, "*.tkm.db");
@@ -425,7 +419,7 @@ window_progress_spinner_start_invoke (gpointer _self)
 }
 
 void
-dltl_window_progress_spinner_start (TkmvWindow *window)
+tkmv_window_progress_spinner_start (TkmvWindow *window)
 {
   g_assert (window);
   g_main_context_invoke (NULL, window_progress_spinner_start_invoke, window);
@@ -445,8 +439,86 @@ window_progress_spinner_stop_invoke (gpointer _self)
 }
 
 void
-dltl_window_progress_spinner_stop (TkmvWindow *window)
+tkmv_window_progress_spinner_stop (TkmvWindow *window)
 {
   g_assert (window);
   g_main_context_invoke (NULL, window_progress_spinner_stop_invoke, window);
+}
+
+static void
+tools_set_timestamp_text (TkmvWindow *self, DataTimeSource source,
+                          guint timestamp_sec)
+{
+  char buf[64];
+
+  g_assert (self);
+  switch (source)
+    {
+    case DATA_TIME_SOURCE_SYSTEM:
+    case DATA_TIME_SOURCE_RECEIVE:
+      {
+        snprintf (buf, sizeof (buf), "%u", timestamp_sec);
+        gtk_label_set_text (self->timestamp_label, buf);
+
+        break;
+      }
+
+    case DATA_TIME_SOURCE_MONOTONIC:
+      {
+        snprintf (buf, sizeof (buf), "%u", timestamp_sec);
+        gtk_label_set_text (self->timestamp_label, buf);
+        break;
+      }
+    }
+}
+
+void
+tkmv_window_update_toolbar (TkmvWindow *window)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  g_assert (window);
+
+  gtk_combo_box_text_remove_all (window->session_list_combobox);
+  for (guint i = 0; sessions->len; i++)
+    {
+      gtk_combo_box_text_append (
+          window->session_list_combobox,
+          tkm_session_entry_get_hash (g_ptr_array_index (sessions, i)),
+          tkm_session_entry_get_name (g_ptr_array_index (sessions, i)));
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  if (active_session == NULL)
+    {
+      active_session = g_ptr_array_index (sessions, 0);
+    }
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (window->time_source_combobox),
+                            (gint)tkmv_settings_get_time_source (settings));
+  gtk_combo_box_set_active (GTK_COMBO_BOX (window->time_interval_combobox),
+                            (gint)tkmv_settings_get_time_interval (settings));
+  gtk_range_set_range (
+      GTK_RANGE (window->timestamp_scale),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)),
+      tkm_session_entry_get_last_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
+  tools_set_timestamp_text (
+      window, tkmv_settings_get_time_source (settings),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
+
+  gtk_widget_show (GTK_WIDGET (window->timestamp_label));
+  gtk_widget_show (GTK_WIDGET (window->timestamp_scale));
+  gtk_widget_show (GTK_WIDGET (window->timestamp_text));
+  gtk_widget_show (GTK_WIDGET (window->play_toggle_button));
 }

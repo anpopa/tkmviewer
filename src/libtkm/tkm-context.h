@@ -24,9 +24,10 @@
 #pragma once
 
 #include "tkm-entrypool.h"
+#include "tkm-session-entry.h"
 #include "tkm-settings.h"
-#include "tkm-taskpool.h"
 #include "tkm-types.h"
+
 #include <glib.h>
 
 G_BEGIN_DECLS

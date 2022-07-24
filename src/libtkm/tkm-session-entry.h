@@ -43,6 +43,7 @@ typedef struct _TkmSessionEntry
   guint last_system_ts;
   guint last_monotonic_ts;
   guint last_receive_ts;
+  gboolean active;
 
   grefcount rc; /**< Reference counter variable  */
 } TkmSessionEntry;
@@ -66,6 +67,9 @@ guint tkm_session_entry_get_last_timestamp (TkmSessionEntry *entry,
                                             DataTimeSource type);
 void tkm_session_entry_set_last_timestamp (TkmSessionEntry *entry,
                                            DataTimeSource type, guint ts);
+
+void tkm_session_entry_set_active (TkmSessionEntry *entry, gboolean state);
+gboolean tkm_session_entry_get_active (TkmSessionEntry *entry);
 
 void tkm_session_entry_set_index (TkmSessionEntry *entry, gint idx);
 gint tkm_session_entry_get_index (TkmSessionEntry *entry);
