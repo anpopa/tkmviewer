@@ -159,6 +159,69 @@ recent_files_lookup (gpointer _rf, gpointer _lookup)
 }
 
 static void
+action_open_recent_file_1 (GSimpleAction *action, GVariant *parameter,
+                           gpointer user_data)
+{
+  TkmvApplication *self = TKMV_APPLICATION (user_data);
+  GList *recent_files = tkmv_settings_get_recent_files (self->settings);
+  GList *paths = NULL;
+  RecentFileLookup lookup = { .found = FALSE, .index = 0 };
+
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
+
+  g_list_foreach (recent_files, recent_files_lookup, &lookup);
+
+  if (lookup.found)
+    {
+      paths = g_list_append (paths, g_strdup (lookup.path));
+      tkmv_application_open_file (self, paths);
+    }
+}
+
+static void
+action_open_recent_file_2 (GSimpleAction *action, GVariant *parameter,
+                           gpointer user_data)
+{
+  TkmvApplication *self = TKMV_APPLICATION (user_data);
+  GList *recent_files = tkmv_settings_get_recent_files (self->settings);
+  GList *paths = NULL;
+  RecentFileLookup lookup = { .found = FALSE, .index = 1 };
+
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
+
+  g_list_foreach (recent_files, recent_files_lookup, &lookup);
+
+  if (lookup.found)
+    {
+      paths = g_list_append (paths, g_strdup (lookup.path));
+      tkmv_application_open_file (self, paths);
+    }
+}
+
+static void
+action_open_recent_file_3 (GSimpleAction *action, GVariant *parameter,
+                           gpointer user_data)
+{
+  TkmvApplication *self = TKMV_APPLICATION (user_data);
+  GList *recent_files = tkmv_settings_get_recent_files (self->settings);
+  GList *paths = NULL;
+  RecentFileLookup lookup = { .found = FALSE, .index = 2 };
+
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
+
+  g_list_foreach (recent_files, recent_files_lookup, &lookup);
+
+  if (lookup.found)
+    {
+      paths = g_list_append (paths, g_strdup (lookup.path));
+      tkmv_application_open_file (self, paths);
+    }
+}
+
+static void
 tkmv_application_init (TkmvApplication *self)
 {
   self->settings = tkmv_settings_new ();
@@ -172,6 +235,27 @@ tkmv_application_init (TkmvApplication *self)
   g_signal_connect (about_action, "activate",
                     G_CALLBACK (tkmv_application_show_about), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (about_action));
+
+  GSimpleAction *open_recent_file_1
+      = g_simple_action_new ("open_recent_file_1", NULL);
+
+  g_signal_connect (open_recent_file_1, "activate",
+                    G_CALLBACK (action_open_recent_file_1), self);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_1));
+
+  GSimpleAction *open_recent_file_2
+      = g_simple_action_new ("open_recent_file_2", NULL);
+
+  g_signal_connect (open_recent_file_2, "activate",
+                    G_CALLBACK (action_open_recent_file_2), self);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_2));
+
+  GSimpleAction *open_recent_file_3
+      = g_simple_action_new ("open_recent_file_3", NULL);
+
+  g_signal_connect (open_recent_file_3, "activate",
+                    G_CALLBACK (action_open_recent_file_3), self);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_3));
 
   GSimpleAction *preferences_action
       = g_simple_action_new ("preferences", NULL);
@@ -209,7 +293,7 @@ tkmv_application_get_settings (TkmvApplication *app)
 }
 
 void
-tkmv_application_open_files (TkmvApplication *app, GList *paths)
+tkmv_application_open_file (TkmvApplication *app, GList *paths)
 {
   g_assert (app);
   g_assert (paths);

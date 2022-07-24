@@ -35,6 +35,7 @@ TkmvApplication *tkmv_application_new (gchar *application_id,
 TkmvApplication *tkmv_application_instance (void);
 TkmvWindow *tkmv_application_get_main_window (TkmvApplication *app);
 TkmvSettings *tkmv_application_get_settings (TkmvApplication *app);
-void tkmv_application_open_files (TkmvApplication *app, GList *paths);
+
+void tkmv_application_open_file (TkmvApplication *app, GList *paths);
 
 G_END_DECLS

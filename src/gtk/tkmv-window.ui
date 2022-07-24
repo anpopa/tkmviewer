@@ -2,8 +2,7 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="upper">3600</property>
+  <object class="GtkAdjustment" id="timestamp_scale_adjustment">
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
@@ -73,11 +72,11 @@
                     <property name="spacing">10</property>
                     <property name="hexpand">True</property>
                     <child>
-                      <object class="GtkComboBox">
+                      <object class="GtkComboBoxText" id="session_list_combobox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="active">0</property>
                         <property name="has-entry">True</property>
-                        <property name="entry-text-column">0</property>
                         <property name="hexpand">False</property>
                         <child internal-child="entry">
                           <object class="GtkEntry">
@@ -87,12 +86,17 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkComboBox">
+                      <object class="GtkComboBoxText" id="time_source_combobox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="active">5</property>
+                        <property name="active">0</property>
                         <property name="has-entry">True</property>
                         <property name="hexpand">False</property>
+                        <items>
+                          <item translatable="no">System Time</item>
+                          <item translatable="no">Monotonic Time</item>
+                          <item translatable="no">Receive Time</item>
+                        </items>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can-focus">False</property>
@@ -100,13 +104,21 @@
                         </child>
                       </object>
                     </child>
-                     <child>
-                      <object class="GtkComboBox">
+                    <child>
+                      <object class="GtkComboBoxText" id="time_interval_combobox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="active">5</property>
+                        <property name="active">0</property>
                         <property name="has-entry">True</property>
                         <property name="hexpand">False</property>
+                        <items>
+                          <item translatable="no">10s</item>
+                          <item translatable="no">1m</item>
+                          <item translatable="no">10m</item>
+                          <item translatable="no">1h</item>
+                          <item translatable="no">24h</item>
+                          <item translatable="no">nolimit</item>
+                        </items>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can-focus">False</property>
@@ -122,13 +134,12 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkScale">
+                      <object class="GtkScale" id="timestamp_scale">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="adjustment">adjustment1</property>
+                        <property name="adjustment">timestamp_scale_adjustment</property>
                         <property name="show-fill-level">True</property>
-                        <property name="fill-level">3600</property>
-                        <property name="round-digits">1</property>
+                        <property name="round-digits">0</property>
                         <property name="digits">0</property>
                         <property name="draw-value">False</property>
                         <property name="value-pos">right</property>
@@ -136,14 +147,14 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel">
+                      <object class="GtkLabel" id="timestamp_text">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes">20:00:32</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkToggleButton">
+                      <object class="GtkToggleButton" id="play_toggle_button">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>

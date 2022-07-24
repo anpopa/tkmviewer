@@ -21,6 +21,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 
+#include "tkm-settings.h"
 #include "tkmv-settings-recent-file.h"
 
 G_BEGIN_DECLS
@@ -30,6 +31,7 @@ G_BEGIN_DECLS
 typedef struct _TkmvSettings
 {
   GSettings *gsettings;
+  TkmSettings *tkm_settings;
 
   GList *recent_files;
   gsize recent_files_count;
@@ -52,6 +54,11 @@ GList *tkmv_settings_get_recent_files (TkmvSettings *tkms);
 void tkmv_settings_add_recent_file (TkmvSettings *tkms,
                                     TkmvSettingsRecentFile *rf);
 gsize tkmv_settings_recent_files_count (TkmvSettings *tkms);
+
+DataTimeSource tkmv_settings_get_time_source (TkmvSettings *tkms);
+void tkmv_settings_set_time_source (TkmvSettings *tkms, DataTimeSource ts);
+DataTimeInterval tkmv_settings_get_time_interval (TkmvSettings *tkms);
+void tkmv_settings_set_time_interval (TkmvSettings *tkms, DataTimeInterval ti);
 
 void tkmv_settings_load_general_settings (TkmvSettings *tkms);
 void tkmv_settings_store_general_settings (TkmvSettings *tkms);

@@ -27,6 +27,8 @@ struct _TkmvPreferencesWindow
   AdwPreferencesWindow parent_instance;
 
   /* General */
+  AdwComboRow *source_combo_row;
+  AdwComboRow *interval_combo_row;
 };
 
 G_DEFINE_TYPE (TkmvPreferencesWindow, tkmv_preferences_window,
@@ -54,6 +56,10 @@ tkmv_preferences_window_class_init (TkmvPreferencesWindowClass *klass)
   gtk_widget_class_set_template_from_resource (
       widget_class,
       "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-preferences-window.ui");
+  gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
+                                        source_combo_row);
+  gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
+                                        interval_combo_row);
 }
 
 static void
@@ -65,6 +71,42 @@ tkmv_preferences_window_load_settings (TkmvPreferencesWindow *self)
   g_assert (self);
 
   tkmv_settings_load_general_settings (settings);
+
+  adw_combo_row_set_selected (self->source_combo_row,
+                              (guint)tkmv_settings_get_time_source (settings));
+  adw_combo_row_set_selected (
+      self->interval_combo_row,
+      (guint)tkmv_settings_get_time_interval (settings));
+}
+
+static void
+source_combo_row_selected (AdwComboRow *self, GParamSpec *pspec,
+                           gpointer user_data)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  TKMV_UNUSED (pspec);
+  TKMV_UNUSED (user_data);
+
+  tkmv_settings_set_time_source (
+      settings, (DataTimeSource)adw_combo_row_get_selected (self));
+  tkmv_settings_store_general_settings (settings);
+}
+
+static void
+interval_combo_row_selected (AdwComboRow *self, GParamSpec *pspec,
+                             gpointer user_data)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  TKMV_UNUSED (pspec);
+  TKMV_UNUSED (user_data);
+
+  tkmv_settings_set_time_interval (
+      settings, (DataTimeInterval)adw_combo_row_get_selected (self));
+  tkmv_settings_store_general_settings (settings);
 }
 
 static void
@@ -73,4 +115,9 @@ tkmv_preferences_window_init (TkmvPreferencesWindow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   tkmv_preferences_window_load_settings (self);
+
+  g_signal_connect (G_OBJECT (self->source_combo_row), "notify::selected",
+                    G_CALLBACK (source_combo_row_selected), self);
+  g_signal_connect (G_OBJECT (self->interval_combo_row), "notify::selected",
+                    G_CALLBACK (interval_combo_row_selected), self);
 }

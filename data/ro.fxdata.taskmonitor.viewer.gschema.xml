@@ -16,5 +16,15 @@
       <summary>Recent open files</summary>
       <description>Recent open files</description>
     </key>
+	  <key name="default-time-interval" type="u">
+      <default>0</default>
+      <summary>Default time interval</summary>
+      <description>Default time interval to report data</description>
+    </key>
+	  <key name="default-time-source" type="u">
+      <default>0</default>
+      <summary>Default time source</summary>
+      <description>Default time source to report data</description>
+    </key>
 	</schema>
 </schemalist>

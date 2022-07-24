@@ -28,6 +28,9 @@ tkm_settings_new (void)
 {
   TkmSettings *settings = g_new0 (TkmSettings, 1);
 
+  settings->time_interval = DATA_TIME_INTERVAL_1M;
+  settings->time_source = DATA_TIME_SOURCE_SYSTEM;
+
   g_ref_count_init (&settings->rc);
 
   return settings;

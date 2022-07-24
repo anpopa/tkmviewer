@@ -12,30 +12,37 @@
         <property name="use-underline">True</property>
         <child>
           <object class="AdwPreferencesGroup">
-            <property name="description" translatable="yes">Configurable options for user interface:</property>
-            <property name="title" translatable="yes">User Interface</property>
+            <property name="description" translatable="yes">Default configurable options for data reader:</property>
+            <property name="title" translatable="yes">Data reader</property>
             <child>
-              <object class="AdwActionRow">
-                <property name="title" translatable="yes">Mark error entries</property>
-                <property name="activatable_widget">auto_mark_errors_switch</property>
-                <child>
-                  <object class="GtkSwitch" id="auto_mark_errors_switch">
-                    <property name="valign">center</property>
-                    <property name="state">True</property>
+              <object class="AdwComboRow" id="interval_combo_row">
+                <property name="title" translatable="yes">Default Time Interval</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item translatable="no">10s</item>
+                      <item translatable="no">1m</item>
+                      <item translatable="no">10m</item>
+                      <item translatable="no">1h</item>
+                      <item translatable="no">24h</item>
+                      <item translatable="no">nolimit</item>
+                    </items>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
             <child>
-              <object class="AdwActionRow">
-                <property name="title" translatable="yes">Mark warning entries</property>
-                <property name="activatable_widget">auto_mark_warnings_switch</property>
-                <child>
-                  <object class="GtkSwitch" id="auto_mark_warnings_switch">
-                    <property name="valign">center</property>
-                    <property name="state">True</property>
+              <object class="AdwComboRow" id="source_combo_row">
+                <property name="title" translatable="yes">Default Time Source</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item translatable="no">System Time</item>
+                      <item translatable="no">Monotonic Time</item>
+                      <item translatable="no">Receive Time</item>
+                    </items>
                   </object>
-                </child>
+                </property>
               </object>
             </child>
           </object>

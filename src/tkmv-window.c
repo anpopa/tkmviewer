@@ -29,8 +29,20 @@
 #include "views/tkmv-systeminfo-view.h"
 
 static void window_views_init (TkmvWindow *self);
+static void window_toolbar_init (TkmvWindow *self);
 static void tools_visible_child_changed (GObject *stack, GParamSpec *pspec,
                                          TkmvWindow *self);
+static void tools_session_list_changed (GtkComboBox *self,
+                                        gpointer _tkmv_window);
+static void tools_time_source_changed (GtkComboBox *self,
+                                       gpointer _tkmv_window);
+static void tools_time_interval_changed (GtkComboBox *self,
+                                         gpointer _tkmv_window);
+static void tools_timestamp_scale_value_changed (GtkRange *self,
+                                                 gpointer _tkmv_window);
+static void tools_play_toggle_button_toggled (GtkToggleButton *self,
+                                              gpointer _tkmv_window);
+
 static void load_window_size (TkmvWindow *self);
 static void open_file_menu_add_file (gpointer _rf, gpointer _window);
 static void close_window_signal (TkmvWindow *self, gpointer user_data);
@@ -66,6 +78,14 @@ struct _TkmvWindow
   GtkToggleButton *tools_button;
   GtkSearchBar *tools_bar;
   GtkSpinner *main_spinner;
+
+  /* Toolbar widgets */
+  GtkComboBoxText *session_list_combobox;
+  GtkComboBoxText *time_source_combobox;
+  GtkComboBoxText *time_interval_combobox;
+  GtkScale *timestamp_scale;
+  GtkLabel *timestamp_text;
+  GtkToggleButton *play_toggle_button;
 };
 
 G_DEFINE_TYPE (TkmvWindow, tkmv_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -89,6 +109,18 @@ tkmv_window_class_init (TkmvWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow, open_button);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         main_spinner);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_list_combobox);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        time_source_combobox);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        time_interval_combobox);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        timestamp_scale);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        timestamp_text);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        play_toggle_button);
 
   /* Bind callbacks */
   gtk_widget_class_bind_template_callback (widget_class,
@@ -103,6 +135,7 @@ tkmv_window_init (TkmvWindow *self)
   gtk_widget_init_template (GTK_WIDGET (self));
 
   window_views_init (self);
+  window_toolbar_init (self);
   load_window_size (self);
 
   self->open_button_menu_model = g_menu_new ();
@@ -137,6 +170,80 @@ window_views_init (TkmvWindow *self)
   self->systeminfo_view = g_object_new (TKMV_TYPE_SYSTEMINFO_VIEW, NULL);
   gtk_viewport_set_child (self->systeminfo_viewport,
                           GTK_WIDGET (self->systeminfo_view));
+}
+
+static void
+tools_session_list_changed (GtkComboBox *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (window);
+}
+
+static void
+tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (window);
+}
+
+static void
+tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (window);
+}
+
+static void
+tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (window);
+
+  g_message ("Timestamp value %f",
+             gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+}
+
+static void
+tools_play_toggle_button_toggled (GtkToggleButton *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (window);
+}
+
+static void
+window_toolbar_init (TkmvWindow *self)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  gtk_combo_box_text_remove_all (self->session_list_combobox);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_source_combobox),
+                            (gint)tkmv_settings_get_time_source (settings));
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_interval_combobox),
+                            (gint)tkmv_settings_get_time_interval (settings));
+
+  gtk_range_set_range (GTK_RANGE (self->timestamp_scale), 0, 0);
+
+  g_signal_connect (G_OBJECT (self->session_list_combobox), "changed",
+                    G_CALLBACK (tools_session_list_changed), self);
+  g_signal_connect (G_OBJECT (self->time_source_combobox), "changed",
+                    G_CALLBACK (tools_time_source_changed), self);
+  g_signal_connect (G_OBJECT (self->time_interval_combobox), "changed",
+                    G_CALLBACK (tools_time_interval_changed), self);
+  g_signal_connect (G_OBJECT (self->timestamp_scale), "value-changed",
+                    G_CALLBACK (tools_timestamp_scale_value_changed), self);
+  g_signal_connect (G_OBJECT (self->play_toggle_button), "toggled",
+                    G_CALLBACK (tools_play_toggle_button_toggled), self);
 }
 
 static void
@@ -259,7 +366,7 @@ on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
         }
 
       if (paths != NULL)
-        tkmv_application_open_files (tkmv_application_instance (), paths);
+        tkmv_application_open_file (tkmv_application_instance (), paths);
     }
 
   update_open_button_menu (self);

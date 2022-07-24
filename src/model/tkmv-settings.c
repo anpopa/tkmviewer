@@ -108,6 +108,7 @@ tkmv_settings_new (void)
   TkmvSettings *tkms = g_new0 (TkmvSettings, 1);
 
   tkms->gsettings = g_settings_new ("ro.fxdata.taskmonitor.viewer");
+  tkms->tkm_settings = tkm_settings_new ();
   g_ref_count_init (&tkms->rc);
 
   load_recent_files (tkms);
@@ -142,6 +143,9 @@ tkmv_settings_unref (TkmvSettings *tkms)
     {
       if (tkms->gsettings != NULL)
         g_object_unref (tkms->gsettings);
+
+      if (tkms->tkm_settings != NULL)
+        tkm_settings_unref (tkms->tkm_settings);
 
       if (tkms->recent_files != NULL)
         g_list_free_full (tkms->recent_files, recent_files_free);
@@ -235,12 +239,53 @@ void
 tkmv_settings_load_general_settings (TkmvSettings *tkms)
 {
   g_assert (tkms);
+  tkmv_settings_set_time_source (tkms,
+                                     (DataTimeSource)g_settings_get_uint (tkms->gsettings, "default-time-source"));
+  tkmv_settings_set_time_interval (tkms,
+                                     (DataTimeInterval)g_settings_get_uint (tkms->gsettings, "default-time-interval"));
+
 }
 
 void
 tkmv_settings_store_general_settings (TkmvSettings *tkms)
 {
   g_assert (tkms);
+  g_settings_set_uint (
+    tkms->gsettings, "default-time-source", (guint)tkmv_settings_get_time_source (tkms));
+  g_settings_set_uint (
+    tkms->gsettings, "default-time-interval", (guint)tkmv_settings_get_time_interval (tkms));
+}
+
+DataTimeSource
+tkmv_settings_get_time_source (TkmvSettings *tkms)
+{
+  g_assert (tkms);
+  g_assert (tkms->tkm_settings);
+  return tkm_settings_get_data_time_source (tkms->tkm_settings);
+}
+
+void
+tkmv_settings_set_time_source (TkmvSettings *tkms, DataTimeSource ts)
+{
+  g_assert (tkms);
+  g_assert (tkms->tkm_settings);
+  tkm_settings_set_data_time_source (tkms->tkm_settings, ts);
+}
+
+DataTimeInterval
+tkmv_settings_get_time_interval (TkmvSettings *tkms)
+{
+  g_assert (tkms);
+  g_assert (tkms->tkm_settings);
+  return tkm_settings_get_data_time_interval (tkms->tkm_settings);
+}
+
+void
+tkmv_settings_set_time_interval (TkmvSettings *tkms, DataTimeInterval ti)
+{
+  g_assert (tkms);
+  g_assert (tkms->tkm_settings);
+  tkm_settings_set_data_time_interval (tkms->tkm_settings, ti);
 }
 
 void
