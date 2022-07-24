@@ -111,7 +111,7 @@ tkm_session_entry_set_name (TkmSessionEntry *entry, const gchar *name)
 {
   g_assert (entry);
   g_assert (name);
-  entry->hash = g_strdup (name);
+  entry->name = g_strdup (name);
 }
 
 guint
@@ -229,9 +229,8 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
     {
     case SESSION_GET_ENTRIES:
       {
-        GPtrArray *entries = (GPtrArray *)querydata->response;
-        g_autoptr (TkmSessionEntry) entry
-            = tkm_session_entry_new (entries->len + 1);
+        GPtrArray **entries = (GPtrArray **)querydata->response;
+        g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new (0);
 
         for (gint i = 0; i < argc; i++)
           {
@@ -241,7 +240,7 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
               tkm_session_entry_set_hash (entry, argv[i]);
           }
 
-        g_ptr_array_add (entries, tkm_session_entry_ref (entry));
+        g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
         break;
       }
 
@@ -251,6 +250,8 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
 
         for (gint i = 0; i < argc; i++)
           {
+            g_message ("colname[%d] = %s arv[%d] = %s", i, colname[i], i,
+                       argv[i]);
             if (g_strcmp0 (colname[i], "MinSysTime") == 0)
               tkm_session_entry_set_first_timestamp (
                   entry, DATA_TIME_SOURCE_SYSTEM,
@@ -303,7 +304,8 @@ update_time_intervals (gpointer _entry, gpointer _db)
   TkmSessionEntry *entry = (TkmSessionEntry *)_entry;
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
-  SessionQueryData data = { .type = SESSION_GET_ENTRIES, .response = entry };
+  SessionQueryData data
+      = { .type = SESSION_GET_TIME_INTERVALS, .response = entry };
 
   g_assert (db);
 
@@ -318,7 +320,7 @@ update_time_intervals (gpointer _entry, gpointer _db)
       "FROM '%s' "
       "WHERE SessionId IS (SELECT Id FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
       tkm_cpustat_table_name, tkm_sessions_table_name,
-      tkm_session_entry_get_name (entry));
+      tkm_session_entry_get_hash (entry));
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {
@@ -335,7 +337,8 @@ tkm_session_entry_get_all (sqlite3 *db, GError **error)
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
-  SessionQueryData data = { .type = SESSION_GET_ENTRIES, .response = entries };
+  SessionQueryData data
+      = { .type = SESSION_GET_ENTRIES, .response = (gpointer)&entries };
 
   g_ptr_array_set_free_func (entries, session_entry_free);
 

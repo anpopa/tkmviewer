@@ -312,7 +312,6 @@ async_action_open_status (ActionStatusType status_type, TkmAction *action)
       break;
 
     case ACTION_STATUS_COMPLETE:
-      tkmv_window_progress_spinner_start (self->main_window);
       tkmv_application_load_sessions (self);
       g_info ("New input file, triggered reload sessions");
       break;
@@ -360,8 +359,6 @@ async_action_load_sessions_status (ActionStatusType status_type,
         TkmSessionEntry *session
             = (TkmSessionEntry *)g_ptr_array_index (sessions, 0);
 
-        tkmv_window_progress_spinner_start (self->main_window);
-
         tkmv_application_load_data (
             self, tkm_session_entry_get_hash (session),
             tkm_session_entry_get_first_timestamp (
@@ -399,12 +396,12 @@ async_action_load_data_status (ActionStatusType status_type, TkmAction *action)
   switch (status_type)
     {
     case ACTION_STATUS_FAILED:
-      tkmv_window_update_toolbar (self->main_window);
       g_message ("Loading data failed");
       break;
 
     case ACTION_STATUS_COMPLETE:
       {
+        tkmv_window_update_toolbar (self->main_window);
         g_message ("Data loaded");
         break;
       }

@@ -208,12 +208,37 @@ static void
 tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
 {
   TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  g_assert (window);
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  if (active_session == NULL)
+    {
+      active_session = g_ptr_array_index (sessions, 0);
+    }
 
   TKMV_UNUSED (self);
   TKMV_UNUSED (window);
 
   g_message ("Timestamp value %f",
              gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+
+  tools_set_timestamp_text (
+      window, tkmv_settings_get_time_source (settings),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
 }
 
 static void
@@ -237,7 +262,7 @@ window_toolbar_init (TkmvWindow *self)
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_interval_combobox),
                             (gint)tkmv_settings_get_time_interval (settings));
 
-  /* hide irelevant widgets */
+  /* hide widgets */
   gtk_widget_hide (GTK_WIDGET (self->timestamp_label));
   gtk_widget_hide (GTK_WIDGET (self->timestamp_scale));
   gtk_widget_hide (GTK_WIDGET (self->timestamp_text));
@@ -449,24 +474,24 @@ static void
 tools_set_timestamp_text (TkmvWindow *self, DataTimeSource source,
                           guint timestamp_sec)
 {
-  char buf[64];
-
   g_assert (self);
+
   switch (source)
     {
     case DATA_TIME_SOURCE_SYSTEM:
     case DATA_TIME_SOURCE_RECEIVE:
       {
-        snprintf (buf, sizeof (buf), "%u", timestamp_sec);
-        gtk_label_set_text (self->timestamp_label, buf);
-
+        g_autoptr (GDateTime) dtime
+            = g_date_time_new_from_unix_utc (timestamp_sec);
+        g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+        gtk_label_set_text (self->timestamp_text, text);
         break;
       }
 
     case DATA_TIME_SOURCE_MONOTONIC:
       {
-        snprintf (buf, sizeof (buf), "%u", timestamp_sec);
-        gtk_label_set_text (self->timestamp_label, buf);
+        g_autofree gchar *text = g_strdup_printf ("%u", timestamp_sec);
+        gtk_label_set_text (self->timestamp_text, text);
         break;
       }
     }
@@ -485,13 +510,15 @@ tkmv_window_update_toolbar (TkmvWindow *window)
   g_assert (window);
 
   gtk_combo_box_text_remove_all (window->session_list_combobox);
-  for (guint i = 0; sessions->len; i++)
+  for (guint i = 0; i < sessions->len; i++)
     {
-      gtk_combo_box_text_append (
-          window->session_list_combobox,
-          tkm_session_entry_get_hash (g_ptr_array_index (sessions, i)),
-          tkm_session_entry_get_name (g_ptr_array_index (sessions, i)));
-      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+      TkmSessionEntry *session = g_ptr_array_index (sessions, i);
+
+      gtk_combo_box_text_append (window->session_list_combobox,
+                                 tkm_session_entry_get_hash (session),
+                                 tkm_session_entry_get_name (session));
+
+      if (tkm_session_entry_get_active (session))
         {
           active_session = g_ptr_array_index (sessions, i);
         }
@@ -500,7 +527,11 @@ tkmv_window_update_toolbar (TkmvWindow *window)
   if (active_session == NULL)
     {
       active_session = g_ptr_array_index (sessions, 0);
+      tkm_session_entry_set_active (active_session, TRUE);
     }
+
+  gtk_combo_box_set_active_id (GTK_COMBO_BOX (window->session_list_combobox),
+                               tkm_session_entry_get_hash (active_session));
 
   gtk_combo_box_set_active (GTK_COMBO_BOX (window->time_source_combobox),
                             (gint)tkmv_settings_get_time_source (settings));
@@ -512,6 +543,7 @@ tkmv_window_update_toolbar (TkmvWindow *window)
           active_session, tkmv_settings_get_time_source (settings)),
       tkm_session_entry_get_last_timestamp (
           active_session, tkmv_settings_get_time_source (settings)));
+
   tools_set_timestamp_text (
       window, tkmv_settings_get_time_source (settings),
       tkm_session_entry_get_first_timestamp (
