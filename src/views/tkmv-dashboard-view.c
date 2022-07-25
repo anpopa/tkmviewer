@@ -191,7 +191,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
       = tkmv_application_get_settings (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
+  TkmSessionEntry *active_session = NULL;
 
   struct kpair *points1 = NULL;
   struct kpair *points2 = NULL;
@@ -209,6 +211,21 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
+
+  if (sessions != NULL)
+    {
+
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+    }
 
   if (cpu_data != NULL)
     {
@@ -270,7 +287,15 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
-  plotcfg.extrema_ymax = 100;
+  if (active_session != NULL)
+    {
+      plotcfg.extrema_ymax
+          = (100 * tkm_session_entry_get_device_cpus (active_session));
+    }
+  else
+    {
+      plotcfg.extrema_ymax = 100;
+    }
   plotcfg.xticlabelfmt = timestamp_format;
 
   p = kplot_alloc (&plotcfg);
@@ -403,6 +428,8 @@ update_instant_cpu_frame (TkmvDashboardView *view)
 {
   TkmContext *context
       = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
   TkmCpuStatEntry *entry = NULL;
   gchar buf[64];
@@ -413,7 +440,34 @@ update_instant_cpu_frame (TkmvDashboardView *view)
   if (cpu_data->len == 0)
     return;
 
+  if (sessions == NULL)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+  g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+
   entry = g_ptr_array_index (cpu_data, 0);
+
+  gtk_level_bar_set_min_value (view->cpu_all_level_bar, 0);
+  gtk_level_bar_set_min_value (view->cpu_usr_level_bar, 0);
+  gtk_level_bar_set_min_value (view->cpu_sys_level_bar, 0);
+  gtk_level_bar_set_max_value (
+      view->cpu_all_level_bar,
+      (100 * tkm_session_entry_get_device_cpus (active_session)));
+  gtk_level_bar_set_max_value (
+      view->cpu_usr_level_bar,
+      (100 * tkm_session_entry_get_device_cpus (active_session)));
+  gtk_level_bar_set_max_value (
+      view->cpu_sys_level_bar,
+      (100 * tkm_session_entry_get_device_cpus (active_session)));
 
   gtk_level_bar_set_value (view->cpu_all_level_bar,
                            (double)tkm_cpustat_entry_get_all (entry));
