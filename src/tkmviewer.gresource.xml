@@ -18,5 +18,6 @@
     <file alias="system-file-manager-symbolic.svg">assets/icons/scalable/actions/system-file-manager-symbolic.svg</file>
     <file alias="accessories-calculator-symbolic.svg">assets/icons/scalable/actions/accessories-calculator-symbolic.svg</file>
     <file alias="applications-utilities-symbolic.svg">assets/icons/scalable/actions/applications-utilities-symbolic.svg</file>
+    <file alias="dialog-information-symbolic.svg">assets/icons/scalable/actions/dialog-information-symbolic.svg</file>
   </gresource>
 </gresources>

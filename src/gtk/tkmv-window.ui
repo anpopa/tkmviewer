@@ -6,6 +6,245 @@
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
+
+  <!-- Session Information Dialog -->
+  <object class="GtkDialog" id="session_info_dialog">
+    <property name="default-width">480</property>
+    <property name="default-height">320</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">10</property>
+        <property name="margin-end">10</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">5</property>
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-top">10</property>
+            <property name="margin-bottom">10</property>
+            <property name="label-xalign">0</property>
+            <child>
+              <!-- n-columns=2 n-rows=2 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="row-spacing">5</property>
+                <property name="column-spacing">10</property>
+                <property name="row-homogeneous">True</property>
+                <property name="column-homogeneous">False</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Name:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">CPUs:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_device_name">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="input-purpose">name</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_device_name_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_device_cpus">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="input-purpose">name</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_device_cpus_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">10</property>
+                <property name="label" translatable="yes">Device</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">10</property>
+            <property name="margin-end">10</property>
+            <property name="margin-top">10</property>
+            <property name="margin-bottom">10</property>
+            <child>
+              <!-- n-columns=2 n-rows=4 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="row-spacing">5</property>
+                <property name="column-spacing">10</property>
+                <property name="row-homogeneous">True</property>
+                <property name="column-homogeneous">False</property>
+                <property name="margin-start">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Name:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Hash:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Starts:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">2</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Ends:</property>
+                    <layout>
+                      <property name="column">0</property>
+                      <property name="row">3</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_session_name">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_session_name_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">0</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_session_hash">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_session_hash_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">1</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_session_start">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_session_start_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">2</property>
+                    </layout>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="session_info_session_end">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="hexpand">True</property>
+                    <property name="buffer">info_session_end_entry_buffer</property>
+                    <layout>
+                      <property name="column">1</property>
+                      <property name="row">3</property>
+                    </layout>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">10</property>
+                <property name="label" translatable="yes">Session</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkEntryBuffer" id="info_device_name_entry_buffer"/>
+  <object class="GtkEntryBuffer" id="info_device_cpus_entry_buffer"/>
+  <object class="GtkEntryBuffer" id="info_session_name_entry_buffer"/>
+  <object class="GtkEntryBuffer" id="info_session_hash_entry_buffer"/>
+  <object class="GtkEntryBuffer" id="info_session_start_entry_buffer"/>
+  <object class="GtkEntryBuffer" id="info_session_end_entry_buffer"/>
+
+  <!-- Main application window -->
   <template class="TkmvWindow" parent="AdwApplicationWindow">
     <property name="default-width">800</property>
     <property name="default-height">800</property>
@@ -60,6 +299,8 @@
             </child>
           </object>
         </child>
+
+        <!-- Toolbar -->
         <child>
           <object class="GtkBox" id="content_box">
             <property name="orientation">vertical</property>
@@ -72,6 +313,16 @@
                     <property name="spacing">10</property>
                     <property name="hexpand">True</property>
                     <child>
+                      <object class="GtkButton" id="session_info_button">
+                        <property name="visible">True</property>
+                        <property name="has-frame">True</property>
+                        <property name="icon-name">dialog-information-symbolic</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkComboBoxText" id="session_list_combobox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -81,6 +332,9 @@
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can-focus">False</property>
+                            <style>
+                              <class name="warning"/>
+                            </style>
                           </object>
                         </child>
                       </object>

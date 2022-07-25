@@ -30,6 +30,8 @@
 
 static void window_views_init (TkmvWindow *self);
 static void window_toolbar_init (TkmvWindow *self);
+static void tkmv_window_update_toolbar (TkmvWindow *window);
+static gboolean update_views_content_invoke (gpointer _self);
 static void tools_visible_child_changed (GObject *stack, GParamSpec *pspec,
                                          TkmvWindow *self);
 static void tools_session_list_changed (GtkComboBox *self,
@@ -82,6 +84,7 @@ struct _TkmvWindow
   GtkSpinner *main_spinner;
 
   /* Toolbar widgets */
+  GtkButton *session_info_button;
   GtkComboBoxText *session_list_combobox;
   GtkComboBoxText *time_source_combobox;
   GtkComboBoxText *time_interval_combobox;
@@ -89,6 +92,21 @@ struct _TkmvWindow
   GtkScale *timestamp_scale;
   GtkLabel *timestamp_text;
   GtkToggleButton *play_toggle_button;
+
+  /* Session info */
+  GtkDialog *session_info_dialog;
+  GtkEntry *session_info_device_name;
+  GtkEntryBuffer *info_device_name_entry_buffer;
+  GtkEntry *session_info_device_cpus;
+  GtkEntryBuffer *info_device_cpus_entry_buffer;
+  GtkEntry *session_info_session_name;
+  GtkEntryBuffer *info_session_name_entry_buffer;
+  GtkEntry *session_info_session_hash;
+  GtkEntryBuffer *info_session_hash_entry_buffer;
+  GtkEntry *session_info_session_start;
+  GtkEntryBuffer *info_session_start_entry_buffer;
+  GtkEntry *session_info_session_end;
+  GtkEntryBuffer *info_session_end_entry_buffer;
 };
 
 G_DEFINE_TYPE (TkmvWindow, tkmv_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -113,6 +131,8 @@ tkmv_window_class_init (TkmvWindowClass *klass)
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         main_spinner);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_button);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         session_list_combobox);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         time_source_combobox);
@@ -126,6 +146,33 @@ tkmv_window_class_init (TkmvWindowClass *klass)
                                         timestamp_text);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         play_toggle_button);
+
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_dialog);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_device_name);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_device_cpus);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_session_name);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_session_hash);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_session_start);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        session_info_session_end);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_device_name_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_device_cpus_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_session_name_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_session_hash_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_session_start_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        info_session_end_entry_buffer);
 
   /* Bind callbacks */
   gtk_widget_class_bind_template_callback (widget_class,
@@ -332,6 +379,80 @@ tools_play_toggle_button_toggled (GtkToggleButton *self, gpointer _tkmv_window)
   TKMV_UNUSED (window);
 }
 
+// Function to open a dialog box with a message
+static void
+session_info_dialog (GtkButton *self, gpointer _tkmv_window)
+{
+  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  g_assert (window);
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+
+  TKMV_UNUSED (self);
+
+  gtk_entry_buffer_set_text (window->info_session_name_entry_buffer,
+                             tkm_session_entry_get_name (active_session), -1);
+  gtk_entry_buffer_set_text (window->info_session_hash_entry_buffer,
+                             tkm_session_entry_get_hash (active_session), -1);
+
+  do
+    {
+      g_autoptr (GDateTime) dtime = g_date_time_new_from_unix_utc (
+          tkm_session_entry_get_first_timestamp (active_session,
+                                                 DATA_TIME_SOURCE_SYSTEM));
+      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      gtk_entry_buffer_set_text (window->info_session_start_entry_buffer, text,
+                                 -1);
+    }
+  while (FALSE);
+
+  do
+    {
+      g_autoptr (GDateTime) dtime = g_date_time_new_from_unix_utc (
+          tkm_session_entry_get_last_timestamp (active_session,
+                                                DATA_TIME_SOURCE_SYSTEM));
+      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      gtk_entry_buffer_set_text (window->info_session_end_entry_buffer, text,
+                                 -1);
+    }
+  while (FALSE);
+
+  gtk_window_set_title (GTK_WINDOW (window->session_info_dialog),
+                        "Session information");
+  gtk_window_set_modal (GTK_WINDOW (window->session_info_dialog), TRUE);
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (window->session_info_dialog),
+                                      FALSE);
+  gtk_window_set_transient_for (GTK_WINDOW (window->session_info_dialog),
+                                GTK_WINDOW (window));
+
+  /* Ensure that the dialog box is destroyed when the user responds */
+  /*g_signal_connect_swapped (window->session_info_dialog,
+                            "response",
+                            G_CALLBACK (gtk_window_destroy),
+                            window->session_info_dialog);*/
+
+  gtk_widget_show (GTK_WIDGET (window->session_info_dialog));
+}
+
 static void
 window_toolbar_init (TkmvWindow *self)
 {
@@ -344,6 +465,8 @@ window_toolbar_init (TkmvWindow *self)
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_interval_combobox),
                             (gint)tkmv_settings_get_time_interval (settings));
 
+  g_signal_connect (G_OBJECT (self->session_info_button), "clicked",
+                    G_CALLBACK (session_info_dialog), self);
   g_signal_connect (G_OBJECT (self->session_list_combobox), "changed",
                     G_CALLBACK (tools_session_list_changed), self);
   g_signal_connect (G_OBJECT (self->time_source_combobox), "changed",
@@ -573,7 +696,7 @@ tools_set_timestamp_text (TkmvWindow *self, DataTimeSource source,
     }
 }
 
-void
+static void
 tkmv_window_update_toolbar (TkmvWindow *window)
 {
   TkmvSettings *settings
@@ -640,9 +763,31 @@ tkmv_window_update_toolbar (TkmvWindow *window)
           active_session, tkmv_settings_get_time_source (settings)));
 }
 
+static gboolean
+update_views_content_invoke (gpointer _self)
+{
+  TkmvWindow *window = (TkmvWindow *)_self;
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  g_assert (window);
+
+  tkmv_window_update_toolbar (window);
+  tkmv_dashboard_view_update_content (window->dashboard_view);
+
+  tkm_context_data_unlock (context);
+
+  return FALSE;
+}
+
 void
 tkmv_window_update_views_content (TkmvWindow *window)
 {
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
   g_assert (window);
-  tkmv_dashboard_view_update_content (window->dashboard_view);
+
+  tkm_context_data_lock (context);
+  g_main_context_invoke (NULL, update_views_content_invoke, window);
 }

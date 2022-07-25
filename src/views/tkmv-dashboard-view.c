@@ -110,6 +110,35 @@ tkmv_dashboard_view_widgets_init (TkmvDashboardView *self)
 }
 
 static void
+timestamp_format (double val, char *buf, size_t sz)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  g_assert (buf);
+
+  switch (tkmv_settings_get_time_source (settings))
+    {
+    case DATA_TIME_SOURCE_SYSTEM:
+    case DATA_TIME_SOURCE_RECEIVE:
+      {
+        g_autoptr (GDateTime) dtime
+            = g_date_time_new_from_unix_utc ((guint)val);
+        g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+        snprintf (buf, sz, "%s", text);
+        break;
+      }
+
+    case DATA_TIME_SOURCE_MONOTONIC:
+      {
+        g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
+        snprintf (buf, sz, "%s", text);
+        break;
+      }
+    }
+}
+
+static void
 events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                               int height, gpointer data)
 {
@@ -136,6 +165,7 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
   plotcfg.extrema_ymax = 100;
+  plotcfg.xticlabelfmt = timestamp_format;
 
   p = kplot_alloc (&plotcfg);
 
@@ -163,9 +193,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       = tkmv_application_get_settings (tkmv_application_instance ());
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
 
-  struct kpair points1[1000];
-  struct kpair points2[1000];
-  struct kpair points3[1000];
+  struct kpair *points1 = NULL;
+  struct kpair *points2 = NULL;
+  struct kpair *points3 = NULL;
 
   struct kplotcfg plotcfg;
   struct kdatacfg d1_cfg;
@@ -180,23 +210,56 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
 
-  if (cpu_data == NULL)
-    return;
-
-  for (guint i = 0; i < cpu_data->len; i++)
+  if (cpu_data != NULL)
     {
-      TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, i);
-      if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
+      if (cpu_data->len > 0)
         {
-          points1[cnt].x = tkm_cpustat_entry_get_timestamp (
-              entry, tkmv_settings_get_time_source (settings));
-          points1[cnt].y = tkm_cpustat_entry_get_all (entry);
-          points2[cnt].x = points1[cnt].x;
-          points2[cnt].y = tkm_cpustat_entry_get_sys (entry);
-          points3[cnt].x = points1[cnt].x;
-          points3[cnt].y = tkm_cpustat_entry_get_usr (entry);
-          cnt += 1;
+          points1 = calloc (cpu_data->len, sizeof (struct kpair));
+          points2 = calloc (cpu_data->len, sizeof (struct kpair));
+          points3 = calloc (cpu_data->len, sizeof (struct kpair));
         }
+
+      for (guint i = 0; i < cpu_data->len; i++)
+        {
+          TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, i);
+          if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
+            {
+              points1[cnt].x = tkm_cpustat_entry_get_timestamp (
+                  entry, tkmv_settings_get_time_source (settings));
+              points1[cnt].y = tkm_cpustat_entry_get_all (entry);
+              points2[cnt].x = points1[cnt].x;
+              points2[cnt].y = tkm_cpustat_entry_get_usr (entry);
+              points3[cnt].x = points1[cnt].x;
+              points3[cnt].y = tkm_cpustat_entry_get_sys (entry);
+              cnt += 1;
+            }
+        }
+    }
+
+  if (points1 == NULL)
+    {
+      points1 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points2 == NULL)
+    {
+      points2 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points3 == NULL)
+    {
+      points3 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (cnt == 0)
+    {
+      points1[cnt].x = 1;
+      points1[cnt].y = 0;
+      points2[cnt].x = points1[cnt].x;
+      points2[cnt].y = 0;
+      points3[cnt].x = points1[cnt].x;
+      points3[cnt].y = 0;
+      cnt += 1;
     }
 
   d1 = kdata_array_alloc (points1, cnt);
@@ -204,39 +267,45 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   d3 = kdata_array_alloc (points3, cnt);
 
   kplotcfg_defaults (&plotcfg);
-
   plotcfg.grid = GRID_ALL;
-  plotcfg.extrema = EXTREMA_YMIN;
+  plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
+  plotcfg.extrema_ymax = 100;
+  plotcfg.xticlabelfmt = timestamp_format;
 
   p = kplot_alloc (&plotcfg);
 
   kdatacfg_defaults (&d1_cfg);
   d1_cfg.line.sz = 1.0;
   d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[2] = 1.0;
+  d1_cfg.line.clr.rgba[0] = 1.0;
   d1_cfg.line.clr.rgba[3] = 1.0;
 
   kdatacfg_defaults (&d2_cfg);
   d2_cfg.line.sz = 1.0;
   d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d2_cfg.line.clr.rgba[2] = 0.1;
+  d2_cfg.line.clr.rgba[2] = 1.0;
   d2_cfg.line.clr.rgba[3] = 1.0;
 
   kdatacfg_defaults (&d3_cfg);
   d3_cfg.line.sz = 1.0;
   d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d3_cfg.line.clr.rgba[2] = 1.0;
-  d3_cfg.line.clr.rgba[3] = 0.1;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
 
   kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
   kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
   kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+
   kdata_destroy (d1);
   kdata_destroy (d2);
   kdata_destroy (d3);
 
   kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
 
   kplot_free (p);
 }
@@ -341,6 +410,9 @@ update_instant_cpu_frame (TkmvDashboardView *view)
   if (cpu_data == NULL)
     return;
 
+  if (cpu_data->len == 0)
+    return;
+
   entry = g_ptr_array_index (cpu_data, 0);
 
   gtk_level_bar_set_value (view->cpu_all_level_bar,
@@ -353,9 +425,11 @@ update_instant_cpu_frame (TkmvDashboardView *view)
   snprintf (buf, sizeof (buf), "All - %u %%",
             tkm_cpustat_entry_get_all (entry));
   gtk_label_set_text (view->cpu_all_level_label, buf);
+
   snprintf (buf, sizeof (buf), "Usr - %3u %%",
             tkm_cpustat_entry_get_usr (entry));
   gtk_label_set_text (view->cpu_usr_level_label, buf);
+
   snprintf (buf, sizeof (buf), "Sys - %3u %%",
             tkm_cpustat_entry_get_sys (entry));
   gtk_label_set_text (view->cpu_sys_level_label, buf);
@@ -367,6 +441,7 @@ void
 tkmv_dashboard_view_update_content (TkmvDashboardView *view)
 {
   g_assert (view);
+
   update_instant_cpu_frame (view);
   gtk_widget_queue_draw (GTK_WIDGET (view->history_cpu_drawing_area));
 }
