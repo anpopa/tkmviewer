@@ -22,6 +22,7 @@
  */
 
 #include "tkm-entrypool.h"
+#include "tkm-cpustat-entry.h"
 #include "tkm-session-entry.h"
 
 #include <fcntl.h>
@@ -229,7 +230,7 @@ do_load_sessions (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
     }
 
   entrypool->session_entries
-      = tkm_session_entry_get_all (entrypool->input_database, &error);
+      = tkm_session_entry_get_all_entries (entrypool->input_database, &error);
 
   tkm_entrypool_data_unlock (entrypool);
 
@@ -250,16 +251,77 @@ static void
 do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 {
   TkmActionStatusCallback callback = tkm_action_get_callback (event->action);
+  TkmSessionEntry *active_session = NULL;
+  const gchar *session_hash = NULL;
+  gulong start_timestamp = 0;
+  gulong end_timestamp = 0;
+  gulong last_timestamp = 0;
+  GList *ts_node = NULL;
+  GList *args = NULL;
 
   g_assert (entrypool);
   g_assert (event);
+
+  args = tkm_action_get_args (event->action);
+  g_assert (args);
+
+  session_hash = (const gchar *)(g_list_first (args)->data);
+
+  ts_node = g_list_next (args);
+  start_timestamp = g_ascii_strtoull (ts_node->data, NULL, 10);
 
   tkm_entrypool_data_lock (entrypool);
 
   /* cleanup existing entries */
   main_entries_free (entrypool);
 
-  /* TODO: Initial data load */
+  for (guint i = 0; i < entrypool->session_entries->len; i++)
+    {
+      if (tkm_session_entry_get_active (
+              g_ptr_array_index (entrypool->session_entries, i)))
+        {
+          active_session = g_ptr_array_index (entrypool->session_entries, i);
+        }
+    }
+  last_timestamp = tkm_session_entry_get_last_timestamp (
+      active_session, tkm_settings_get_data_time_source (entrypool->settings));
+
+  switch (tkm_settings_get_data_time_interval (entrypool->settings))
+    {
+    case DATA_TIME_INTERVAL_10S:
+      end_timestamp = (start_timestamp + 10) < last_timestamp
+                          ? (start_timestamp + 10)
+                          : last_timestamp;
+      break;
+    case DATA_TIME_INTERVAL_1M:
+      end_timestamp = (start_timestamp + 60) < last_timestamp
+                          ? (start_timestamp + 60)
+                          : last_timestamp;
+      break;
+    case DATA_TIME_INTERVAL_10M:
+      end_timestamp = (start_timestamp + 600) < last_timestamp
+                          ? (start_timestamp + 600)
+                          : last_timestamp;
+      break;
+    case DATA_TIME_INTERVAL_1H:
+      end_timestamp = (start_timestamp + 3600) < last_timestamp
+                          ? (start_timestamp + 3600)
+                          : last_timestamp;
+      break;
+    case DATA_TIME_INTERVAL_24H:
+      end_timestamp = (start_timestamp + 86400) < last_timestamp
+                          ? (start_timestamp + 86400)
+                          : last_timestamp;
+      break;
+    default:
+      end_timestamp = last_timestamp;
+      break;
+    }
+
+  entrypool->cpustat_entries = tkm_cpustat_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
 
   tkm_entrypool_data_unlock (entrypool);
 

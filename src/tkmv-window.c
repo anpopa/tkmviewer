@@ -639,3 +639,10 @@ tkmv_window_update_toolbar (TkmvWindow *window)
       tkm_session_entry_get_last_timestamp (
           active_session, tkmv_settings_get_time_source (settings)));
 }
+
+void
+tkmv_window_update_views_content (TkmvWindow *window)
+{
+  g_assert (window);
+  tkmv_dashboard_view_update_content (window->dashboard_view);
+}

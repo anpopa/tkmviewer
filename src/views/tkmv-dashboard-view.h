@@ -27,4 +27,6 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (TkmvDashboardView, tkmv_dashboard_view, TKMV,
                       DASHBOARD_VIEW, GtkBox)
 
+void tkmv_dashboard_view_update_content (TkmvDashboardView *view);
+
 G_END_DECLS

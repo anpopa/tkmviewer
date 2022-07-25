@@ -404,6 +404,7 @@ async_action_load_data_status (ActionStatusType status_type, TkmAction *action)
 
     case ACTION_STATUS_COMPLETE:
       {
+        tkmv_window_update_views_content (self->main_window);
         tkmv_window_update_toolbar (self->main_window);
         g_message ("Data loaded");
         break;

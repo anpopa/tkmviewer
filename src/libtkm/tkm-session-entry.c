@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * \author Alin Popa <alin.popa@fxdata.ro>
- * \file tkm-entry.c
+ * \file tkm-session-entry.c
  */
 
 #include "tkm-session-entry.h"
@@ -41,18 +41,14 @@ typedef struct _SessionQueryData
   gpointer response;
 } SessionQueryData;
 
-const gchar *tkm_sessions_table_name = "tkmSessions";
-const gchar *tkm_cpustat_table_name = "tkmSysProcStat";
-
 static int session_sqlite_callback (void *data, int argc, char **argv,
                                     char **colname);
 
 TkmSessionEntry *
-tkm_session_entry_new (gint idx)
+tkm_session_entry_new (void)
 {
   TkmSessionEntry *entry = g_new0 (TkmSessionEntry, 1);
 
-  entry->idx = idx;
   entry->active = FALSE;
   g_ref_count_init (&entry->rc);
 
@@ -193,20 +189,6 @@ tkm_session_entry_set_last_timestamp (TkmSessionEntry *entry,
 }
 
 void
-tkm_session_entry_set_index (TkmSessionEntry *entry, gint idx)
-{
-  g_assert (entry);
-  entry->idx = idx;
-}
-
-gint
-tkm_session_entry_get_index (TkmSessionEntry *entry)
-{
-  g_assert (entry);
-  return entry->idx;
-}
-
-void
 tkm_session_entry_set_active (TkmSessionEntry *entry, gboolean state)
 {
   g_assert (entry);
@@ -230,7 +212,7 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
     case SESSION_GET_ENTRIES:
       {
         GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new (0);
+        g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new ();
 
         for (gint i = 0; i < argc; i++)
           {
@@ -250,8 +232,6 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
 
         for (gint i = 0; i < argc; i++)
           {
-            g_message ("colname[%d] = %s arv[%d] = %s", i, colname[i], i,
-                       argv[i]);
             if (g_strcmp0 (colname[i], "MinSysTime") == 0)
               tkm_session_entry_set_first_timestamp (
                   entry, DATA_TIME_SOURCE_SYSTEM,
@@ -319,7 +299,7 @@ update_time_intervals (gpointer _entry, gpointer _db)
       "MAX(ReceiveTime) AS 'MaxRecTime' "
       "FROM '%s' "
       "WHERE SessionId IS (SELECT Id FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
-      tkm_cpustat_table_name, tkm_sessions_table_name,
+      TKM_CPUSTAT_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
       tkm_session_entry_get_hash (entry));
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
@@ -332,7 +312,7 @@ update_time_intervals (gpointer _entry, gpointer _db)
 }
 
 GPtrArray *
-tkm_session_entry_get_all (sqlite3 *db, GError **error)
+tkm_session_entry_get_all_entries (sqlite3 *db, GError **error)
 {
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
@@ -344,7 +324,7 @@ tkm_session_entry_get_all (sqlite3 *db, GError **error)
 
   g_assert (db);
 
-  sql = g_strdup_printf ("SELECT Name,Hash FROM %s", tkm_sessions_table_name);
+  sql = g_strdup_printf ("SELECT Name,Hash FROM %s", TKM_SESSIONS_TABLE_NAME);
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {

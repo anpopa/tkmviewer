@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * \author Alin Popa <alin.popa@fxdata.ro>
- * \file tkm-entry.h
+ * \file tkm-session-entry.h
  */
 
 #pragma once
@@ -33,8 +33,6 @@ G_BEGIN_DECLS
 
 typedef struct _TkmSessionEntry
 {
-  gint idx; /**< Main list index */
-
   gchar *hash;
   gchar *name;
   guint first_system_ts;
@@ -45,10 +43,10 @@ typedef struct _TkmSessionEntry
   guint last_receive_ts;
   gboolean active;
 
-  grefcount rc; /**< Reference counter variable  */
+  grefcount rc;
 } TkmSessionEntry;
 
-TkmSessionEntry *tkm_session_entry_new (gint idx);
+TkmSessionEntry *tkm_session_entry_new (void);
 TkmSessionEntry *tkm_session_entry_ref (TkmSessionEntry *entry);
 void tkm_session_entry_unref (TkmSessionEntry *entry);
 
@@ -71,10 +69,7 @@ void tkm_session_entry_set_last_timestamp (TkmSessionEntry *entry,
 void tkm_session_entry_set_active (TkmSessionEntry *entry, gboolean state);
 gboolean tkm_session_entry_get_active (TkmSessionEntry *entry);
 
-void tkm_session_entry_set_index (TkmSessionEntry *entry, gint idx);
-gint tkm_session_entry_get_index (TkmSessionEntry *entry);
-
-GPtrArray *tkm_session_entry_get_all (sqlite3 *db, GError **error);
+GPtrArray *tkm_session_entry_get_all_entries (sqlite3 *db, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmSessionEntry, tkm_session_entry_unref);
 

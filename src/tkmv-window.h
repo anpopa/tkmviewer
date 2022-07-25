@@ -28,7 +28,9 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (TkmvWindow, tkmv_window, TKMV, WINDOW,
                       AdwApplicationWindow)
 
+void tkmv_window_update_views_content (TkmvWindow *window);
 void tkmv_window_update_toolbar (TkmvWindow *window);
+
 void tkmv_window_progress_spinner_start (TkmvWindow *window);
 void tkmv_window_progress_spinner_stop (TkmvWindow *window);
 

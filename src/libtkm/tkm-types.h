@@ -33,6 +33,9 @@ G_BEGIN_DECLS
 
 #define TKM_EVENT_SOURCE(x) (GSource *)(x)
 
+#define TKM_SESSIONS_TABLE_NAME "tkmSessions"
+#define TKM_CPUSTAT_TABLE_NAME "tkmSysProcStat"
+
 typedef enum _DataTimeSource
 {
   DATA_TIME_SOURCE_SYSTEM,
