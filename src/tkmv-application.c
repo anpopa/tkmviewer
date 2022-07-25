@@ -216,7 +216,6 @@ action_open_recent_file_3 (GSimpleAction *action, GVariant *parameter,
   if (lookup.found)
     {
       tkmv_application_open_file (self, lookup.path);
-      ;
     }
 }
 

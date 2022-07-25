@@ -35,12 +35,17 @@ typedef struct _TkmSessionEntry
 {
   gchar *hash;
   gchar *name;
+
+  gchar *device_name;
+  guint device_cpus; /* number of cpu cores */
+
   guint first_system_ts;
   guint first_monotonic_ts;
   guint first_receive_ts;
   guint last_system_ts;
   guint last_monotonic_ts;
   guint last_receive_ts;
+
   gboolean active;
 
   grefcount rc;
@@ -55,6 +60,12 @@ void tkm_session_entry_set_hash (TkmSessionEntry *entry, const gchar *hash);
 
 const gchar *tkm_session_entry_get_name (TkmSessionEntry *entry);
 void tkm_session_entry_set_name (TkmSessionEntry *entry, const gchar *name);
+
+const gchar *tkm_session_entry_get_device_name (TkmSessionEntry *entry);
+void tkm_session_entry_set_device_name (TkmSessionEntry *entry,
+                                        const gchar *name);
+guint tkm_session_entry_get_device_cpus (TkmSessionEntry *entry);
+void tkm_session_entry_set_device_cpus (TkmSessionEntry *entry, guint cpus);
 
 guint tkm_session_entry_get_first_timestamp (TkmSessionEntry *entry,
                                              DataTimeSource type);

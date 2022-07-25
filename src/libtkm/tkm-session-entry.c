@@ -30,6 +30,7 @@ typedef enum _SessionQueryType
 {
   SESSION_GET_ENTRIES,
   SESSION_GET_TIME_INTERVALS,
+  SESSION_GET_DEVICE_DATA,
 } SessionQueryType;
 
 /**
@@ -50,6 +51,7 @@ tkm_session_entry_new (void)
   TkmSessionEntry *entry = g_new0 (TkmSessionEntry, 1);
 
   entry->active = FALSE;
+  entry->device_cpus = 1;
   g_ref_count_init (&entry->rc);
 
   return entry;
@@ -108,6 +110,35 @@ tkm_session_entry_set_name (TkmSessionEntry *entry, const gchar *name)
   g_assert (entry);
   g_assert (name);
   entry->name = g_strdup (name);
+}
+
+const gchar *
+tkm_session_entry_get_device_name (TkmSessionEntry *entry)
+{
+  g_assert (entry);
+  return entry->device_name;
+}
+
+void
+tkm_session_entry_set_device_name (TkmSessionEntry *entry, const gchar *name)
+{
+  g_assert (entry);
+  g_assert (name);
+  entry->device_name = g_strdup (name);
+}
+
+guint
+tkm_session_entry_get_device_cpus (TkmSessionEntry *entry)
+{
+  g_assert (entry);
+  return entry->device_cpus;
+}
+
+void
+tkm_session_entry_set_device_cpus (TkmSessionEntry *entry, guint cpus)
+{
+  g_assert (entry);
+  entry->device_cpus = cpus;
 }
 
 guint
@@ -261,6 +292,22 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
         break;
       }
 
+    case SESSION_GET_DEVICE_DATA:
+      {
+        TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
+
+        for (gint i = 0; i < argc; i++)
+          {
+            if (g_strcmp0 (colname[i], "Name") == 0)
+              tkm_session_entry_set_device_name (entry, argv[i]);
+            else if (g_strcmp0 (colname[i], "CpuCnt") == 0)
+              tkm_session_entry_set_device_cpus (
+                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          }
+
+        break;
+      }
+
     default:
       break;
     }
@@ -277,7 +324,7 @@ session_entry_free (gpointer data)
   tkm_session_entry_unref (e);
 }
 
-void
+static void
 update_time_intervals (gpointer _entry, gpointer _db)
 {
   sqlite3 *db = (sqlite3 *)_db;
@@ -311,6 +358,33 @@ update_time_intervals (gpointer _entry, gpointer _db)
     }
 }
 
+static void
+update_device_data (gpointer _entry, gpointer _db)
+{
+  sqlite3 *db = (sqlite3 *)_db;
+  TkmSessionEntry *entry = (TkmSessionEntry *)_entry;
+  g_autofree gchar *sql = NULL;
+  gchar *query_error = NULL;
+  SessionQueryData data
+      = { .type = SESSION_GET_DEVICE_DATA, .response = entry };
+
+  g_assert (db);
+
+  sql = g_strdup_printf (
+      "SELECT * "
+      "FROM '%s' "
+      "WHERE Id IS (SELECT Device FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
+      TKM_DEVICES_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
+      tkm_session_entry_get_hash (entry));
+  if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
+      != SQLITE_OK)
+    {
+      g_warning ("Fail to update device data for session '%s'. SQL error %s",
+                 tkm_session_entry_get_name (entry), query_error);
+      sqlite3_free (query_error);
+    }
+}
+
 GPtrArray *
 tkm_session_entry_get_all_entries (sqlite3 *db, GError **error)
 {
@@ -338,7 +412,10 @@ tkm_session_entry_get_all_entries (sqlite3 *db, GError **error)
     }
 
   if (entries != NULL)
-    g_ptr_array_foreach (entries, update_time_intervals, db);
+    {
+      g_ptr_array_foreach (entries, update_time_intervals, db);
+      g_ptr_array_foreach (entries, update_device_data, db);
+    }
 
   return entries;
 }

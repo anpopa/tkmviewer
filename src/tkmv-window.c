@@ -409,6 +409,9 @@ session_info_dialog (GtkButton *self, gpointer _tkmv_window)
 
   TKMV_UNUSED (self);
 
+  gtk_entry_buffer_set_text (
+      window->info_device_name_entry_buffer,
+      tkm_session_entry_get_device_name (active_session), -1);
   gtk_entry_buffer_set_text (window->info_session_name_entry_buffer,
                              tkm_session_entry_get_name (active_session), -1);
   gtk_entry_buffer_set_text (window->info_session_hash_entry_buffer,
@@ -416,10 +419,20 @@ session_info_dialog (GtkButton *self, gpointer _tkmv_window)
 
   do
     {
+      gchar buf[32];
+      snprintf (buf, sizeof (buf), "%u",
+                tkm_session_entry_get_device_cpus (active_session));
+      gtk_entry_buffer_set_text (window->info_device_cpus_entry_buffer, buf,
+                                 -1);
+    }
+  while (FALSE);
+
+  do
+    {
       g_autoptr (GDateTime) dtime = g_date_time_new_from_unix_utc (
           tkm_session_entry_get_first_timestamp (active_session,
                                                  DATA_TIME_SOURCE_SYSTEM));
-      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      g_autofree gchar *text = g_date_time_format (dtime, "%A, %F %H:%M:%S");
       gtk_entry_buffer_set_text (window->info_session_start_entry_buffer, text,
                                  -1);
     }
@@ -430,7 +443,7 @@ session_info_dialog (GtkButton *self, gpointer _tkmv_window)
       g_autoptr (GDateTime) dtime = g_date_time_new_from_unix_utc (
           tkm_session_entry_get_last_timestamp (active_session,
                                                 DATA_TIME_SOURCE_SYSTEM));
-      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      g_autofree gchar *text = g_date_time_format (dtime, "%A, %F %H:%M:%S");
       gtk_entry_buffer_set_text (window->info_session_end_entry_buffer, text,
                                  -1);
     }
@@ -439,16 +452,10 @@ session_info_dialog (GtkButton *self, gpointer _tkmv_window)
   gtk_window_set_title (GTK_WINDOW (window->session_info_dialog),
                         "Session information");
   gtk_window_set_modal (GTK_WINDOW (window->session_info_dialog), TRUE);
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (window->session_info_dialog),
-                                      FALSE);
   gtk_window_set_transient_for (GTK_WINDOW (window->session_info_dialog),
                                 GTK_WINDOW (window));
-
-  /* Ensure that the dialog box is destroyed when the user responds */
-  /*g_signal_connect_swapped (window->session_info_dialog,
-                            "response",
-                            G_CALLBACK (gtk_window_destroy),
-                            window->session_info_dialog);*/
+  gtk_window_set_hide_on_close (GTK_WINDOW (window->session_info_dialog),
+                                TRUE);
 
   gtk_widget_show (GTK_WIDGET (window->session_info_dialog));
 }
@@ -572,6 +579,8 @@ static void
 on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
 {
   TkmvWindow *self = (TkmvWindow *)user_data;
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
 
   g_assert (self);
 
@@ -581,8 +590,15 @@ on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
       GFile *file = gtk_file_chooser_get_file (chooser);
 
       if (file != NULL)
-        tkmv_application_open_file (tkmv_application_instance (),
-                                    g_file_get_path (file));
+        {
+          g_autoptr (TkmvSettingsRecentFile) rf
+              = tkmv_settings_recent_file_new (g_file_get_basename (file),
+                                               g_file_get_path (file));
+
+          tkmv_settings_add_recent_file (settings, rf);
+          tkmv_application_open_file (tkmv_application_instance (),
+                                      g_file_get_path (file));
+        }
 
       g_object_unref (file);
     }
