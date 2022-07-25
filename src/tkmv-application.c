@@ -359,6 +359,9 @@ async_action_load_sessions_status (ActionStatusType status_type,
         TkmSessionEntry *session
             = (TkmSessionEntry *)g_ptr_array_index (sessions, 0);
 
+        /* mark first section active as default after loading */
+        tkm_session_entry_set_active (session, TRUE);
+
         tkmv_application_load_data (
             self, tkm_session_entry_get_hash (session),
             tkm_session_entry_get_first_timestamp (

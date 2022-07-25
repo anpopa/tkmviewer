@@ -181,27 +181,113 @@ static void
 tools_session_list_changed (GtkComboBox *self, gpointer _tkmv_window)
 {
   TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
 
-  TKMV_UNUSED (self);
-  TKMV_UNUSED (window);
+  g_assert (window);
+
+  if (gtk_combo_box_get_active_id (self) == NULL)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  if (active_session == NULL)
+    return;
+
+  if (g_strcmp0 (gtk_combo_box_get_active_id (self),
+                 tkm_session_entry_get_hash (active_session))
+      == 0)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      TkmSessionEntry *session = g_ptr_array_index (sessions, i);
+
+      if (g_strcmp0 (gtk_combo_box_get_active_id (self),
+                     tkm_session_entry_get_hash (session))
+          == 0)
+        {
+          tkm_session_entry_set_active (session, TRUE);
+        }
+      else
+        {
+          tkm_session_entry_set_active (session, FALSE);
+        }
+    }
+
+  tkmv_application_load_data (
+      tkmv_application_instance (), gtk_combo_box_get_active_id (self),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
 }
 
 static void
 tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 {
   TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
 
-  TKMV_UNUSED (self);
-  TKMV_UNUSED (window);
+  g_assert (window);
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+
+  tkmv_settings_set_time_source (settings,
+                                 (guint)gtk_combo_box_get_active (self));
+  tkmv_application_load_data (
+      tkmv_application_instance (),
+      tkm_session_entry_get_hash (active_session),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
 }
 
 static void
 tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
 {
   TkmvWindow *window = (TkmvWindow *)_tkmv_window;
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
 
-  TKMV_UNUSED (self);
-  TKMV_UNUSED (window);
+  g_assert (window);
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+
+  tkmv_settings_set_time_interval (settings,
+                                   (guint)gtk_combo_box_get_active (self));
+  tkmv_application_load_data (
+      tkmv_application_instance (),
+      tkm_session_entry_get_hash (active_session),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
 }
 
 static void
@@ -225,20 +311,16 @@ tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
         }
     }
 
-  if (active_session == NULL)
-    {
-      active_session = g_ptr_array_index (sessions, 0);
-    }
+  g_assert (active_session);
 
-  TKMV_UNUSED (self);
-  TKMV_UNUSED (window);
+  g_message ("Timestamp value %f", gtk_range_get_value (self));
 
-  g_message ("Timestamp value %f",
-             gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+  tools_set_timestamp_text (window, tkmv_settings_get_time_source (settings),
+                            gtk_range_get_value (self));
 
-  tools_set_timestamp_text (
-      window, tkmv_settings_get_time_source (settings),
-      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+  tkmv_application_load_data (tkmv_application_instance (),
+                              tkm_session_entry_get_hash (active_session),
+                              gtk_range_get_value (self));
 }
 
 static void
@@ -261,12 +343,6 @@ window_toolbar_init (TkmvWindow *self)
                             (gint)tkmv_settings_get_time_source (settings));
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->time_interval_combobox),
                             (gint)tkmv_settings_get_time_interval (settings));
-
-  /* hide widgets */
-  gtk_widget_hide (GTK_WIDGET (self->timestamp_label));
-  gtk_widget_hide (GTK_WIDGET (self->timestamp_scale));
-  gtk_widget_hide (GTK_WIDGET (self->timestamp_text));
-  gtk_widget_hide (GTK_WIDGET (self->play_toggle_button));
 
   g_signal_connect (G_OBJECT (self->session_list_combobox), "changed",
                     G_CALLBACK (tools_session_list_changed), self);
@@ -530,27 +606,36 @@ tkmv_window_update_toolbar (TkmvWindow *window)
       tkm_session_entry_set_active (active_session, TRUE);
     }
 
-  gtk_combo_box_set_active_id (GTK_COMBO_BOX (window->session_list_combobox),
-                               tkm_session_entry_get_hash (active_session));
+  if (g_strcmp0 (gtk_combo_box_get_active_id (
+                     GTK_COMBO_BOX (window->session_list_combobox)),
+                 tkm_session_entry_get_hash (active_session))
+      != 0)
+    {
+      gtk_combo_box_set_active_id (
+          GTK_COMBO_BOX (window->session_list_combobox),
+          tkm_session_entry_get_hash (active_session));
+    }
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (window->time_source_combobox),
-                            (gint)tkmv_settings_get_time_source (settings));
-  gtk_combo_box_set_active (GTK_COMBO_BOX (window->time_interval_combobox),
-                            (gint)tkmv_settings_get_time_interval (settings));
+  if (gtk_combo_box_get_active (GTK_COMBO_BOX (window->time_source_combobox))
+      != (gint)tkmv_settings_get_time_source (settings))
+    {
+      gtk_combo_box_set_active (
+          GTK_COMBO_BOX (window->time_source_combobox),
+          (gint)tkmv_settings_get_time_source (settings));
+    }
+
+  if (gtk_combo_box_get_active (GTK_COMBO_BOX (window->time_interval_combobox))
+      != (gint)tkmv_settings_get_time_interval (settings))
+    {
+      gtk_combo_box_set_active (
+          GTK_COMBO_BOX (window->time_interval_combobox),
+          (gint)tkmv_settings_get_time_interval (settings));
+    }
+
   gtk_range_set_range (
       GTK_RANGE (window->timestamp_scale),
       tkm_session_entry_get_first_timestamp (
           active_session, tkmv_settings_get_time_source (settings)),
       tkm_session_entry_get_last_timestamp (
           active_session, tkmv_settings_get_time_source (settings)));
-
-  tools_set_timestamp_text (
-      window, tkmv_settings_get_time_source (settings),
-      tkm_session_entry_get_first_timestamp (
-          active_session, tkmv_settings_get_time_source (settings)));
-
-  gtk_widget_show (GTK_WIDGET (window->timestamp_label));
-  gtk_widget_show (GTK_WIDGET (window->timestamp_scale));
-  gtk_widget_show (GTK_WIDGET (window->timestamp_text));
-  gtk_widget_show (GTK_WIDGET (window->play_toggle_button));
 }
