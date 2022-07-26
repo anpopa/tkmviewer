@@ -251,6 +251,9 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
               tkm_session_entry_set_name (entry, argv[i]);
             else if (g_strcmp0 (colname[i], "Hash") == 0)
               tkm_session_entry_set_hash (entry, argv[i]);
+            else if (g_strcmp0 (colname[i], "CoreCount") == 0)
+              tkm_session_entry_set_device_cpus (
+                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
           }
 
         g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
@@ -300,9 +303,6 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
           {
             if (g_strcmp0 (colname[i], "Name") == 0)
               tkm_session_entry_set_device_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "CpuCnt") == 0)
-              tkm_session_entry_set_device_cpus (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
           }
 
         break;
@@ -371,7 +371,7 @@ update_device_data (gpointer _entry, gpointer _db)
   g_assert (db);
 
   sql = g_strdup_printf (
-      "SELECT * "
+      "SELECT Name "
       "FROM '%s' "
       "WHERE Id IS (SELECT Device FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
       TKM_DEVICES_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
@@ -398,7 +398,7 @@ tkm_session_entry_get_all_entries (sqlite3 *db, GError **error)
 
   g_assert (db);
 
-  sql = g_strdup_printf ("SELECT Name,Hash FROM %s", TKM_SESSIONS_TABLE_NAME);
+  sql = g_strdup_printf ("SELECT * FROM %s", TKM_SESSIONS_TABLE_NAME);
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {

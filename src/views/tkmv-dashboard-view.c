@@ -456,25 +456,18 @@ update_instant_cpu_frame (TkmvDashboardView *view)
 
   entry = g_ptr_array_index (cpu_data, 0);
 
-  gtk_level_bar_set_min_value (view->cpu_all_level_bar, 0);
-  gtk_level_bar_set_min_value (view->cpu_usr_level_bar, 0);
-  gtk_level_bar_set_min_value (view->cpu_sys_level_bar, 0);
-  gtk_level_bar_set_max_value (
+  gtk_level_bar_set_value (
       view->cpu_all_level_bar,
-      (100 * tkm_session_entry_get_device_cpus (active_session)));
-  gtk_level_bar_set_max_value (
+      (double)tkm_cpustat_entry_get_all (entry)
+          / tkm_session_entry_get_device_cpus (active_session));
+  gtk_level_bar_set_value (
       view->cpu_usr_level_bar,
-      (100 * tkm_session_entry_get_device_cpus (active_session)));
-  gtk_level_bar_set_max_value (
+      (double)tkm_cpustat_entry_get_usr (entry)
+          / tkm_session_entry_get_device_cpus (active_session));
+  gtk_level_bar_set_value (
       view->cpu_sys_level_bar,
-      (100 * tkm_session_entry_get_device_cpus (active_session)));
-
-  gtk_level_bar_set_value (view->cpu_all_level_bar,
-                           (double)tkm_cpustat_entry_get_all (entry));
-  gtk_level_bar_set_value (view->cpu_usr_level_bar,
-                           (double)tkm_cpustat_entry_get_usr (entry));
-  gtk_level_bar_set_value (view->cpu_sys_level_bar,
-                           (double)tkm_cpustat_entry_get_sys (entry));
+      (double)tkm_cpustat_entry_get_sys (entry)
+          / tkm_session_entry_get_device_cpus (active_session));
 
   snprintf (buf, sizeof (buf), "All - %u %%",
             tkm_cpustat_entry_get_all (entry));
