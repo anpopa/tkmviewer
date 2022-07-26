@@ -161,7 +161,21 @@ static void
 memory_format (double val, char *buf, size_t sz)
 {
   g_assert (buf);
-  snprintf (buf, sz, "%u", (guint)val / (1024));
+  snprintf (buf, sz, "%u MB", (guint)val / (1024));
+}
+
+static void
+pressure_format (double val, char *buf, size_t sz)
+{
+  g_assert (buf);
+  snprintf (buf, sz, "%.3f %%", val);
+}
+
+static void
+percent_format (double val, char *buf, size_t sz)
+{
+  g_assert (buf);
+  snprintf (buf, sz, "%u %%", (guint)val);
 }
 
 static void
@@ -300,6 +314,7 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.extrema = EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
   plotcfg.xticlabelfmt = timestamp_format;
+  plotcfg.yticlabelfmt = percent_format;
 
   p = kplot_alloc (&plotcfg);
 
@@ -474,6 +489,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       plotcfg.extrema_ymax = 100;
     }
   plotcfg.xticlabelfmt = timestamp_format;
+  plotcfg.yticlabelfmt = percent_format;
 
   p = kplot_alloc (&plotcfg);
 
@@ -860,6 +876,7 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.extrema = EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
   plotcfg.xticlabelfmt = timestamp_format;
+  plotcfg.yticlabelfmt = pressure_format;
 
   p = kplot_alloc (&plotcfg);
 
