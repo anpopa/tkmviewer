@@ -72,6 +72,7 @@ typedef struct _TkmEntryPool
   GPtrArray *cpustat_entries;
   GPtrArray *meminfo_entries;
   GPtrArray *procevent_entries;
+  GPtrArray *pressure_entries;
   GPtrArray *buddyinfo_entries;
   GPtrArray *wireless_entries;
 
@@ -88,6 +89,7 @@ GPtrArray *tkm_entrypool_get_procacct_entries (TkmEntryPool *entrypool);
 GPtrArray *tkm_entrypool_get_cpustat_entries (TkmEntryPool *entrypool);
 GPtrArray *tkm_entrypool_get_meminfo_entries (TkmEntryPool *entrypool);
 GPtrArray *tkm_entrypool_get_procevent_entries (TkmEntryPool *entrypool);
+GPtrArray *tkm_entrypool_get_pressure_entries (TkmEntryPool *entrypool);
 GPtrArray *tkm_entrypool_get_buddyinfo_entries (TkmEntryPool *entrypool);
 GPtrArray *tkm_entrypool_get_wireless_entries (TkmEntryPool *entrypool);
 

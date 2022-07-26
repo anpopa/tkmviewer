@@ -19,6 +19,7 @@
 #include "tkmv-dashboard-view.h"
 #include "tkm-cpustat-entry.h"
 #include "tkm-meminfo-entry.h"
+#include "tkm-pressure-entry.h"
 #include "tkm-procevent-entry.h"
 #include "tkm-settings.h"
 #include "tkmv-application.h"
@@ -712,42 +713,220 @@ static void
 psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                            int height, gpointer data)
 {
-  struct kpair points1[50];
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *psi_data = tkm_context_get_pressure_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL; /* CPUSome10 */
+  struct kpair *points2 = NULL; /* CPUSome60 */
+  struct kpair *points3 = NULL; /* MEMSome10 */
+  struct kpair *points4 = NULL; /* MEMSome60 */
+  struct kpair *points5 = NULL; /* IOSome10 */
+  struct kpair *points6 = NULL; /* IOSome60 */
+
   struct kplotcfg plotcfg;
   struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
+  struct kdatacfg d6_cfg;
   struct kdata *d1;
+  struct kdata *d2;
+  struct kdata *d3;
+  struct kdata *d4;
+  struct kdata *d5;
+  struct kdata *d6;
   struct kplot *p;
-  size_t i;
+  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
 
-  for (i = 0; i < 50; i++)
+  if (sessions != NULL)
     {
-      points1[i].x = i;
-      points1[i].y = i;
+
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
     }
-  d1 = kdata_array_alloc (points1, 50);
+
+  if (psi_data != NULL)
+    {
+      if (psi_data->len > 0)
+        {
+          points1 = calloc (psi_data->len, sizeof (struct kpair));
+          points2 = calloc (psi_data->len, sizeof (struct kpair));
+          points3 = calloc (psi_data->len, sizeof (struct kpair));
+          points4 = calloc (psi_data->len, sizeof (struct kpair));
+          points5 = calloc (psi_data->len, sizeof (struct kpair));
+          points6 = calloc (psi_data->len, sizeof (struct kpair));
+        }
+
+      for (guint i = 0; i < psi_data->len; i++)
+        {
+          TkmPressureEntry *entry = g_ptr_array_index (psi_data, i);
+
+          points1[cnt].x = tkm_pressure_entry_get_timestamp (
+              entry, tkmv_settings_get_time_source (settings));
+          points1[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_CPU_SOME_AVG10);
+          points2[cnt].x = points1[cnt].x;
+          points2[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_CPU_SOME_AVG60);
+          points3[cnt].x = points1[cnt].x;
+          points3[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_MEM_SOME_AVG10);
+          points4[cnt].x = points1[cnt].x;
+          points4[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_MEM_SOME_AVG10);
+          points5[cnt].x = points1[cnt].x;
+          points5[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_IO_SOME_AVG10);
+          points6[cnt].x = points1[cnt].x;
+          points6[cnt].y = tkm_pressure_entry_get_data_avg (
+              entry, PSI_DATA_IO_SOME_AVG10);
+          cnt += 1;
+        }
+    }
+
+  if (points1 == NULL)
+    {
+      points1 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points2 == NULL)
+    {
+      points2 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points3 == NULL)
+    {
+      points3 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points4 == NULL)
+    {
+      points4 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points5 == NULL)
+    {
+      points5 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points6 == NULL)
+    {
+      points6 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (cnt == 0)
+    {
+      points1[cnt].x = 1;
+      points1[cnt].y = 0;
+      points2[cnt].x = points1[cnt].x;
+      points2[cnt].y = 0;
+      points3[cnt].x = points1[cnt].x;
+      points3[cnt].y = 0;
+      points4[cnt].x = points1[cnt].x;
+      points4[cnt].y = 0;
+      points5[cnt].x = points1[cnt].x;
+      points5[cnt].y = 0;
+      points6[cnt].x = points1[cnt].x;
+      points6[cnt].y = 0;
+      cnt += 1;
+    }
+
+  d1 = kdata_array_alloc (points1, cnt);
+  d2 = kdata_array_alloc (points2, cnt);
+  d3 = kdata_array_alloc (points3, cnt);
+  d4 = kdata_array_alloc (points4, cnt);
+  d5 = kdata_array_alloc (points5, cnt);
+  d6 = kdata_array_alloc (points6, cnt);
 
   kplotcfg_defaults (&plotcfg);
-
   plotcfg.grid = GRID_ALL;
-  plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
+  plotcfg.extrema = EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
-  plotcfg.extrema_ymax = 100;
+  plotcfg.xticlabelfmt = timestamp_format;
 
   p = kplot_alloc (&plotcfg);
 
   kdatacfg_defaults (&d1_cfg);
   d1_cfg.line.sz = 1.0;
   d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[2] = 1.0;
+  d1_cfg.line.clr.rgba[0] = 1.0;
   d1_cfg.line.clr.rgba[3] = 1.0;
 
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d6_cfg);
+  d6_cfg.line.sz = 1.0;
+  d6_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d6_cfg.line.clr.rgba[0] = 1.0;
+  d6_cfg.line.clr.rgba[1] = 0.9;
+  d6_cfg.line.clr.rgba[2] = 0.1;
+  d6_cfg.line.clr.rgba[3] = 1.0;
+
   kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+  kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+  kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+  kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+  kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+  kplot_attach_data (p, d6, KPLOT_LINES, &d6_cfg);
+
   kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
+  kdata_destroy (d5);
+  kdata_destroy (d6);
 
   kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
+  free (points6);
 
   kplot_free (p);
 }
@@ -877,4 +1056,5 @@ tkmv_dashboard_view_update_content (TkmvDashboardView *view)
   gtk_widget_queue_draw (GTK_WIDGET (view->history_mem_drawing_area));
 
   gtk_widget_queue_draw (GTK_WIDGET (view->history_events_drawing_area));
+  gtk_widget_queue_draw (GTK_WIDGET (view->history_psi_drawing_area));
 }

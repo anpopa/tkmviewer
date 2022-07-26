@@ -160,6 +160,13 @@ tkm_context_get_procevent_entries (TkmContext *ctx)
 }
 
 GPtrArray *
+tkm_context_get_pressure_entries (TkmContext *ctx)
+{
+  g_assert (ctx);
+  return tkm_entrypool_get_pressure_entries (ctx->entrypool);
+}
+
+GPtrArray *
 tkm_context_get_buddyinfo_entries (TkmContext *ctx)
 {
   g_assert (ctx);

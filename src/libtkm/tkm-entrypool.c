@@ -24,6 +24,7 @@
 #include "tkm-entrypool.h"
 #include "tkm-cpustat-entry.h"
 #include "tkm-meminfo-entry.h"
+#include "tkm-pressure-entry.h"
 #include "tkm-procevent-entry.h"
 #include "tkm-session-entry.h"
 
@@ -201,6 +202,12 @@ main_entries_free (TkmEntryPool *entrypool)
       entrypool->procevent_entries = NULL;
     }
 
+  if (entrypool->pressure_entries != NULL)
+    {
+      g_ptr_array_free (entrypool->pressure_entries, TRUE);
+      entrypool->pressure_entries = NULL;
+    }
+
   if (entrypool->buddyinfo_entries != NULL)
     {
       g_ptr_array_free (entrypool->buddyinfo_entries, TRUE);
@@ -335,6 +342,11 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
       tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
       end_timestamp, NULL);
 
+  entrypool->pressure_entries = tkm_pressure_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
   tkm_entrypool_data_unlock (entrypool);
 
   if (callback != NULL)
@@ -430,6 +442,7 @@ tkm_entrypool_new (GMainContext *context, TkmTaskPool *taskpool,
   entrypool->cpustat_entries = NULL;
   entrypool->meminfo_entries = NULL;
   entrypool->procevent_entries = NULL;
+  entrypool->pressure_entries = NULL;
   entrypool->buddyinfo_entries = NULL;
   entrypool->wireless_entries = NULL;
 
@@ -543,6 +556,13 @@ tkm_entrypool_get_procevent_entries (TkmEntryPool *entrypool)
 {
   g_assert (entrypool);
   return entrypool->procevent_entries;
+}
+
+GPtrArray *
+tkm_entrypool_get_pressure_entries (TkmEntryPool *entrypool)
+{
+  g_assert (entrypool);
+  return entrypool->pressure_entries;
 }
 
 GPtrArray *
