@@ -36,6 +36,7 @@ G_BEGIN_DECLS
 #define TKM_DEVICES_TABLE_NAME "tkmDevices"
 #define TKM_SESSIONS_TABLE_NAME "tkmSessions"
 #define TKM_CPUSTAT_TABLE_NAME "tkmSysProcStat"
+#define TKM_MEMINFO_TABLE_NAME "tkmSysProcMemInfo"
 
 typedef enum _DataTimeSource
 {

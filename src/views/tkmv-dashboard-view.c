@@ -18,6 +18,7 @@
 
 #include "tkmv-dashboard-view.h"
 #include "tkm-cpustat-entry.h"
+#include "tkm-meminfo-entry.h"
 #include "tkm-settings.h"
 #include "tkmv-application.h"
 #include "tkmv-types.h"
@@ -54,6 +55,12 @@ struct _TkmvDashboardView
   GtkLabel *cpu_usr_level_label;
   GtkLevelBar *cpu_sys_level_bar;
   GtkLabel *cpu_sys_level_label;
+
+  /* Instant MEM */
+  GtkLevelBar *mem_level_bar;
+  GtkLabel *mem_level_label;
+  GtkLevelBar *swap_level_bar;
+  GtkLabel *swap_level_label;
 };
 
 G_DEFINE_TYPE (TkmvDashboardView, tkmv_dashboard_view, GTK_TYPE_BOX)
@@ -74,6 +81,7 @@ tkmv_dashboard_view_class_init (TkmvDashboardViewClass *klass)
                                         history_mem_drawing_area);
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
                                         history_psi_drawing_area);
+
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
                                         cpu_all_level_bar);
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
@@ -86,6 +94,15 @@ tkmv_dashboard_view_class_init (TkmvDashboardViewClass *klass)
                                         cpu_sys_level_bar);
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
                                         cpu_sys_level_label);
+
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        mem_level_bar);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        mem_level_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        swap_level_bar);
+  gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
+                                        swap_level_label);
 }
 
 static void
@@ -136,6 +153,13 @@ timestamp_format (double val, char *buf, size_t sz)
         break;
       }
     }
+}
+
+static void
+memory_format (double val, char *buf, size_t sz)
+{
+  g_assert (buf);
+  snprintf (buf, sz, "%u", (guint)val / (1024));
 }
 
 static void
@@ -339,42 +363,195 @@ static void
 mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                            int height, gpointer data)
 {
-  struct kpair points1[50];
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *mem_data = tkm_context_get_meminfo_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL; /* MemTotal */
+  struct kpair *points2 = NULL; /* MemFree */
+  struct kpair *points3 = NULL; /* MemAvail */
+  struct kpair *points4 = NULL; /* SwapTotal */
+  struct kpair *points5 = NULL; /* SwapFree */
+
   struct kplotcfg plotcfg;
   struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
   struct kdata *d1;
+  struct kdata *d2;
+  struct kdata *d3;
+  struct kdata *d4;
+  struct kdata *d5;
   struct kplot *p;
-  size_t i;
+  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
 
-  for (i = 0; i < 50; i++)
+  if (sessions != NULL)
     {
-      points1[i].x = i;
-      points1[i].y = i;
+
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
     }
-  d1 = kdata_array_alloc (points1, 50);
+
+  if (mem_data != NULL)
+    {
+      if (mem_data->len > 0)
+        {
+          points1 = calloc (mem_data->len, sizeof (struct kpair));
+          points2 = calloc (mem_data->len, sizeof (struct kpair));
+          points3 = calloc (mem_data->len, sizeof (struct kpair));
+          points4 = calloc (mem_data->len, sizeof (struct kpair));
+          points5 = calloc (mem_data->len, sizeof (struct kpair));
+        }
+
+      for (guint i = 0; i < mem_data->len; i++)
+        {
+          TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, i);
+
+          points1[cnt].x = tkm_meminfo_entry_get_timestamp (
+              entry, tkmv_settings_get_time_source (settings));
+          points1[cnt].y
+              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL);
+          points2[cnt].x = points1[cnt].x;
+          points2[cnt].y
+              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE);
+          points3[cnt].x = points1[cnt].x;
+          points3[cnt].y
+              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL);
+          points4[cnt].x = points1[cnt].x;
+          points4[cnt].y
+              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL);
+          points5[cnt].x = points1[cnt].x;
+          points5[cnt].y
+              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE);
+          cnt += 1;
+        }
+    }
+
+  if (points1 == NULL)
+    {
+      points1 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points2 == NULL)
+    {
+      points2 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points3 == NULL)
+    {
+      points3 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points4 == NULL)
+    {
+      points4 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (points5 == NULL)
+    {
+      points5 = calloc (1, sizeof (struct kpair));
+    }
+
+  if (cnt == 0)
+    {
+      points1[cnt].x = 1;
+      points1[cnt].y = 0;
+      points2[cnt].x = points1[cnt].x;
+      points2[cnt].y = 0;
+      points3[cnt].x = points1[cnt].x;
+      points3[cnt].y = 0;
+      points4[cnt].x = points1[cnt].x;
+      points4[cnt].y = 0;
+      points5[cnt].x = points1[cnt].x;
+      points5[cnt].y = 0;
+      cnt += 1;
+    }
+
+  d1 = kdata_array_alloc (points1, cnt);
+  d2 = kdata_array_alloc (points2, cnt);
+  d3 = kdata_array_alloc (points3, cnt);
+  d4 = kdata_array_alloc (points4, cnt);
+  d5 = kdata_array_alloc (points5, cnt);
 
   kplotcfg_defaults (&plotcfg);
-
   plotcfg.grid = GRID_ALL;
-  plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
+  plotcfg.extrema = EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
-  plotcfg.extrema_ymax = 100;
+  plotcfg.xticlabelfmt = timestamp_format;
+  plotcfg.yticlabelfmt = memory_format;
 
   p = kplot_alloc (&plotcfg);
 
   kdatacfg_defaults (&d1_cfg);
   d1_cfg.line.sz = 1.0;
   d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[2] = 1.0;
+  d1_cfg.line.clr.rgba[0] = 1.0;
   d1_cfg.line.clr.rgba[3] = 1.0;
 
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
   kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+  kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+  kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+  kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+  kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+
   kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
+  kdata_destroy (d5);
 
   kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
 
   kplot_free (p);
 }
@@ -484,6 +661,58 @@ update_instant_cpu_frame (TkmvDashboardView *view)
   g_assert (view);
 }
 
+static void
+update_instant_mem_frame (TkmvDashboardView *view)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+  GPtrArray *mem_data = tkm_context_get_meminfo_entries (context);
+  TkmMemInfoEntry *entry = NULL;
+  gchar buf[64];
+
+  if (mem_data == NULL)
+    return;
+
+  if (mem_data->len == 0)
+    return;
+
+  if (sessions == NULL)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+  g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+
+  entry = g_ptr_array_index (mem_data, 0);
+
+  gtk_level_bar_set_value (view->mem_level_bar,
+                           100
+                               - (double)tkm_meminfo_entry_get_data (
+                                   entry, MINFO_DATA_MEM_PERCENT));
+  gtk_level_bar_set_value (
+      view->swap_level_bar,
+      (double)tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT));
+
+  snprintf (buf, sizeof (buf), "Memory - %u %%",
+            100 - tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_PERCENT));
+  gtk_label_set_text (view->mem_level_label, buf);
+
+  snprintf (buf, sizeof (buf), "Swap - %u %%",
+            tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT));
+  gtk_label_set_text (view->swap_level_label, buf);
+
+  g_assert (view);
+}
+
 void
 tkmv_dashboard_view_update_content (TkmvDashboardView *view)
 {
@@ -491,4 +720,7 @@ tkmv_dashboard_view_update_content (TkmvDashboardView *view)
 
   update_instant_cpu_frame (view);
   gtk_widget_queue_draw (GTK_WIDGET (view->history_cpu_drawing_area));
+
+  update_instant_mem_frame (view);
+  gtk_widget_queue_draw (GTK_WIDGET (view->history_mem_drawing_area));
 }

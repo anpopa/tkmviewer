@@ -23,6 +23,7 @@
 
 #include "tkm-entrypool.h"
 #include "tkm-cpustat-entry.h"
+#include "tkm-meminfo-entry.h"
 #include "tkm-session-entry.h"
 
 #include <fcntl.h>
@@ -319,6 +320,11 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
     }
 
   entrypool->cpustat_entries = tkm_cpustat_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
+  entrypool->meminfo_entries = tkm_meminfo_entry_get_all_entries (
       entrypool->input_database, session_hash,
       tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
       end_timestamp, NULL);

@@ -5,6 +5,7 @@ libtkm_sources = [
   'tkm-entrypool.c',
   'tkm-session-entry.c',
   'tkm-cpustat-entry.c',
+  'tkm-meminfo-entry.c',
   'tkm-task.c',
   'tkm-taskpool.c',
 ]
