@@ -39,6 +39,18 @@ static void mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                        int width, int height, gpointer data);
 static void psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                        int width, int height, gpointer data);
+static void events_history_draw_function_safe (GtkDrawingArea *area,
+                                               cairo_t *cr, int width,
+                                               int height, gpointer data);
+static void cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                            int width, int height,
+                                            gpointer data);
+static void mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                            int width, int height,
+                                            gpointer data);
+static void psi_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                            int width, int height,
+                                            gpointer data);
 
 struct _TkmvDashboardView
 {
@@ -119,13 +131,14 @@ tkmv_dashboard_view_widgets_init (TkmvDashboardView *self)
 {
   TKMV_UNUSED (self);
   gtk_drawing_area_set_draw_func (self->history_events_drawing_area,
-                                  events_history_draw_function, self, NULL);
+                                  events_history_draw_function_safe, self,
+                                  NULL);
   gtk_drawing_area_set_draw_func (self->history_cpu_drawing_area,
-                                  cpu_history_draw_function, self, NULL);
+                                  cpu_history_draw_function_safe, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_mem_drawing_area,
-                                  mem_history_draw_function, self, NULL);
+                                  mem_history_draw_function_safe, self, NULL);
   gtk_drawing_area_set_draw_func (self->history_psi_drawing_area,
-                                  psi_history_draw_function, self, NULL);
+                                  psi_history_draw_function_safe, self, NULL);
 }
 
 static void
@@ -314,7 +327,6 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.extrema = EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
   plotcfg.xticlabelfmt = timestamp_format;
-  plotcfg.yticlabelfmt = percent_format;
 
   p = kplot_alloc (&plotcfg);
 
@@ -995,15 +1007,18 @@ update_instant_cpu_frame (TkmvDashboardView *view)
           / tkm_session_entry_get_device_cpus (active_session));
 
   snprintf (buf, sizeof (buf), "All - %u %%",
-            tkm_cpustat_entry_get_all (entry));
+            tkm_cpustat_entry_get_all (entry)
+                / tkm_session_entry_get_device_cpus (active_session));
   gtk_label_set_text (view->cpu_all_level_label, buf);
 
   snprintf (buf, sizeof (buf), "Usr - %3u %%",
-            tkm_cpustat_entry_get_usr (entry));
+            tkm_cpustat_entry_get_usr (entry)
+                / tkm_session_entry_get_device_cpus (active_session));
   gtk_label_set_text (view->cpu_usr_level_label, buf);
 
   snprintf (buf, sizeof (buf), "Sys - %3u %%",
-            tkm_cpustat_entry_get_sys (entry));
+            tkm_cpustat_entry_get_sys (entry)
+                / tkm_session_entry_get_device_cpus (active_session));
   gtk_label_set_text (view->cpu_sys_level_label, buf);
 
   g_assert (view);
@@ -1060,6 +1075,66 @@ update_instant_mem_frame (TkmvDashboardView *view)
 
   g_assert (view);
 }
+
+static void
+cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
+                                int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      cpu_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
+                                int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      mem_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+psi_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
+                                int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      psi_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+events_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                   int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      events_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void psi_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                            int width, int height,
+                                            gpointer data);
 
 void
 tkmv_dashboard_view_update_content (TkmvDashboardView *view)
