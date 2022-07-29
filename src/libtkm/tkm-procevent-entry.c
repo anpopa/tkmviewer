@@ -75,6 +75,20 @@ tkm_procevent_entry_unref (TkmProcEventEntry *entry)
     }
 }
 
+guint
+tkm_procevent_entry_get_index (TkmProcEventEntry *entry)
+{
+  g_assert (entry);
+  return entry->idx;
+}
+
+void
+tkm_procevent_entry_set_index (TkmProcEventEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->idx = val;
+}
+
 gulong
 tkm_procevent_entry_get_timestamp (TkmProcEventEntry *entry,
                                    DataTimeSource type)

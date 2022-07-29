@@ -82,6 +82,20 @@ tkm_session_entry_unref (TkmSessionEntry *entry)
     }
 }
 
+guint
+tkm_session_entry_get_index (TkmSessionEntry *entry)
+{
+  g_assert (entry);
+  return entry->idx;
+}
+
+void
+tkm_session_entry_set_index (TkmSessionEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->idx = val;
+}
+
 const gchar *
 tkm_session_entry_get_hash (TkmSessionEntry *entry)
 {

@@ -75,6 +75,20 @@ tkm_meminfo_entry_unref (TkmMemInfoEntry *entry)
     }
 }
 
+guint
+tkm_meminfo_entry_get_index (TkmMemInfoEntry *entry)
+{
+  g_assert (entry);
+  return entry->idx;
+}
+
+void
+tkm_meminfo_entry_set_index (TkmMemInfoEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->idx = val;
+}
+
 gulong
 tkm_meminfo_entry_get_timestamp (TkmMemInfoEntry *entry, DataTimeSource type)
 {

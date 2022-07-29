@@ -19,6 +19,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
+#include <tkm-context.h>
 
 G_BEGIN_DECLS
 
@@ -26,5 +27,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (TkmvSysteminfoView, tkmv_systeminfo_view, TKMV,
                       SYSTEMINFO_VIEW, GtkBox)
+
+void tkmv_systeminfo_reload_entries (TkmvSysteminfoView *view,
+                                     TkmContext *context);
 
 G_END_DECLS

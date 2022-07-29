@@ -21,12 +21,20 @@
             <property name="margin-end">10</property>
             <property name="label-xalign">0</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkScrolledWindow" id="cpuinfo_scrolled_window">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="enable-grid-lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="cpuinfo_treeview">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="enable-search">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="cpuinfo_treeview_select"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -47,12 +55,20 @@
             <property name="margin-end">10</property>
             <property name="label-xalign">0</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkScrolledWindow" id="meminfo_scrolled_window">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="enable-grid-lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="meminfo_treeview">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="enable-search">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="meminfo_treeview_select"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -73,12 +89,20 @@
             <property name="margin-end">10</property>
             <property name="label-xalign">0</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkScrolledWindow" id="buddyinfo_scrolled_window">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="enable-grid-lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="buddyinfo_treeview">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="enable-search">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="buddyinfo_treeview_select"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -99,12 +123,20 @@
             <property name="margin-end">10</property>
             <property name="label-xalign">0</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkScrolledWindow" id="wlaninfo_scrolled_window">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="enable-grid-lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="wlaninfo_treeview">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="enable-search">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="wlaninfo_treeview_select"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -125,11 +157,20 @@
             <property name="margin-end">10</property>
             <property name="label-xalign">0</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkScrolledWindow" id="diskinfo_scrolled_window">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="diskinfo_treeview">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="enable-search">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="diskinfo_treeview_select"/>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>

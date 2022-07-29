@@ -75,6 +75,20 @@ tkm_pressure_entry_unref (TkmPressureEntry *entry)
     }
 }
 
+guint
+tkm_pressure_entry_get_index (TkmPressureEntry *entry)
+{
+  g_assert (entry);
+  return entry->idx;
+}
+
+void
+tkm_pressure_entry_set_index (TkmPressureEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->idx = val;
+}
+
 gulong
 tkm_pressure_entry_get_timestamp (TkmPressureEntry *entry, DataTimeSource type)
 {

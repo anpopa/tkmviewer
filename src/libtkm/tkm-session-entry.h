@@ -33,6 +33,8 @@ G_BEGIN_DECLS
 
 typedef struct _TkmSessionEntry
 {
+  guint idx;
+
   gchar *hash;
   gchar *name;
 
@@ -54,6 +56,9 @@ typedef struct _TkmSessionEntry
 TkmSessionEntry *tkm_session_entry_new (void);
 TkmSessionEntry *tkm_session_entry_ref (TkmSessionEntry *entry);
 void tkm_session_entry_unref (TkmSessionEntry *entry);
+
+guint tkm_session_entry_get_index (TkmSessionEntry *entry);
+void tkm_session_entry_set_index (TkmSessionEntry *entry, guint val);
 
 const gchar *tkm_session_entry_get_hash (TkmSessionEntry *entry);
 void tkm_session_entry_set_hash (TkmSessionEntry *entry, const gchar *hash);

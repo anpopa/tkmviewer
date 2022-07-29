@@ -42,6 +42,8 @@ typedef enum _TkmProcEventDataType
 
 typedef struct _TkmProcEventEntry
 {
+  guint idx;
+
   gulong system_time;
   gulong monotonic_time;
   gulong receive_time;
@@ -58,6 +60,9 @@ typedef struct _TkmProcEventEntry
 TkmProcEventEntry *tkm_procevent_entry_new (void);
 TkmProcEventEntry *tkm_procevent_entry_ref (TkmProcEventEntry *entry);
 void tkm_procevent_entry_unref (TkmProcEventEntry *entry);
+
+guint tkm_procevent_entry_get_index (TkmProcEventEntry *entry);
+void tkm_procevent_entry_set_index (TkmProcEventEntry *entry, guint val);
 
 gulong tkm_procevent_entry_get_timestamp (TkmProcEventEntry *entry,
                                           DataTimeSource type);

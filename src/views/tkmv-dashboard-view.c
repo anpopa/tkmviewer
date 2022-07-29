@@ -228,7 +228,6 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (sessions != NULL)
     {
-
       for (guint i = 0; i < sessions->len; i++)
         {
           if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))

@@ -48,6 +48,8 @@ typedef enum _TkmMemInfoDataType
 
 typedef struct _TkmMemInfoEntry
 {
+  guint idx;
+
   gulong system_time;
   gulong monotonic_time;
   gulong receive_time;
@@ -70,6 +72,9 @@ typedef struct _TkmMemInfoEntry
 TkmMemInfoEntry *tkm_meminfo_entry_new (void);
 TkmMemInfoEntry *tkm_meminfo_entry_ref (TkmMemInfoEntry *entry);
 void tkm_meminfo_entry_unref (TkmMemInfoEntry *entry);
+
+guint tkm_meminfo_entry_get_index (TkmMemInfoEntry *entry);
+void tkm_meminfo_entry_set_index (TkmMemInfoEntry *entry, guint val);
 
 gulong tkm_meminfo_entry_get_timestamp (TkmMemInfoEntry *entry,
                                         DataTimeSource type);

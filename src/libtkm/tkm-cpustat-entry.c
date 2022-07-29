@@ -78,6 +78,20 @@ tkm_cpustat_entry_unref (TkmCpuStatEntry *entry)
     }
 }
 
+guint
+tkm_cpustat_entry_get_index (TkmCpuStatEntry *entry)
+{
+  g_assert (entry);
+  return entry->idx;
+}
+
+void
+tkm_cpustat_entry_set_index (TkmCpuStatEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->idx = val;
+}
+
 const gchar *
 tkm_cpustat_entry_get_name (TkmCpuStatEntry *entry)
 {

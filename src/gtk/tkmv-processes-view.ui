@@ -10,11 +10,20 @@
         <property name="show-border">False</property>
         <property name="hexpand">True</property>
         <child>
-          <object class="GtkTreeView">
+          <object class="GtkScrolledWindow" id="procinfo_scrolled_window">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <child internal-child="selection">
-              <object class="GtkTreeSelection"/>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <object class="GtkTreeView" id="procinfo_treeview">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="enable-search">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="procinfo_treeview_select"/>
+                </child>
+              </object>
             </child>
           </object>
         </child>
@@ -26,11 +35,20 @@
           </object>
         </child>
         <child>
-          <object class="GtkTreeView">
+          <object class="GtkScrolledWindow" id="ctxinfo_scrolled_window">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <child internal-child="selection">
-              <object class="GtkTreeSelection"/>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <object class="GtkTreeView" id="ctxinfo_treeview">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="enable-search">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="ctxinfo_treeview_select"/>
+                </child>
+              </object>
             </child>
           </object>
         </child>
@@ -42,11 +60,20 @@
           </object>
         </child>
         <child>
-          <object class="GtkTreeView">
+          <object class="GtkScrolledWindow" id="procacct_scrolled_window">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <child internal-child="selection">
-              <object class="GtkTreeSelection"/>
+            <property name="hscrollbar_policy">automatic</property>
+            <property name="vscrollbar_policy">automatic</property>
+            <child>
+              <object class="GtkTreeView" id="procacct_treeview">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="enable-search">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection" id="procacct_treeview_select"/>
+                </child>
+              </object>
             </child>
           </object>
         </child>

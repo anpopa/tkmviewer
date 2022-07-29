@@ -61,6 +61,8 @@ typedef enum _TkmPressureDataType
 
 typedef struct _TkmPressureEntry
 {
+  guint idx;
+
   gulong system_time;
   gulong monotonic_time;
   gulong receive_time;
@@ -96,6 +98,9 @@ typedef struct _TkmPressureEntry
 TkmPressureEntry *tkm_pressure_entry_new (void);
 TkmPressureEntry *tkm_pressure_entry_ref (TkmPressureEntry *entry);
 void tkm_pressure_entry_unref (TkmPressureEntry *entry);
+
+guint tkm_pressure_entry_get_index (TkmPressureEntry *entry);
+void tkm_pressure_entry_set_index (TkmPressureEntry *entry, guint val);
 
 gulong tkm_pressure_entry_get_timestamp (TkmPressureEntry *entry,
                                          DataTimeSource type);

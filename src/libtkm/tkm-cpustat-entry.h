@@ -33,6 +33,7 @@ G_BEGIN_DECLS
 
 typedef struct _TkmCpuStatEntry
 {
+  guint idx;
   gchar *name;
 
   gulong system_time;
@@ -50,6 +51,8 @@ TkmCpuStatEntry *tkm_cpustat_entry_new (void);
 TkmCpuStatEntry *tkm_cpustat_entry_ref (TkmCpuStatEntry *entry);
 void tkm_cpustat_entry_unref (TkmCpuStatEntry *entry);
 
+guint tkm_cpustat_entry_get_index (TkmCpuStatEntry *entry);
+void tkm_cpustat_entry_set_index (TkmCpuStatEntry *entry, guint val);
 const gchar *tkm_cpustat_entry_get_name (TkmCpuStatEntry *entry);
 void tkm_cpustat_entry_set_name (TkmCpuStatEntry *entry, const gchar *name);
 
