@@ -8,6 +8,9 @@ libtkm_sources = [
   'tkm-meminfo-entry.c',
   'tkm-procevent-entry.c',
   'tkm-pressure-entry.c',
+  'tkm-buddyinfo-entry.c',
+  'tkm-wireless-entry.c',
+  'tkm-diskstat-entry.c',
   'tkm-task.c',
   'tkm-taskpool.c',
 ]

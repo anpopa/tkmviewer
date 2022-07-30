@@ -57,6 +57,7 @@ GPtrArray *tkm_context_get_procevent_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_pressure_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_buddyinfo_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_wireless_entries (TkmContext *ctx);
+GPtrArray *tkm_context_get_diskstat_entries (TkmContext *ctx);
 
 void tkm_context_execute_action (TkmContext *ctx, TkmAction *action);
 

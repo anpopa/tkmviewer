@@ -180,6 +180,13 @@ tkm_context_get_wireless_entries (TkmContext *ctx)
   return tkm_entrypool_get_wireless_entries (ctx->entrypool);
 }
 
+GPtrArray *
+tkm_context_get_diskstat_entries (TkmContext *ctx)
+{
+  g_assert (ctx);
+  return tkm_entrypool_get_diskstat_entries (ctx->entrypool);
+}
+
 void
 tkm_context_data_lock (TkmContext *ctx)
 {

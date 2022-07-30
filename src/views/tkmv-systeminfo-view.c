@@ -17,8 +17,11 @@
  */
 
 #include "tkmv-systeminfo-view.h"
+#include "tkm-buddyinfo-entry.h"
 #include "tkm-cpustat-entry.h"
+#include "tkm-diskstat-entry.h"
 #include "tkm-meminfo-entry.h"
+#include "tkm-wireless-entry.h"
 
 enum
 {
@@ -114,6 +117,26 @@ static void cpuinfo_list_store_append_entry (GtkListStore *list_store,
                                              GtkTreeIter *iter);
 static void reload_cpuinfo_entries (TkmvSysteminfoView *view,
                                     TkmContext *context);
+static void meminfo_list_store_append_entry (GtkListStore *list_store,
+                                             TkmMemInfoEntry *entry,
+                                             GtkTreeIter *iter);
+static void reload_meminfo_entries (TkmvSysteminfoView *view,
+                                    TkmContext *context);
+static void buddyinfo_list_store_append_entry (GtkListStore *list_store,
+                                               TkmBuddyInfoEntry *entry,
+                                               GtkTreeIter *iter);
+static void reload_buddyinfo_entries (TkmvSysteminfoView *view,
+                                      TkmContext *context);
+static void wlaninfo_list_store_append_entry (GtkListStore *list_store,
+                                              TkmWirelessEntry *entry,
+                                              GtkTreeIter *iter);
+static void reload_wlaninfo_entries (TkmvSysteminfoView *view,
+                                     TkmContext *context);
+static void diskinfo_list_store_append_entry (GtkListStore *list_store,
+                                              TkmDiskStatEntry *entry,
+                                              GtkTreeIter *iter);
+static void reload_diskinfo_entries (TkmvSysteminfoView *view,
+                                     TkmContext *context);
 
 struct _TkmvSysteminfoView
 {
@@ -742,7 +765,7 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create diskinfo store */
   self->diskinfo_store = gtk_list_store_new (
-      CPUINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_LONG,
+      DISKINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
   gtk_tree_view_set_model (self->diskinfo_treeview,
@@ -867,9 +890,210 @@ reload_meminfo_entries (TkmvSysteminfoView *view, TkmContext *context)
                            GTK_TREE_MODEL (view->meminfo_store));
 }
 
+static void
+buddyinfo_list_store_append_entry (GtkListStore *list_store,
+                                   TkmBuddyInfoEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter, COLUMN_BUDDYINFO_INDEX,
+      tkm_buddyinfo_entry_get_index (entry), COLUMN_BUDDYINFO_NAME,
+      tkm_buddyinfo_entry_get_name (entry), COLUMN_BUDDYINFO_ZONE,
+      tkm_buddyinfo_entry_get_zone (entry), COLUMN_BUDDYINFO_DATA,
+      tkm_buddyinfo_entry_get_data (entry), -1);
+}
+
+static void
+reload_buddyinfo_entries (TkmvSysteminfoView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_buddyinfo_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->buddyinfo_treeview), NULL);
+  gtk_list_store_clear (view->buddyinfo_store);
+
+  /* get first entry */
+  TkmBuddyInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_buddyinfo_entry_set_index (firstEntry, 0);
+  buddyinfo_list_store_append_entry (view->buddyinfo_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmBuddyInfoEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_buddyinfo_entry_set_index (entry, i);
+      if (tkm_buddyinfo_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_buddyinfo_entry_get_timestamp (firstEntry,
+                                                DATA_TIME_SOURCE_MONOTONIC))
+        {
+          buddyinfo_list_store_append_entry (view->buddyinfo_store, entry,
+                                             &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->buddyinfo_treeview),
+                           GTK_TREE_MODEL (view->buddyinfo_store));
+}
+
+static void
+wlaninfo_list_store_append_entry (GtkListStore *list_store,
+                                  TkmWirelessEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter, COLUMN_WLANINFO_INDEX,
+      tkm_wireless_entry_get_index (entry), COLUMN_WLANINFO_NAME,
+      tkm_wireless_entry_get_name (entry), COLUMN_WLANINFO_STATUS,
+      tkm_wireless_entry_get_status (entry), COLUMN_WLANINFO_QUALITY_LINK,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LINK),
+      COLUMN_WLANINFO_QUALITY_LEVEL,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LEVEL),
+      COLUMN_WLANINFO_QUALITY_NOISE,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_NOISE),
+      COLUMN_WLANINFO_DISCARDED_NWID,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_NWID),
+      COLUMN_WLANINFO_DISCARDED_CRYPT,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_CRYPT),
+      COLUMN_WLANINFO_DISCARDED_FRAG,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_FRAG),
+      COLUMN_WLANINFO_DISCARDED_MISC,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_MISC),
+      COLUMN_WLANINFO_MISSED_BEACON,
+      tkm_wireless_entry_get_data (entry, WLAN_DATA_MISSED_BEACON), -1);
+}
+
+static void
+reload_wlaninfo_entries (TkmvSysteminfoView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_wireless_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->wlaninfo_treeview), NULL);
+  gtk_list_store_clear (view->wlaninfo_store);
+
+  /* get first entry */
+  TkmWirelessEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_wireless_entry_set_index (firstEntry, 0);
+  wlaninfo_list_store_append_entry (view->wlaninfo_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmWirelessEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_wireless_entry_set_index (entry, i);
+      if (tkm_wireless_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_wireless_entry_get_timestamp (firstEntry,
+                                               DATA_TIME_SOURCE_MONOTONIC))
+        {
+          wlaninfo_list_store_append_entry (view->wlaninfo_store, entry,
+                                            &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->wlaninfo_treeview),
+                           GTK_TREE_MODEL (view->wlaninfo_store));
+}
+
+static void
+diskinfo_list_store_append_entry (GtkListStore *list_store,
+                                  TkmDiskStatEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter, COLUMN_DISKINFO_INDEX,
+      tkm_diskstat_entry_get_index (entry), COLUMN_DISKINFO_NAME,
+      tkm_diskstat_entry_get_name (entry), COLUMN_DISKINFO_MAJOR,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MAJOR),
+      COLUMN_DISKINFO_MINOR,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MINOR),
+      COLUMN_DISKINFO_READS_COMPLETED,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_COMPLETED),
+      COLUMN_DISKINFO_READS_MERGED,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_MERGED),
+      COLUMN_DISKINFO_READS_SPENT_MS,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_SPENT_MS),
+      COLUMN_DISKINFO_WRITES_COMPLETED,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_COMPLETED),
+      COLUMN_DISKINFO_WRITES_MERGED,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_MERGED),
+      COLUMN_DISKINFO_WRITES_SPENT_MS,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_SPENT_MS),
+      COLUMN_DISKINFO_IO_INPROGRESS,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_INPROGRESS),
+      COLUMN_DISKINFO_IO_SPENT_MS,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_SPENT_MS),
+      COLUMN_DISKINFO_IO_WEIGHTED_MS,
+      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_WEIGHTED_MS), -1);
+}
+
+static void
+reload_diskinfo_entries (TkmvSysteminfoView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_diskstat_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->diskinfo_treeview), NULL);
+  gtk_list_store_clear (view->diskinfo_store);
+
+  /* get first entry */
+  TkmDiskStatEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_diskstat_entry_set_index (firstEntry, 0);
+  diskinfo_list_store_append_entry (view->diskinfo_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmDiskStatEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_diskstat_entry_set_index (entry, i);
+      if (tkm_diskstat_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_diskstat_entry_get_timestamp (firstEntry,
+                                               DATA_TIME_SOURCE_MONOTONIC))
+        {
+          diskinfo_list_store_append_entry (view->diskinfo_store, entry,
+                                            &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->diskinfo_treeview),
+                           GTK_TREE_MODEL (view->diskinfo_store));
+}
+
 void
 tkmv_systeminfo_reload_entries (TkmvSysteminfoView *view, TkmContext *context)
 {
   reload_cpuinfo_entries (view, context);
   reload_meminfo_entries (view, context);
+  reload_buddyinfo_entries (view, context);
+  reload_wlaninfo_entries (view, context);
+  reload_diskinfo_entries (view, context);
 }

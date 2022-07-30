@@ -22,11 +22,14 @@
  */
 
 #include "tkm-entrypool.h"
+#include "tkm-buddyinfo-entry.h"
 #include "tkm-cpustat-entry.h"
+#include "tkm-diskstat-entry.h"
 #include "tkm-meminfo-entry.h"
 #include "tkm-pressure-entry.h"
 #include "tkm-procevent-entry.h"
 #include "tkm-session-entry.h"
+#include "tkm-wireless-entry.h"
 
 #include <fcntl.h>
 
@@ -219,6 +222,12 @@ main_entries_free (TkmEntryPool *entrypool)
       g_ptr_array_free (entrypool->wireless_entries, TRUE);
       entrypool->wireless_entries = NULL;
     }
+
+  if (entrypool->diskstat_entries != NULL)
+    {
+      g_ptr_array_free (entrypool->diskstat_entries, TRUE);
+      entrypool->diskstat_entries = NULL;
+    }
 }
 
 static void
@@ -347,6 +356,21 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
       tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
       end_timestamp, NULL);
 
+  entrypool->buddyinfo_entries = tkm_buddyinfo_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
+  entrypool->wireless_entries = tkm_wireless_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
+  entrypool->diskstat_entries = tkm_diskstat_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
   tkm_entrypool_data_unlock (entrypool);
 
   if (callback != NULL)
@@ -445,6 +469,7 @@ tkm_entrypool_new (GMainContext *context, TkmTaskPool *taskpool,
   entrypool->pressure_entries = NULL;
   entrypool->buddyinfo_entries = NULL;
   entrypool->wireless_entries = NULL;
+  entrypool->diskstat_entries = NULL;
 
   g_source_set_callback (TKM_EVENT_SOURCE (entrypool), NULL, entrypool,
                          entrypool_source_destroy_notify);
@@ -577,6 +602,13 @@ tkm_entrypool_get_wireless_entries (TkmEntryPool *entrypool)
 {
   g_assert (entrypool);
   return entrypool->wireless_entries;
+}
+
+GPtrArray *
+tkm_entrypool_get_diskstat_entries (TkmEntryPool *entrypool)
+{
+  g_assert (entrypool);
+  return entrypool->diskstat_entries;
 }
 
 void

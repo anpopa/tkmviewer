@@ -39,6 +39,9 @@ G_BEGIN_DECLS
 #define TKM_CPUSTAT_TABLE_NAME "tkmSysProcStat"
 #define TKM_MEMINFO_TABLE_NAME "tkmSysProcMemInfo"
 #define TKM_PRESSURE_TABLE_NAME "tkmSysProcPressure"
+#define TKM_BUDDYINFO_TABLE_NAME "tkmSysProcBuddyInfo"
+#define TKM_WIRELESS_TABLE_NAME "tkmSysProcWireless"
+#define TKM_DISKSTAT_TABLE_NAME "tkmSysProcDiskStats"
 
 typedef enum _DataTimeSource
 {
