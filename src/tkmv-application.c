@@ -114,7 +114,7 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
   GtkWindow *window = NULL;
   const gchar *authors[] = { "Alin Popa <alin.popa@fxdata.ro>", NULL };
   GtkWidget *image = gtk_image_new_from_resource (
-      "/ro/fxdata/taskmonitor/viewer/assets/icons/scalable/application/"
+      "/ro/fxdata/taskmonitor/viewer/icons/scalable/actions/"
       "tkmviewer-icon.svg");
 
   TKMV_UNUSED (action);
@@ -125,7 +125,7 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
 
   gtk_show_about_dialog (window, "program-name", "TkmViewer", "authors",
                          authors, "website", "http://www.fxdata.ro", "version",
-                         "0.9.0", "comments", "Taskmonitor Viewer",
+                         "0.9.0", "comments", "Task Monitor Viewer",
                          "license_type", GTK_LICENSE_GPL_3_0, "logo",
                          gtk_image_get_paintable (GTK_IMAGE (image)), NULL);
 }
