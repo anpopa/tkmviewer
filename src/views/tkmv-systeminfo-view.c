@@ -257,7 +257,7 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
   /* column sys */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("SYS", renderer, "text",
-                                                     COLUMN_CPUINFO_USR, NULL);
+                                                     COLUMN_CPUINFO_SYS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->cpuinfo_treeview, column);
@@ -265,7 +265,7 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
   /* column usr */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("USR", renderer, "text",
-                                                     COLUMN_CPUINFO_ALL, NULL);
+                                                     COLUMN_CPUINFO_USR, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->cpuinfo_treeview, column);

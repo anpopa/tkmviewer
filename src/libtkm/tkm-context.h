@@ -50,6 +50,7 @@ void tkm_context_unref (TkmContext *ctx);
 
 GPtrArray *tkm_context_get_session_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_procinfo_entries (TkmContext *ctx);
+GPtrArray *tkm_context_get_ctxinfo_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_procacct_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_cpustat_entries (TkmContext *ctx);
 GPtrArray *tkm_context_get_meminfo_entries (TkmContext *ctx);

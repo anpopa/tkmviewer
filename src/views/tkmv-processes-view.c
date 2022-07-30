@@ -17,6 +17,8 @@
  */
 
 #include "tkmv-processes-view.h"
+#include "tkm-ctxinfo-entry.h"
+#include "tkm-procinfo-entry.h"
 
 enum
 {
@@ -35,6 +37,7 @@ enum
 {
   COLUMN_CTXINFO_INDEX,
   COLUMN_CTXINFO_NAME,
+  COLUMN_CTXINFO_ID,
   COLUMN_CTXINFO_CPU_TIME,
   COLUMN_CTXINFO_CPU_PERCENT,
   COLUMN_CTXINFO_VMRSS,
@@ -94,6 +97,17 @@ static void procacct_add_columns (TkmvProcessesView *self);
 static void procacct_selection_changed (GtkTreeSelection *selection,
                                         gpointer data);
 static void create_tables (TkmvProcessesView *self);
+
+static void procinfo_list_store_append_entry (GtkListStore *list_store,
+                                              TkmProcInfoEntry *entry,
+                                              GtkTreeIter *iter);
+static void reload_procinfo_entries (TkmvProcessesView *view,
+                                     TkmContext *context);
+static void ctxinfo_list_store_append_entry (GtkListStore *list_store,
+                                             TkmCtxInfoEntry *entry,
+                                             GtkTreeIter *iter);
+static void reload_ctxinfo_entries (TkmvProcessesView *view,
+                                    TkmContext *context);
 
 struct _TkmvProcessesView
 {
@@ -271,6 +285,14 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 
+  /* column id */
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("ID", renderer, "text",
+                                                     COLUMN_CTXINFO_ID, NULL);
+  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
+                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_append_column (self->ctxinfo_treeview, column);
+
   /* column cputime */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
@@ -304,7 +326,7 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   guint idx = 0;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->procinfo_store), &iter,
+    gtk_tree_model_get (GTK_TREE_MODEL (self->ctxinfo_store), &iter,
                         COLUMN_CTXINFO_INDEX, &idx, -1);
 
   g_message ("Context info list selected index: %d", idx);
@@ -636,7 +658,7 @@ procacct_selection_changed (GtkTreeSelection *selection, gpointer data)
   guint idx = 0;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->procinfo_store), &iter,
+    gtk_tree_model_get (GTK_TREE_MODEL (self->procacct_store), &iter,
                         COLUMN_PROCACCT_INDEX, &idx, -1);
 
   g_message ("Proc accounting list selected index: %d", idx);
@@ -662,9 +684,9 @@ create_tables (TkmvProcessesView *self)
                     G_CALLBACK (procinfo_selection_changed), self);
 
   /* create ctxinfo store */
-  self->ctxinfo_store
-      = gtk_list_store_new (CTXINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING,
-                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+  self->ctxinfo_store = gtk_list_store_new (
+      CTXINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING,
+      G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->ctxinfo_treeview,
                            GTK_TREE_MODEL (self->ctxinfo_store));
   ctxinfo_add_columns (self);
@@ -698,4 +720,132 @@ create_tables (TkmvProcessesView *self)
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->procacct_treeview_select), "changed",
                     G_CALLBACK (procacct_selection_changed), self);
+}
+
+static void
+procinfo_list_store_append_entry (GtkListStore *list_store,
+                                  TkmProcInfoEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter, COLUMN_PROCINFO_INDEX,
+      tkm_procinfo_entry_get_index (entry), COLUMN_PROCINFO_NAME,
+      tkm_procinfo_entry_get_name (entry), COLUMN_PROCINFO_PID,
+      tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID),
+      COLUMN_PROCINFO_PPID,
+      tkm_procinfo_entry_get_data (entry, PINFO_DATA_PPID),
+      COLUMN_PROCINFO_CONTEXT, tkm_procinfo_entry_get_context (entry),
+      COLUMN_PROCINFO_CPU_TIME,
+      tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_TIME),
+      COLUMN_PROCINFO_CPU_PERCENT,
+      tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_PERCENT),
+      COLUMN_PROCINFO_VMRSS,
+      tkm_procinfo_entry_get_data (entry, PINFO_DATA_VMRSS), -1);
+}
+
+static void
+reload_procinfo_entries (TkmvProcessesView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_procinfo_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->procinfo_treeview), NULL);
+  gtk_list_store_clear (view->procinfo_store);
+
+  /* get first entry */
+  TkmProcInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_procinfo_entry_set_index (firstEntry, 0);
+  procinfo_list_store_append_entry (view->procinfo_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmProcInfoEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_procinfo_entry_set_index (entry, i);
+      if (tkm_procinfo_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_procinfo_entry_get_timestamp (firstEntry,
+                                               DATA_TIME_SOURCE_MONOTONIC))
+        {
+          procinfo_list_store_append_entry (view->procinfo_store, entry,
+                                            &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->procinfo_treeview),
+                           GTK_TREE_MODEL (view->procinfo_store));
+}
+
+static void
+ctxinfo_list_store_append_entry (GtkListStore *list_store,
+                                 TkmCtxInfoEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter, COLUMN_CTXINFO_INDEX,
+      tkm_ctxinfo_entry_get_index (entry), COLUMN_CTXINFO_NAME,
+      tkm_ctxinfo_entry_get_name (entry), COLUMN_CTXINFO_ID,
+      tkm_ctxinfo_entry_get_id (entry), COLUMN_CTXINFO_CPU_TIME,
+      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_TIME),
+      COLUMN_CTXINFO_CPU_PERCENT,
+      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_PERCENT),
+      COLUMN_CTXINFO_VMRSS,
+      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_VMRSS), -1);
+}
+
+static void
+reload_ctxinfo_entries (TkmvProcessesView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_ctxinfo_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->ctxinfo_treeview), NULL);
+  gtk_list_store_clear (view->ctxinfo_store);
+
+  /* get first entry */
+  TkmCtxInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_ctxinfo_entry_set_index (firstEntry, 0);
+  ctxinfo_list_store_append_entry (view->ctxinfo_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmCtxInfoEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_ctxinfo_entry_set_index (entry, i);
+      if (tkm_ctxinfo_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_ctxinfo_entry_get_timestamp (firstEntry,
+                                              DATA_TIME_SOURCE_MONOTONIC))
+        {
+          ctxinfo_list_store_append_entry (view->ctxinfo_store, entry, &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->ctxinfo_treeview),
+                           GTK_TREE_MODEL (view->ctxinfo_store));
+}
+
+void
+tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
+{
+  reload_procinfo_entries (view, context);
+  reload_ctxinfo_entries (view, context);
 }

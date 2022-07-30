@@ -24,10 +24,12 @@
 #include "tkm-entrypool.h"
 #include "tkm-buddyinfo-entry.h"
 #include "tkm-cpustat-entry.h"
+#include "tkm-ctxinfo-entry.h"
 #include "tkm-diskstat-entry.h"
 #include "tkm-meminfo-entry.h"
 #include "tkm-pressure-entry.h"
 #include "tkm-procevent-entry.h"
+#include "tkm-procinfo-entry.h"
 #include "tkm-session-entry.h"
 #include "tkm-wireless-entry.h"
 
@@ -179,6 +181,12 @@ main_entries_free (TkmEntryPool *entrypool)
     {
       g_ptr_array_free (entrypool->procinfo_entries, TRUE);
       entrypool->procinfo_entries = NULL;
+    }
+
+  if (entrypool->ctxinfo_entries != NULL)
+    {
+      g_ptr_array_free (entrypool->ctxinfo_entries, TRUE);
+      entrypool->ctxinfo_entries = NULL;
     }
 
   if (entrypool->procacct_entries != NULL)
@@ -371,6 +379,16 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
       tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
       end_timestamp, NULL);
 
+  entrypool->procinfo_entries = tkm_procinfo_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
+  entrypool->ctxinfo_entries = tkm_ctxinfo_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
   tkm_entrypool_data_unlock (entrypool);
 
   if (callback != NULL)
@@ -462,6 +480,7 @@ tkm_entrypool_new (GMainContext *context, TkmTaskPool *taskpool,
 
   entrypool->session_entries = NULL;
   entrypool->procinfo_entries = NULL;
+  entrypool->ctxinfo_entries = NULL;
   entrypool->procacct_entries = NULL;
   entrypool->cpustat_entries = NULL;
   entrypool->meminfo_entries = NULL;
@@ -553,6 +572,13 @@ tkm_entrypool_get_procinfo_entries (TkmEntryPool *entrypool)
 {
   g_assert (entrypool);
   return entrypool->procinfo_entries;
+}
+
+GPtrArray *
+tkm_entrypool_get_ctxinfo_entries (TkmEntryPool *entrypool)
+{
+  g_assert (entrypool);
+  return entrypool->ctxinfo_entries;
 }
 
 GPtrArray *

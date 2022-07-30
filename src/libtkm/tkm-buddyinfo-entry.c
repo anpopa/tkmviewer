@@ -203,7 +203,19 @@ buddyinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
 
         for (gint i = 0; i < argc; i++)
           {
-            if (g_strcmp0 (colname[i], "Name") == 0)
+            if (g_strcmp0 (colname[i], "SystemTime") == 0)
+              tkm_buddyinfo_entry_set_timestamp (
+                  entry, DATA_TIME_SOURCE_SYSTEM,
+                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+              tkm_buddyinfo_entry_set_timestamp (
+                  entry, DATA_TIME_SOURCE_MONOTONIC,
+                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+              tkm_buddyinfo_entry_set_timestamp (
+                  entry, DATA_TIME_SOURCE_RECEIVE,
+                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "Name") == 0)
               tkm_buddyinfo_entry_set_name (entry, argv[i]);
             else if (g_strcmp0 (colname[i], "Zone") == 0)
               tkm_buddyinfo_entry_set_zone (entry, argv[i]);

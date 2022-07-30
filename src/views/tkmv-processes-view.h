@@ -20,6 +20,7 @@
 
 #include <adwaita.h>
 #include <gtk/gtk.h>
+#include <tkm-context.h>
 
 G_BEGIN_DECLS
 
@@ -27,5 +28,8 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (TkmvProcessesView, tkmv_processes_view, TKMV,
                       PROCESSES_VIEW, GtkBox)
+
+void tkmv_processes_reload_entries (TkmvProcessesView *view,
+                                    TkmContext *context);
 
 G_END_DECLS

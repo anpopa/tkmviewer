@@ -132,6 +132,13 @@ tkm_context_get_procinfo_entries (TkmContext *ctx)
 }
 
 GPtrArray *
+tkm_context_get_ctxinfo_entries (TkmContext *ctx)
+{
+  g_assert (ctx);
+  return tkm_entrypool_get_ctxinfo_entries (ctx->entrypool);
+}
+
+GPtrArray *
 tkm_context_get_procacct_entries (TkmContext *ctx)
 {
   g_assert (ctx);

@@ -791,6 +791,7 @@ update_views_content_invoke (gpointer _self)
   tkmv_window_update_toolbar (window);
   tkmv_dashboard_view_update_content (window->dashboard_view);
   tkmv_systeminfo_reload_entries (window->systeminfo_view, context);
+  tkmv_processes_reload_entries (window->processes_view, context);
 
   tkm_context_data_unlock (context);
 

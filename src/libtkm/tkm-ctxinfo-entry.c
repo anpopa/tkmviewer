@@ -18,46 +18,46 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * \author Alin Popa <alin.popa@fxdata.ro>
- * \file tkm-entry.c
+ * \file tkm-ctxinfo-entry.c
  */
 
-#include "tkm-cpustat-entry.h"
+#include "tkm-ctxinfo-entry.h"
 
 static const gchar *timeSourceColumn[]
     = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
- * @enum CpuStat query type
+ * @enum CtxInfo query type
  */
-typedef enum _CpuStatQueryType
+typedef enum _CtxInfoQueryType
 {
-  CPUSTAT_GET_ENTRIES,
-} CpuStatQueryType;
+  CTXINFO_GET_ENTRIES,
+} CtxInfoQueryType;
 
 /**
- * @enum CpuStat query data object
+ * @enum CtxInfo query data object
  */
-typedef struct _CpuStatQueryData
+typedef struct _CtxInfoQueryData
 {
-  CpuStatQueryType type;
+  CtxInfoQueryType type;
   gpointer response;
-} CpuStatQueryData;
+} CtxInfoQueryData;
 
-static int cpustat_sqlite_callback (void *data, int argc, char **argv,
+static int ctxinfo_sqlite_callback (void *data, int argc, char **argv,
                                     char **colname);
 
-TkmCpuStatEntry *
-tkm_cpustat_entry_new (void)
+TkmCtxInfoEntry *
+tkm_ctxinfo_entry_new (void)
 {
-  TkmCpuStatEntry *entry = g_new0 (TkmCpuStatEntry, 1);
+  TkmCtxInfoEntry *entry = g_new0 (TkmCtxInfoEntry, 1);
 
   g_ref_count_init (&entry->rc);
 
   return entry;
 }
 
-TkmCpuStatEntry *
-tkm_cpustat_entry_ref (TkmCpuStatEntry *entry)
+TkmCtxInfoEntry *
+tkm_ctxinfo_entry_ref (TkmCtxInfoEntry *entry)
 {
   g_assert (entry);
   g_ref_count_inc (&entry->rc);
@@ -65,7 +65,7 @@ tkm_cpustat_entry_ref (TkmCpuStatEntry *entry)
 }
 
 void
-tkm_cpustat_entry_unref (TkmCpuStatEntry *entry)
+tkm_ctxinfo_entry_unref (TkmCtxInfoEntry *entry)
 {
   g_assert (entry);
 
@@ -73,34 +73,36 @@ tkm_cpustat_entry_unref (TkmCpuStatEntry *entry)
     {
       if (entry->name != NULL)
         g_free (entry->name);
+      if (entry->id != NULL)
+        g_free (entry->id);
 
       g_free (entry);
     }
 }
 
 guint
-tkm_cpustat_entry_get_index (TkmCpuStatEntry *entry)
+tkm_ctxinfo_entry_get_index (TkmCtxInfoEntry *entry)
 {
   g_assert (entry);
   return entry->idx;
 }
 
 void
-tkm_cpustat_entry_set_index (TkmCpuStatEntry *entry, guint val)
+tkm_ctxinfo_entry_set_index (TkmCtxInfoEntry *entry, guint val)
 {
   g_assert (entry);
   entry->idx = val;
 }
 
 const gchar *
-tkm_cpustat_entry_get_name (TkmCpuStatEntry *entry)
+tkm_ctxinfo_entry_get_name (TkmCtxInfoEntry *entry)
 {
   g_assert (entry);
   return entry->name;
 }
 
 void
-tkm_cpustat_entry_set_name (TkmCpuStatEntry *entry, const gchar *name)
+tkm_ctxinfo_entry_set_name (TkmCtxInfoEntry *entry, const gchar *name)
 {
   g_assert (entry);
 
@@ -111,7 +113,7 @@ tkm_cpustat_entry_set_name (TkmCpuStatEntry *entry, const gchar *name)
 }
 
 gulong
-tkm_cpustat_entry_get_timestamp (TkmCpuStatEntry *entry, DataTimeSource type)
+tkm_ctxinfo_entry_get_timestamp (TkmCtxInfoEntry *entry, DataTimeSource type)
 {
   g_assert (entry);
   switch (type)
@@ -128,7 +130,7 @@ tkm_cpustat_entry_get_timestamp (TkmCpuStatEntry *entry, DataTimeSource type)
 }
 
 void
-tkm_cpustat_entry_set_timestamp (TkmCpuStatEntry *entry, DataTimeSource type,
+tkm_ctxinfo_entry_set_timestamp (TkmCtxInfoEntry *entry, DataTimeSource type,
                                  gulong val)
 {
   g_assert (entry);
@@ -148,100 +150,112 @@ tkm_cpustat_entry_set_timestamp (TkmCpuStatEntry *entry, DataTimeSource type,
     }
 }
 
-guint
-tkm_cpustat_entry_get_all (TkmCpuStatEntry *entry)
+const gchar *
+tkm_ctxinfo_entry_get_id (TkmCtxInfoEntry *entry)
 {
   g_assert (entry);
-  return entry->all;
+  return entry->id;
 }
 
 void
-tkm_cpustat_entry_set_all (TkmCpuStatEntry *entry, guint val)
+tkm_ctxinfo_entry_set_id (TkmCtxInfoEntry *entry, const gchar *id)
 {
   g_assert (entry);
-  entry->all = val;
+
+  if (entry->id != NULL)
+    g_free (entry->id);
+
+  entry->id = g_strdup (id);
 }
 
-guint
-tkm_cpustat_entry_get_sys (TkmCpuStatEntry *entry)
+glong
+tkm_ctxinfo_entry_get_data (TkmCtxInfoEntry *entry, TkmCtxInfoDataType type)
 {
   g_assert (entry);
-  return entry->sys;
+  switch (type)
+    {
+    case CTXINFO_DATA_CPU_TIME:
+      return entry->cpu_time;
+
+    case CTXINFO_DATA_CPU_PERCENT:
+      return entry->cpu_percent;
+
+    case CTXINFO_DATA_VMRSS:
+      return entry->vm_rss;
+
+    default:
+      break;
+    }
+
+  return 0;
 }
 
 void
-tkm_cpustat_entry_set_sys (TkmCpuStatEntry *entry, guint val)
+tkm_ctxinfo_entry_set_data (TkmCtxInfoEntry *entry, TkmCtxInfoDataType type,
+                            glong val)
 {
   g_assert (entry);
-  entry->sys = val;
-}
+  switch (type)
+    {
+    case CTXINFO_DATA_CPU_TIME:
+      entry->cpu_time = val;
+      break;
 
-guint
-tkm_cpustat_entry_get_usr (TkmCpuStatEntry *entry)
-{
-  g_assert (entry);
-  return entry->usr;
-}
+    case CTXINFO_DATA_CPU_PERCENT:
+      entry->cpu_percent = val;
+      break;
 
-void
-tkm_cpustat_entry_set_usr (TkmCpuStatEntry *entry, guint val)
-{
-  g_assert (entry);
-  entry->usr = val;
+    case CTXINFO_DATA_VMRSS:
+      entry->vm_rss = val;
+      break;
+
+    default:
+      break;
+    }
 }
 
 static int
-cpustat_sqlite_callback (void *data, int argc, char **argv, char **colname)
+ctxinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
 {
-  CpuStatQueryData *querydata = (CpuStatQueryData *)data;
+  CtxInfoQueryData *querydata = (CtxInfoQueryData *)data;
 
   switch (querydata->type)
     {
-    case CPUSTAT_GET_ENTRIES:
+    case CTXINFO_GET_ENTRIES:
       {
         GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmCpuStatEntry) entry = tkm_cpustat_entry_new ();
+        g_autoptr (TkmCtxInfoEntry) entry = tkm_ctxinfo_entry_new ();
 
         for (gint i = 0; i < argc; i++)
           {
             if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
+              tkm_ctxinfo_entry_set_timestamp (
                   entry, DATA_TIME_SOURCE_SYSTEM,
                   (guint)g_ascii_strtoull (argv[i], NULL, 10));
             else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
+              tkm_ctxinfo_entry_set_timestamp (
                   entry, DATA_TIME_SOURCE_MONOTONIC,
                   (guint)g_ascii_strtoull (argv[i], NULL, 10));
             else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
+              tkm_ctxinfo_entry_set_timestamp (
                   entry, DATA_TIME_SOURCE_RECEIVE,
                   (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatName") == 0)
-              tkm_cpustat_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatAll") == 0)
-              tkm_cpustat_entry_set_all (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatSys") == 0)
-              tkm_cpustat_entry_set_sys (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatUsr") == 0)
-              tkm_cpustat_entry_set_usr (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "ContextId") == 0)
+              tkm_ctxinfo_entry_set_id (entry, argv[i]);
+            else if (g_strcmp0 (colname[i], "ContextName") == 0)
+              tkm_ctxinfo_entry_set_name (entry, argv[i]);
+            else if (g_strcmp0 (colname[i], "TotalCpuTime") == 0)
+              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_TIME,
+                                          g_ascii_strtoll (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "TotalCpuPercent") == 0)
+              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_PERCENT,
+                                          g_ascii_strtoll (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "TotalVmRSS") == 0)
+              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_VMRSS,
+                                          g_ascii_strtoll (argv[i], NULL, 10));
           }
 
-        g_ptr_array_add (*entries, tkm_cpustat_entry_ref (entry));
+        g_ptr_array_add (*entries, tkm_ctxinfo_entry_ref (entry));
         break;
       }
 
@@ -253,16 +267,16 @@ cpustat_sqlite_callback (void *data, int argc, char **argv, char **colname)
 }
 
 static void
-cpustat_entry_free (gpointer data)
+ctxinfo_entry_free (gpointer data)
 {
-  TkmCpuStatEntry *e = (TkmCpuStatEntry *)data;
+  TkmCtxInfoEntry *e = (TkmCtxInfoEntry *)data;
 
   g_assert (e);
-  tkm_cpustat_entry_unref (e);
+  tkm_ctxinfo_entry_unref (e);
 }
 
 GPtrArray *
-tkm_cpustat_entry_get_all_entries (sqlite3 *db, const char *session_hash,
+tkm_ctxinfo_entry_get_all_entries (sqlite3 *db, const char *session_hash,
                                    DataTimeSource time_source,
                                    gulong start_time, gulong end_time,
                                    GError **error)
@@ -270,10 +284,10 @@ tkm_cpustat_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
-  CpuStatQueryData data
-      = { .type = CPUSTAT_GET_ENTRIES, .response = (gpointer)&entries };
+  CtxInfoQueryData data
+      = { .type = CTXINFO_GET_ENTRIES, .response = (gpointer)&entries };
 
-  g_ptr_array_set_free_func (entries, cpustat_entry_free);
+  g_ptr_array_set_free_func (entries, ctxinfo_entry_free);
 
   g_assert (db);
 
@@ -281,18 +295,18 @@ tkm_cpustat_entry_get_all_entries (sqlite3 *db, const char *session_hash,
                          "WHERE %s >= %lu AND "
                          " %s < %lu AND SessionId IS "
                          "(SELECT Id FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
-                         TKM_CPUSTAT_TABLE_NAME, timeSourceColumn[time_source],
+                         TKM_CTXINFO_TABLE_NAME, timeSourceColumn[time_source],
                          start_time, timeSourceColumn[time_source], end_time,
                          TKM_SESSIONS_TABLE_NAME, session_hash);
-  if (sqlite3_exec (db, sql, cpustat_sqlite_callback, &data, &query_error)
+  if (sqlite3_exec (db, sql, ctxinfo_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {
       g_ptr_array_free (entries, TRUE);
       entries = NULL;
 
-      g_set_error (error, g_quark_from_static_string ("CpuStatGetAll"), 1,
+      g_set_error (error, g_quark_from_static_string ("CtxInfoGetAll"), 1,
                    "SQL query error");
-      g_warning ("Fail to get cpustat list. SQL error %s", query_error);
+      g_warning ("Fail to get ctxinfo list. SQL error %s", query_error);
       sqlite3_free (query_error);
     }
 
