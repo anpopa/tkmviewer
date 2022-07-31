@@ -28,6 +28,7 @@
 #include "tkm-diskstat-entry.h"
 #include "tkm-meminfo-entry.h"
 #include "tkm-pressure-entry.h"
+#include "tkm-procacct-entry.h"
 #include "tkm-procevent-entry.h"
 #include "tkm-procinfo-entry.h"
 #include "tkm-session-entry.h"
@@ -385,6 +386,11 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
       end_timestamp, NULL);
 
   entrypool->ctxinfo_entries = tkm_ctxinfo_entry_get_all_entries (
+      entrypool->input_database, session_hash,
+      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+      end_timestamp, NULL);
+
+  entrypool->procacct_entries = tkm_procacct_entry_get_all_entries (
       entrypool->input_database, session_hash,
       tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
       end_timestamp, NULL);

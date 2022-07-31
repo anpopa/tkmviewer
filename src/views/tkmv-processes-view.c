@@ -19,6 +19,7 @@
 #include "tkmv-processes-view.h"
 #include "tkm-ctxinfo-entry.h"
 #include "tkm-procinfo-entry.h"
+#include "tkm-procacct-entry.h"
 
 enum
 {
@@ -108,6 +109,11 @@ static void ctxinfo_list_store_append_entry (GtkListStore *list_store,
                                              GtkTreeIter *iter);
 static void reload_ctxinfo_entries (TkmvProcessesView *view,
                                     TkmContext *context);
+static void procacct_list_store_append_entry (GtkListStore *list_store,
+                                              TkmProcAcctEntry *entry,
+                                              GtkTreeIter *iter);
+static void reload_procacct_entries (TkmvProcessesView *view,
+                                     TkmContext *context);
 
 struct _TkmvProcessesView
 {
@@ -843,9 +849,134 @@ reload_ctxinfo_entries (TkmvProcessesView *view, TkmContext *context)
                            GTK_TREE_MODEL (view->ctxinfo_store));
 }
 
+static void
+procacct_list_store_append_entry (GtkListStore *list_store,
+                                  TkmProcAcctEntry *entry, GtkTreeIter *iter)
+{
+  gtk_list_store_append (list_store, iter);
+  gtk_list_store_set (
+      list_store, iter,
+                      COLUMN_PROCACCT_INDEX,
+                      tkm_procacct_entry_get_index (entry),
+                      COLUMN_PROCACCT_NAME,
+                      tkm_procacct_entry_get_name (entry),
+                      COLUMN_PROCACCT_PID,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_PID),
+                      COLUMN_PROCACCT_PPID,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_PPID),
+                      COLUMN_PROCACCT_UID,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_UID),
+                      COLUMN_PROCACCT_GID,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_GID),
+                      COLUMN_PROCACCT_UTIME,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_UTIME),
+                      COLUMN_PROCACCT_STIME,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_STIME),
+                      COLUMN_PROCACCT_CPU_COUNT,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_COUNT),
+                      COLUMN_PROCACCT_CPU_RUN_REAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_REAL),
+                      COLUMN_PROCACCT_CPU_RUN_VIRTUAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_VIRTUAL),
+                      COLUMN_PROCACCT_CPU_DELAY_TOTAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_TOTAL),
+                      COLUMN_PROCACCT_CPU_DELAY_AVG,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_AVG),
+                      COLUMN_PROCACCT_CORE_MEM,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_CORE_MEM),
+                      COLUMN_PROCACCT_VIRT_MEM,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_VIRT_MEM),
+                      COLUMN_PROCACCT_HIGH_WATER_RSS,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_HIGH_WATER_RSS),
+                      COLUMN_PROCACCT_NVCSW,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_NVCSW),
+                      COLUMN_PROCACCT_NIVCSW,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_NIVCSW),
+                      COLUMN_PROCACCT_SWAPIN_COUNT,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_COUNT),
+                      COLUMN_PROCACCT_SWAPIN_DELAY_TOTAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_TOTAL),
+                      COLUMN_PROCACCT_SWAPIN_DELAY_AVG,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_AVG),
+                      COLUMN_PROCACCT_BLKIO_COUNT,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_COUNT),
+                      COLUMN_PROCACCT_BLKIO_DELAY_TOTAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_TOTAL),
+                      COLUMN_PROCACCT_BLKIO_DELAY_AVG,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_AVG),
+                      COLUMN_PROCACCT_IO_STORAGE_READ,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_READ),
+                      COLUMN_PROCACCT_IO_STORAGE_WRITE,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_WRITE),
+                      COLUMN_PROCACCT_IO_READ_CHAR,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_CHAR),
+                      COLUMN_PROCACCT_IO_WRITE_CHAR,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_CHAR),
+                      COLUMN_PROCACCT_IO_READ_SYSCALLS,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_SYSCALLS),
+                      COLUMN_PROCACCT_IO_WRITE_SYSCALLS,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_SYSCALLS),
+                      COLUMN_PROCACCT_FREEPAGE_COUNT,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_COUNT),
+                      COLUMN_PROCACCT_FREEPAGE_DELAY_TOTAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_TOTAL),
+                      COLUMN_PROCACCT_FREEPAGE_DELAY_AVG,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_AVG),
+                      COLUMN_PROCACCT_TRASHING_COUNT,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_COUNT),
+                      COLUMN_PROCACCT_TRASHING_DELAY_TOTAL,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_TOTAL),
+                      COLUMN_PROCACCT_TRASHING_DELAY_AVG,
+                      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_AVG),
+                      -1);
+}
+
+static void
+reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
+{
+  GPtrArray *entries = tkm_context_get_procacct_entries (context);
+  GtkTreeIter iter;
+
+  if (entries == NULL)
+    return;
+
+  if (entries->len == 0)
+    return;
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->procacct_treeview), NULL);
+  gtk_list_store_clear (view->procacct_store);
+
+  /* get first entry */
+  TkmProcAcctEntry *firstEntry = g_ptr_array_index (entries, 0);
+  tkm_procacct_entry_set_index (firstEntry, 0);
+  procacct_list_store_append_entry (view->procacct_store, firstEntry, &iter);
+
+  for (guint i = 1; i < entries->len; i++)
+    {
+      TkmProcAcctEntry *entry = g_ptr_array_index (entries, i);
+
+      tkm_procacct_entry_set_index (entry, i);
+      if (tkm_procacct_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
+          == tkm_procacct_entry_get_timestamp (firstEntry,
+                                               DATA_TIME_SOURCE_MONOTONIC))
+        {
+          procacct_list_store_append_entry (view->procacct_store, entry,
+                                            &iter);
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view->procacct_treeview),
+                           GTK_TREE_MODEL (view->procacct_store));
+}
+
 void
 tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
 {
   reload_procinfo_entries (view, context);
   reload_ctxinfo_entries (view, context);
+  reload_procacct_entries (view, context);
 }

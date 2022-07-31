@@ -43,6 +43,7 @@ G_BEGIN_DECLS
 #define TKM_WIRELESS_TABLE_NAME "tkmSysProcWireless"
 #define TKM_DISKSTAT_TABLE_NAME "tkmSysProcDiskStats"
 #define TKM_PROCINFO_TABLE_NAME "tkmProcInfo"
+#define TKM_PROCACCT_TABLE_NAME "tkmProcAcct"
 #define TKM_CTXINFO_TABLE_NAME "tkmContextInfo"
 
 typedef enum _DataTimeSource

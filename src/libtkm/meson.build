@@ -12,6 +12,7 @@ libtkm_sources = [
   'tkm-wireless-entry.c',
   'tkm-diskstat-entry.c',
   'tkm-procinfo-entry.c',
+  'tkm-procacct-entry.c',
   'tkm-ctxinfo-entry.c',
   'tkm-task.c',
   'tkm-taskpool.c',
