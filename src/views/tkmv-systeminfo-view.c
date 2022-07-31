@@ -480,14 +480,13 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   column = gtk_tree_view_column_new_with_attributes (
       "Status", renderer, "text", COLUMN_WLANINFO_STATUS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 150);
+                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
 
   /* column qualitylink */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QualityLink", renderer, "text", COLUMN_WLANINFO_QUALITY_LINK, NULL);
+      "QALink", renderer, "text", COLUMN_WLANINFO_QUALITY_LINK, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -495,7 +494,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column qualitylevel */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QualityLevel", renderer, "text", COLUMN_WLANINFO_QUALITY_LEVEL, NULL);
+      "QALevel", renderer, "text", COLUMN_WLANINFO_QUALITY_LEVEL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -503,7 +502,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column qualitynoise */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QualityNoise", renderer, "text", COLUMN_WLANINFO_QUALITY_NOISE, NULL);
+      "QANoise", renderer, "text", COLUMN_WLANINFO_QUALITY_NOISE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -511,7 +510,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardednwid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscardedNWID", renderer, "text", COLUMN_WLANINFO_DISCARDED_NWID, NULL);
+      "DiscNWID", renderer, "text", COLUMN_WLANINFO_DISCARDED_NWID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -519,8 +518,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedcrypt */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscardedCrypt", renderer, "text", COLUMN_WLANINFO_DISCARDED_CRYPT,
-      NULL);
+      "DiscCrypt", renderer, "text", COLUMN_WLANINFO_DISCARDED_CRYPT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -528,7 +526,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedfrag */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscardedFrag", renderer, "text", COLUMN_WLANINFO_DISCARDED_FRAG, NULL);
+      "DiscFrag", renderer, "text", COLUMN_WLANINFO_DISCARDED_FRAG, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -536,7 +534,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedmisc */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscardedMisc", renderer, "text", COLUMN_WLANINFO_DISCARDED_MISC, NULL);
+      "DiscMisc", renderer, "text", COLUMN_WLANINFO_DISCARDED_MISC, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);

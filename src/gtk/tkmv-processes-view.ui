@@ -17,9 +17,10 @@
             <property name="vscrollbar_policy">automatic</property>
             <child>
               <object class="GtkTreeView" id="procinfo_treeview">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="enable-search">True</property>
+                <property name="reorderable">True</property>
+                <property name="search-column">1</property>
+                <property name="enable-grid-lines">both</property>
+                <property name="enable-tree-lines">True</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="procinfo_treeview_select"/>
                 </child>
@@ -42,9 +43,10 @@
             <property name="vscrollbar_policy">automatic</property>
             <child>
               <object class="GtkTreeView" id="ctxinfo_treeview">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="enable-search">True</property>
+                <property name="reorderable">True</property>
+                <property name="search-column">1</property>
+                <property name="enable-grid-lines">both</property>
+                <property name="enable-tree-lines">True</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="ctxinfo_treeview_select"/>
                 </child>
@@ -67,9 +69,10 @@
             <property name="vscrollbar_policy">automatic</property>
             <child>
               <object class="GtkTreeView" id="procacct_treeview">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="enable-search">True</property>
+                <property name="reorderable">True</property>
+                <property name="search-column">1</property>
+                <property name="enable-grid-lines">both</property>
+                <property name="enable-tree-lines">True</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection" id="procacct_treeview_select"/>
                 </child>
