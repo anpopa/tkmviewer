@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * \author Alin Popa <alin.popa@fxdata.ro>
- * \file tkm-entry.c
+ * \file tkm-cpustat-entry.c
  */
 
 #include "tkm-cpustat-entry.h"

@@ -92,6 +92,7 @@ struct _TkmvWindow
   GtkScale *timestamp_scale;
   GtkLabel *timestamp_text;
   GtkToggleButton *play_toggle_button;
+  GtkAdjustment *timestamp_scale_adjustment;
 
   /* Session info */
   GtkDialog *session_info_dialog;
@@ -173,6 +174,8 @@ tkmv_window_class_init (TkmvWindowClass *klass)
                                         info_session_start_entry_buffer);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         info_session_end_entry_buffer);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        timestamp_scale_adjustment);
 
   /* Bind callbacks */
   gtk_widget_class_bind_template_callback (widget_class,
@@ -298,6 +301,8 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   g_assert (active_session);
 
+  gtk_range_set_value (GTK_RANGE(window->timestamp_scale), 0);
+
   tkmv_settings_set_time_source (settings,
                                  (guint)gtk_combo_box_get_active (self));
   tkmv_application_load_data (
@@ -316,6 +321,7 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
       = tkmv_application_get_context (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   TkmSessionEntry *active_session = NULL;
+  guint adjustment_sec = 1;
 
   g_assert (window);
 
@@ -331,6 +337,26 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   tkmv_settings_set_time_interval (settings,
                                    (guint)gtk_combo_box_get_active (self));
+  gtk_range_set_value (GTK_RANGE(window->timestamp_scale), 0);
+
+  switch (tkmv_settings_get_time_interval (settings))
+    {
+    case DATA_TIME_INTERVAL_10S:
+    case DATA_TIME_INTERVAL_1M:
+    case DATA_TIME_INTERVAL_10M:
+      adjustment_sec = 1;
+      break;
+    case DATA_TIME_INTERVAL_1H:
+      adjustment_sec = 60;
+      break;
+    case DATA_TIME_INTERVAL_24H:
+    default:
+      adjustment_sec = 3600;
+      break;
+    }
+
+  gtk_adjustment_set_page_increment (window->timestamp_scale_adjustment, adjustment_sec);
+
   tkmv_application_load_data (
       tkmv_application_instance (),
       tkm_session_entry_get_hash (active_session),
