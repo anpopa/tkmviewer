@@ -52,7 +52,6 @@ tkmv_application_finalize (GObject *object)
 {
   TkmvApplication *self = (TkmvApplication *)object;
 
-  tkmv_settings_save (self->settings);
   tkm_context_unref (self->tkm_context);
   tkmv_settings_unref (self->settings);
 
