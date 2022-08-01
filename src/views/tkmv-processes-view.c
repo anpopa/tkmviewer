@@ -949,9 +949,14 @@ reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
       TkmProcAcctEntry *entry = g_ptr_array_index (entries, i);
 
       tkm_procacct_entry_set_index (entry, i);
+
+      // The procacct entry come when ready so we should group the entries with
+      // some delay in mind. For now we use a 3 seconds delay since
+      // slowLaneInterval is normally much higher (eg 10s)
       if (tkm_procacct_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
-          == tkm_procacct_entry_get_timestamp (firstEntry,
-                                               DATA_TIME_SOURCE_MONOTONIC))
+          <= tkm_procacct_entry_get_timestamp (firstEntry,
+                                               DATA_TIME_SOURCE_MONOTONIC)
+                 + 3)
         {
           procacct_list_store_append_entry (view->procacct_store, entry,
                                             &iter);

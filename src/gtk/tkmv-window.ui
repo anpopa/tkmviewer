@@ -385,7 +385,7 @@
                       <object class="GtkLabel" id="timestamp_label">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes"> Timestamp: </property>
+                        <property name="label" translatable="yes">Timestamp:</property>
                       </object>
                     </child>
                     <child>
