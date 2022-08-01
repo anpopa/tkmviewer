@@ -817,13 +817,13 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
               entry, PSI_DATA_MEM_SOME_AVG10);
           points4[cnt].x = points1[cnt].x;
           points4[cnt].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_MEM_SOME_AVG10);
+              entry, PSI_DATA_MEM_SOME_AVG60);
           points5[cnt].x = points1[cnt].x;
           points5[cnt].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_IO_SOME_AVG10);
           points6[cnt].x = points1[cnt].x;
           points6[cnt].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_IO_SOME_AVG10);
+              entry, PSI_DATA_IO_SOME_AVG60);
           cnt += 1;
         }
     }

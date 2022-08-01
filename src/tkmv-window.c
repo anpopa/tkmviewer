@@ -286,6 +286,17 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   g_assert (window);
 
+  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
+
+  tkmv_settings_set_time_source (settings,
+                                 (guint)gtk_combo_box_get_active (self));
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
+
   for (guint i = 0; i < sessions->len; i++)
     {
       if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
@@ -296,10 +307,6 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   g_assert (active_session);
 
-  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
-
-  tkmv_settings_set_time_source (settings,
-                                 (guint)gtk_combo_box_get_active (self));
   tkmv_application_load_data (
       tkmv_application_instance (),
       tkm_session_entry_get_hash (active_session),
@@ -319,6 +326,16 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
   guint adjustment_sec = 1;
 
   g_assert (window);
+
+  tkmv_settings_set_time_interval (settings,
+                                   (guint)gtk_combo_box_get_active (self));
+  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
 
   for (guint i = 0; i < sessions->len; i++)
     {
@@ -371,6 +388,12 @@ tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
   TkmSessionEntry *active_session = NULL;
 
   g_assert (window);
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
 
   for (guint i = 0; i < sessions->len; i++)
     {
