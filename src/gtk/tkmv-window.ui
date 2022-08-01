@@ -412,14 +412,6 @@
                         </attributes>
                       </object>
                     </child>
-                    <child>
-                      <object class="GtkToggleButton" id="play_toggle_button">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
-                        <property name="icon-name">media-playback-start-symbolic</property>
-                      </object>
-                    </child>
                   </object>
                 </child>
               </object>

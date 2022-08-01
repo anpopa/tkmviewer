@@ -42,8 +42,6 @@ static void tools_time_interval_changed (GtkComboBox *self,
                                          gpointer _tkmv_window);
 static void tools_timestamp_scale_value_changed (GtkRange *self,
                                                  gpointer _tkmv_window);
-static void tools_play_toggle_button_toggled (GtkToggleButton *self,
-                                              gpointer _tkmv_window);
 static void tools_set_timestamp_text (TkmvWindow *self, DataTimeSource source,
                                       guint timestamp_sec);
 
@@ -91,7 +89,6 @@ struct _TkmvWindow
   GtkLabel *timestamp_label;
   GtkScale *timestamp_scale;
   GtkLabel *timestamp_text;
-  GtkToggleButton *play_toggle_button;
   GtkAdjustment *timestamp_scale_adjustment;
 
   /* Session info */
@@ -145,8 +142,6 @@ tkmv_window_class_init (TkmvWindowClass *klass)
                                         timestamp_scale);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         timestamp_text);
-  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
-                                        play_toggle_button);
 
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         session_info_dialog);
@@ -301,7 +296,7 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   g_assert (active_session);
 
-  gtk_range_set_value (GTK_RANGE(window->timestamp_scale), 0);
+  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
 
   tkmv_settings_set_time_source (settings,
                                  (guint)gtk_combo_box_get_active (self));
@@ -337,7 +332,7 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   tkmv_settings_set_time_interval (settings,
                                    (guint)gtk_combo_box_get_active (self));
-  gtk_range_set_value (GTK_RANGE(window->timestamp_scale), 0);
+  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
 
   switch (tkmv_settings_get_time_interval (settings))
     {
@@ -355,7 +350,8 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
       break;
     }
 
-  gtk_adjustment_set_page_increment (window->timestamp_scale_adjustment, adjustment_sec);
+  gtk_adjustment_set_page_increment (window->timestamp_scale_adjustment,
+                                     adjustment_sec);
 
   tkmv_application_load_data (
       tkmv_application_instance (),
@@ -394,15 +390,6 @@ tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
   tkmv_application_load_data (tkmv_application_instance (),
                               tkm_session_entry_get_hash (active_session),
                               gtk_range_get_value (self));
-}
-
-static void
-tools_play_toggle_button_toggled (GtkToggleButton *self, gpointer _tkmv_window)
-{
-  TkmvWindow *window = (TkmvWindow *)_tkmv_window;
-
-  TKMV_UNUSED (self);
-  TKMV_UNUSED (window);
 }
 
 // Function to open a dialog box with a message
@@ -508,8 +495,6 @@ window_toolbar_init (TkmvWindow *self)
                     G_CALLBACK (tools_time_interval_changed), self);
   g_signal_connect (G_OBJECT (self->timestamp_scale), "value-changed",
                     G_CALLBACK (tools_timestamp_scale_value_changed), self);
-  g_signal_connect (G_OBJECT (self->play_toggle_button), "toggled",
-                    G_CALLBACK (tools_play_toggle_button_toggled), self);
 }
 
 static void
