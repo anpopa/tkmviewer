@@ -286,8 +286,6 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   g_assert (window);
 
-  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
-
   tkmv_settings_set_time_source (settings,
                                  (guint)gtk_combo_box_get_active (self));
 
@@ -306,6 +304,17 @@ tools_time_source_changed (GtkComboBox *self, gpointer _tkmv_window)
     }
 
   g_assert (active_session);
+
+  gtk_range_set_range (
+      GTK_RANGE (window->timestamp_scale),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)),
+      tkm_session_entry_get_last_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
+  gtk_range_set_value (
+      GTK_RANGE (window->timestamp_scale),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
 
   tkmv_application_load_data (
       tkmv_application_instance (),
@@ -329,7 +338,6 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   tkmv_settings_set_time_interval (settings,
                                    (guint)gtk_combo_box_get_active (self));
-  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
 
   if (sessions == NULL)
     return;
@@ -346,10 +354,6 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
     }
 
   g_assert (active_session);
-
-  tkmv_settings_set_time_interval (settings,
-                                   (guint)gtk_combo_box_get_active (self));
-  gtk_range_set_value (GTK_RANGE (window->timestamp_scale), 0);
 
   switch (tkmv_settings_get_time_interval (settings))
     {
@@ -369,6 +373,17 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
 
   gtk_adjustment_set_page_increment (window->timestamp_scale_adjustment,
                                      adjustment_sec);
+
+  gtk_range_set_range (
+      GTK_RANGE (window->timestamp_scale),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)),
+      tkm_session_entry_get_last_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
+  gtk_range_set_value (
+      GTK_RANGE (window->timestamp_scale),
+      tkm_session_entry_get_first_timestamp (
+          active_session, tkmv_settings_get_time_source (settings)));
 
   tkmv_application_load_data (
       tkmv_application_instance (),
