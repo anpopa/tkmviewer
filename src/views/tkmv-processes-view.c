@@ -1463,16 +1463,6 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   guint points5_count = 0;
 
   struct kplotcfg plotcfg;
-  struct kdatacfg d1_cfg;
-  struct kdatacfg d2_cfg;
-  struct kdatacfg d3_cfg;
-  struct kdatacfg d4_cfg;
-  struct kdatacfg d5_cfg;
-  struct kdata *d1 = NULL;
-  struct kdata *d2 = NULL;
-  struct kdata *d3 = NULL;
-  struct kdata *d4 = NULL;
-  struct kdata *d5 = NULL;
   struct kplot *p = NULL;
 
   guint selected_count = 0;
@@ -1613,27 +1603,6 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   g_list_free (selected_pids);
 
-  if (points1 != NULL)
-    {
-      d1 = kdata_array_alloc (points1, points1_count);
-    }
-  if (points2 != NULL)
-    {
-      d2 = kdata_array_alloc (points2, points2_count);
-    }
-  if (points3 != NULL)
-    {
-      d3 = kdata_array_alloc (points3, points3_count);
-    }
-  if (points4 != NULL)
-    {
-      d4 = kdata_array_alloc (points4, points4_count);
-    }
-  if (points5 != NULL)
-    {
-      d5 = kdata_array_alloc (points5, points5_count);
-    }
-
   kplotcfg_defaults (&plotcfg);
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
@@ -1652,62 +1621,77 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   p = kplot_alloc (&plotcfg);
 
-  kdatacfg_defaults (&d1_cfg);
-  d1_cfg.line.sz = 1.0;
-  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[0] = 1.0;
-  d1_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d2_cfg);
-  d2_cfg.line.sz = 1.0;
-  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d2_cfg.line.clr.rgba[2] = 1.0;
-  d2_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d3_cfg);
-  d3_cfg.line.sz = 1.0;
-  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d3_cfg.line.clr.rgba[1] = 1.0;
-  d3_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d4_cfg);
-  d4_cfg.line.sz = 1.0;
-  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d4_cfg.line.clr.rgba[0] = 0.4;
-  d4_cfg.line.clr.rgba[1] = 0.0;
-  d4_cfg.line.clr.rgba[2] = 0.6;
-  d4_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d5_cfg);
-  d5_cfg.line.sz = 1.0;
-  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d5_cfg.line.clr.rgba[0] = 0.9;
-  d5_cfg.line.clr.rgba[1] = 0.4;
-  d5_cfg.line.clr.rgba[2] = 0.3;
-  d5_cfg.line.clr.rgba[3] = 1.0;
-
-  if (d1 != NULL)
+  if (points1 != NULL)
     {
+      struct kdata *d1 = kdata_array_alloc (points1, points1_count);
+      struct kdatacfg d1_cfg;
+
+      kdatacfg_defaults (&d1_cfg);
+      d1_cfg.line.sz = 1.0;
+      d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d1_cfg.line.clr.rgba[0] = 1.0;
+      d1_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
       kdata_destroy (d1);
     }
-  if (d2 != NULL)
+  if (points2 != NULL)
     {
+      struct kdata *d2 = kdata_array_alloc (points2, points2_count);
+      struct kdatacfg d2_cfg;
+
+      kdatacfg_defaults (&d2_cfg);
+      d2_cfg.line.sz = 1.0;
+      d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d2_cfg.line.clr.rgba[2] = 1.0;
+      d2_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
       kdata_destroy (d2);
     }
-  if (d3 != NULL)
+  if (points3 != NULL)
     {
+      struct kdata *d3 = kdata_array_alloc (points3, points3_count);
+      struct kdatacfg d3_cfg;
+
+      kdatacfg_defaults (&d3_cfg);
+      d3_cfg.line.sz = 1.0;
+      d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d3_cfg.line.clr.rgba[1] = 1.0;
+      d3_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
       kdata_destroy (d3);
     }
-  if (d4 != NULL)
+  if (points4 != NULL)
     {
+      struct kdata *d4 = kdata_array_alloc (points4, points4_count);
+      struct kdatacfg d4_cfg;
+
+      kdatacfg_defaults (&d4_cfg);
+      d4_cfg.line.sz = 1.0;
+      d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d4_cfg.line.clr.rgba[0] = 0.4;
+      d4_cfg.line.clr.rgba[1] = 0.0;
+      d4_cfg.line.clr.rgba[2] = 0.6;
+      d4_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
       kdata_destroy (d4);
     }
-  if (d5 != NULL)
+  if (points5 != NULL)
     {
+      struct kdata *d5 = kdata_array_alloc (points5, points5_count);
+      struct kdatacfg d5_cfg;
+
+      kdatacfg_defaults (&d5_cfg);
+      d5_cfg.line.sz = 1.0;
+      d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d5_cfg.line.clr.rgba[0] = 0.9;
+      d5_cfg.line.clr.rgba[1] = 0.4;
+      d5_cfg.line.clr.rgba[2] = 0.3;
+      d5_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
       kdata_destroy (d5);
     }
@@ -1748,16 +1732,6 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   guint points5_count = 0;
 
   struct kplotcfg plotcfg;
-  struct kdatacfg d1_cfg;
-  struct kdatacfg d2_cfg;
-  struct kdatacfg d3_cfg;
-  struct kdatacfg d4_cfg;
-  struct kdatacfg d5_cfg;
-  struct kdata *d1 = NULL;
-  struct kdata *d2 = NULL;
-  struct kdata *d3 = NULL;
-  struct kdata *d4 = NULL;
-  struct kdata *d5 = NULL;
   struct kplot *p = NULL;
 
   guint selected_count = 0;
@@ -1898,27 +1872,6 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   g_list_free (selected_pids);
 
-  if (points1 != NULL)
-    {
-      d1 = kdata_array_alloc (points1, points1_count);
-    }
-  if (points2 != NULL)
-    {
-      d2 = kdata_array_alloc (points2, points2_count);
-    }
-  if (points3 != NULL)
-    {
-      d3 = kdata_array_alloc (points3, points3_count);
-    }
-  if (points4 != NULL)
-    {
-      d4 = kdata_array_alloc (points4, points4_count);
-    }
-  if (points5 != NULL)
-    {
-      d5 = kdata_array_alloc (points5, points5_count);
-    }
-
   kplotcfg_defaults (&plotcfg);
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMIN;
@@ -1928,62 +1881,77 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   p = kplot_alloc (&plotcfg);
 
-  kdatacfg_defaults (&d1_cfg);
-  d1_cfg.line.sz = 1.0;
-  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[0] = 1.0;
-  d1_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d2_cfg);
-  d2_cfg.line.sz = 1.0;
-  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d2_cfg.line.clr.rgba[2] = 1.0;
-  d2_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d3_cfg);
-  d3_cfg.line.sz = 1.0;
-  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d3_cfg.line.clr.rgba[1] = 1.0;
-  d3_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d4_cfg);
-  d4_cfg.line.sz = 1.0;
-  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d4_cfg.line.clr.rgba[0] = 0.4;
-  d4_cfg.line.clr.rgba[1] = 0.0;
-  d4_cfg.line.clr.rgba[2] = 0.6;
-  d4_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d5_cfg);
-  d5_cfg.line.sz = 1.0;
-  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d5_cfg.line.clr.rgba[0] = 0.9;
-  d5_cfg.line.clr.rgba[1] = 0.4;
-  d5_cfg.line.clr.rgba[2] = 0.3;
-  d5_cfg.line.clr.rgba[3] = 1.0;
-
-  if (d1 != NULL)
+  if (points1 != NULL)
     {
+      struct kdata *d1 = kdata_array_alloc (points1, points1_count);
+      struct kdatacfg d1_cfg;
+
+      kdatacfg_defaults (&d1_cfg);
+      d1_cfg.line.sz = 1.0;
+      d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d1_cfg.line.clr.rgba[0] = 1.0;
+      d1_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
       kdata_destroy (d1);
     }
-  if (d2 != NULL)
+  if (points2 != NULL)
     {
+      struct kdata *d2 = kdata_array_alloc (points2, points2_count);
+      struct kdatacfg d2_cfg;
+
+      kdatacfg_defaults (&d2_cfg);
+      d2_cfg.line.sz = 1.0;
+      d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d2_cfg.line.clr.rgba[2] = 1.0;
+      d2_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
       kdata_destroy (d2);
     }
-  if (d3 != NULL)
+  if (points3 != NULL)
     {
+      struct kdata *d3 = kdata_array_alloc (points3, points3_count);
+      struct kdatacfg d3_cfg;
+
+      kdatacfg_defaults (&d3_cfg);
+      d3_cfg.line.sz = 1.0;
+      d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d3_cfg.line.clr.rgba[1] = 1.0;
+      d3_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
       kdata_destroy (d3);
     }
-  if (d4 != NULL)
+  if (points4 != NULL)
     {
+      struct kdata *d4 = kdata_array_alloc (points4, points4_count);
+      struct kdatacfg d4_cfg;
+
+      kdatacfg_defaults (&d4_cfg);
+      d4_cfg.line.sz = 1.0;
+      d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d4_cfg.line.clr.rgba[0] = 0.4;
+      d4_cfg.line.clr.rgba[1] = 0.0;
+      d4_cfg.line.clr.rgba[2] = 0.6;
+      d4_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
       kdata_destroy (d4);
     }
-  if (d5 != NULL)
+  if (points5 != NULL)
     {
+      struct kdata *d5 = kdata_array_alloc (points5, points5_count);
+      struct kdatacfg d5_cfg;
+
+      kdatacfg_defaults (&d5_cfg);
+      d5_cfg.line.sz = 1.0;
+      d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d5_cfg.line.clr.rgba[0] = 0.9;
+      d5_cfg.line.clr.rgba[1] = 0.4;
+      d5_cfg.line.clr.rgba[2] = 0.3;
+      d5_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
       kdata_destroy (d5);
     }
@@ -2024,16 +1992,6 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   guint points5_count = 0;
 
   struct kplotcfg plotcfg;
-  struct kdatacfg d1_cfg;
-  struct kdatacfg d2_cfg;
-  struct kdatacfg d3_cfg;
-  struct kdatacfg d4_cfg;
-  struct kdatacfg d5_cfg;
-  struct kdata *d1 = NULL;
-  struct kdata *d2 = NULL;
-  struct kdata *d3 = NULL;
-  struct kdata *d4 = NULL;
-  struct kdata *d5 = NULL;
   struct kplot *p = NULL;
 
   guint selected_count = 0;
@@ -2179,27 +2137,6 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   g_list_free_full (selected_ids, g_free);
 
-  if (points1 != NULL)
-    {
-      d1 = kdata_array_alloc (points1, points1_count);
-    }
-  if (points2 != NULL)
-    {
-      d2 = kdata_array_alloc (points2, points2_count);
-    }
-  if (points3 != NULL)
-    {
-      d3 = kdata_array_alloc (points3, points3_count);
-    }
-  if (points4 != NULL)
-    {
-      d4 = kdata_array_alloc (points4, points4_count);
-    }
-  if (points5 != NULL)
-    {
-      d5 = kdata_array_alloc (points5, points5_count);
-    }
-
   kplotcfg_defaults (&plotcfg);
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
@@ -2218,62 +2155,77 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   p = kplot_alloc (&plotcfg);
 
-  kdatacfg_defaults (&d1_cfg);
-  d1_cfg.line.sz = 1.0;
-  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[0] = 1.0;
-  d1_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d2_cfg);
-  d2_cfg.line.sz = 1.0;
-  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d2_cfg.line.clr.rgba[2] = 1.0;
-  d2_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d3_cfg);
-  d3_cfg.line.sz = 1.0;
-  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d3_cfg.line.clr.rgba[1] = 1.0;
-  d3_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d4_cfg);
-  d4_cfg.line.sz = 1.0;
-  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d4_cfg.line.clr.rgba[0] = 0.4;
-  d4_cfg.line.clr.rgba[1] = 0.0;
-  d4_cfg.line.clr.rgba[2] = 0.6;
-  d4_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d5_cfg);
-  d5_cfg.line.sz = 1.0;
-  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d5_cfg.line.clr.rgba[0] = 0.9;
-  d5_cfg.line.clr.rgba[1] = 0.4;
-  d5_cfg.line.clr.rgba[2] = 0.3;
-  d5_cfg.line.clr.rgba[3] = 1.0;
-
-  if (d1 != NULL)
+  if (points1 != NULL)
     {
+      struct kdata *d1 = kdata_array_alloc (points1, points1_count);
+      struct kdatacfg d1_cfg;
+
+      kdatacfg_defaults (&d1_cfg);
+      d1_cfg.line.sz = 1.0;
+      d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d1_cfg.line.clr.rgba[0] = 1.0;
+      d1_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
       kdata_destroy (d1);
     }
-  if (d2 != NULL)
+  if (points2 != NULL)
     {
+      struct kdata *d2 = kdata_array_alloc (points2, points2_count);
+      struct kdatacfg d2_cfg;
+
+      kdatacfg_defaults (&d2_cfg);
+      d2_cfg.line.sz = 1.0;
+      d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d2_cfg.line.clr.rgba[2] = 1.0;
+      d2_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
       kdata_destroy (d2);
     }
-  if (d3 != NULL)
+  if (points3 != NULL)
     {
+      struct kdata *d3 = kdata_array_alloc (points3, points3_count);
+      struct kdatacfg d3_cfg;
+
+      kdatacfg_defaults (&d3_cfg);
+      d3_cfg.line.sz = 1.0;
+      d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d3_cfg.line.clr.rgba[1] = 1.0;
+      d3_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
       kdata_destroy (d3);
     }
-  if (d4 != NULL)
+  if (points4 != NULL)
     {
+      struct kdata *d4 = kdata_array_alloc (points4, points4_count);
+      struct kdatacfg d4_cfg;
+
+      kdatacfg_defaults (&d4_cfg);
+      d4_cfg.line.sz = 1.0;
+      d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d4_cfg.line.clr.rgba[0] = 0.4;
+      d4_cfg.line.clr.rgba[1] = 0.0;
+      d4_cfg.line.clr.rgba[2] = 0.6;
+      d4_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
       kdata_destroy (d4);
     }
-  if (d5 != NULL)
+  if (points5 != NULL)
     {
+      struct kdata *d5 = kdata_array_alloc (points5, points5_count);
+      struct kdatacfg d5_cfg;
+
+      kdatacfg_defaults (&d5_cfg);
+      d5_cfg.line.sz = 1.0;
+      d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d5_cfg.line.clr.rgba[0] = 0.9;
+      d5_cfg.line.clr.rgba[1] = 0.4;
+      d5_cfg.line.clr.rgba[2] = 0.3;
+      d5_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
       kdata_destroy (d5);
     }
@@ -2314,16 +2266,6 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   guint points5_count = 0;
 
   struct kplotcfg plotcfg;
-  struct kdatacfg d1_cfg;
-  struct kdatacfg d2_cfg;
-  struct kdatacfg d3_cfg;
-  struct kdatacfg d4_cfg;
-  struct kdatacfg d5_cfg;
-  struct kdata *d1 = NULL;
-  struct kdata *d2 = NULL;
-  struct kdata *d3 = NULL;
-  struct kdata *d4 = NULL;
-  struct kdata *d5 = NULL;
   struct kplot *p = NULL;
 
   guint selected_count = 0;
@@ -2469,27 +2411,6 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   g_list_free_full (selected_ids, g_free);
 
-  if (points1 != NULL)
-    {
-      d1 = kdata_array_alloc (points1, points1_count);
-    }
-  if (points2 != NULL)
-    {
-      d2 = kdata_array_alloc (points2, points2_count);
-    }
-  if (points3 != NULL)
-    {
-      d3 = kdata_array_alloc (points3, points3_count);
-    }
-  if (points4 != NULL)
-    {
-      d4 = kdata_array_alloc (points4, points4_count);
-    }
-  if (points5 != NULL)
-    {
-      d5 = kdata_array_alloc (points5, points5_count);
-    }
-
   kplotcfg_defaults (&plotcfg);
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMIN;
@@ -2499,62 +2420,77 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
 
   p = kplot_alloc (&plotcfg);
 
-  kdatacfg_defaults (&d1_cfg);
-  d1_cfg.line.sz = 1.0;
-  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d1_cfg.line.clr.rgba[0] = 1.0;
-  d1_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d2_cfg);
-  d2_cfg.line.sz = 1.0;
-  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d2_cfg.line.clr.rgba[2] = 1.0;
-  d2_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d3_cfg);
-  d3_cfg.line.sz = 1.0;
-  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d3_cfg.line.clr.rgba[1] = 1.0;
-  d3_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d4_cfg);
-  d4_cfg.line.sz = 1.0;
-  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d4_cfg.line.clr.rgba[0] = 0.4;
-  d4_cfg.line.clr.rgba[1] = 0.0;
-  d4_cfg.line.clr.rgba[2] = 0.6;
-  d4_cfg.line.clr.rgba[3] = 1.0;
-
-  kdatacfg_defaults (&d5_cfg);
-  d5_cfg.line.sz = 1.0;
-  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
-  d5_cfg.line.clr.rgba[0] = 0.9;
-  d5_cfg.line.clr.rgba[1] = 0.4;
-  d5_cfg.line.clr.rgba[2] = 0.3;
-  d5_cfg.line.clr.rgba[3] = 1.0;
-
-  if (d1 != NULL)
+  if (points1 != NULL)
     {
+      struct kdata *d1 = kdata_array_alloc (points1, points1_count);
+      struct kdatacfg d1_cfg;
+
+      kdatacfg_defaults (&d1_cfg);
+      d1_cfg.line.sz = 1.0;
+      d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d1_cfg.line.clr.rgba[0] = 1.0;
+      d1_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
       kdata_destroy (d1);
     }
-  if (d2 != NULL)
+  if (points2 != NULL)
     {
+      struct kdata *d2 = kdata_array_alloc (points2, points2_count);
+      struct kdatacfg d2_cfg;
+
+      kdatacfg_defaults (&d2_cfg);
+      d2_cfg.line.sz = 1.0;
+      d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d2_cfg.line.clr.rgba[2] = 1.0;
+      d2_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
       kdata_destroy (d2);
     }
-  if (d3 != NULL)
+  if (points3 != NULL)
     {
+      struct kdata *d3 = kdata_array_alloc (points3, points3_count);
+      struct kdatacfg d3_cfg;
+
+      kdatacfg_defaults (&d3_cfg);
+      d3_cfg.line.sz = 1.0;
+      d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d3_cfg.line.clr.rgba[1] = 1.0;
+      d3_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
       kdata_destroy (d3);
     }
-  if (d4 != NULL)
+  if (points4 != NULL)
     {
+      struct kdata *d4 = kdata_array_alloc (points4, points4_count);
+      struct kdatacfg d4_cfg;
+
+      kdatacfg_defaults (&d4_cfg);
+      d4_cfg.line.sz = 1.0;
+      d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d4_cfg.line.clr.rgba[0] = 0.4;
+      d4_cfg.line.clr.rgba[1] = 0.0;
+      d4_cfg.line.clr.rgba[2] = 0.6;
+      d4_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
       kdata_destroy (d4);
     }
-  if (d5 != NULL)
+  if (points5 != NULL)
     {
+      struct kdata *d5 = kdata_array_alloc (points5, points5_count);
+      struct kdatacfg d5_cfg;
+
+      kdatacfg_defaults (&d5_cfg);
+      d5_cfg.line.sz = 1.0;
+      d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d5_cfg.line.clr.rgba[0] = 0.9;
+      d5_cfg.line.clr.rgba[1] = 0.4;
+      d5_cfg.line.clr.rgba[2] = 0.3;
+      d5_cfg.line.clr.rgba[3] = 1.0;
+
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
       kdata_destroy (d5);
     }
