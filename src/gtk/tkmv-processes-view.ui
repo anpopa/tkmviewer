@@ -4,25 +4,207 @@
   <template class="TkmvProcessesView" parent="GtkBox">
     <child>
       <object class="GtkNotebook">
-        <property name="visible">True</property>
-        <property name="can-focus">True</property>
         <property name="tab-pos">bottom</property>
         <property name="show-border">False</property>
         <property name="hexpand">True</property>
         <child>
-          <object class="GtkScrolledWindow" id="procinfo_scrolled_window">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
+          <object class="GtkBox">
+            <property name="margin-bottom">12</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <property name="homogeneous">True</property>
+            <property name="hexpand">True</property>
             <child>
-              <object class="GtkTreeView" id="procinfo_treeview">
-                <property name="reorderable">True</property>
-                <property name="search-column">1</property>
-                <property name="enable-grid-lines">both</property>
-                <property name="enable-tree-lines">True</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="procinfo_treeview_select"/>
+              <object class="GtkScrolledWindow" id="procinfo_scrolled_window">
+                <property name="vexpand">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="procinfo_treeview">
+                    <property name="reorderable">True</property>
+                    <property name="search-column">1</property>
+                    <property name="enable-grid-lines">both</property>
+                    <property name="enable-tree-lines">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="procinfo_treeview_select"/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFrame" id="procinfo_history_cpu_frame">
+                <property name="label-xalign">0.03</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">CPU History</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">20</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="hexpand">True</property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_cpu_entry1_label">
+                            <property name="label" translatable="yes"> Proc1 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#a5a51d1d2d2d"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_cpu_entry2_label">
+                            <property name="label" translatable="yes"> Proc2 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#1a1a5f5fb4b4"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_cpu_entry3_label">
+                            <property name="label" translatable="yes"> Proc3 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#2626a2a26969"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_cpu_entry4_label">
+                            <property name="label" translatable="yes"> Proc4 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#616135358383"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_cpu_entry5_label">
+                            <property name="label" translatable="yes"> Proc5 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#c6c646460000"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDrawingArea" id="procinfo_history_cpu_drawing_area">
+                        <property name="height-request">130</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFrame" id="procinfo_history_mem_frame">
+                <property name="label-xalign">0.03</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Memory History</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">20</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="hexpand">True</property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_mem_entry1_label">
+                            <property name="label" translatable="yes"> Proc1 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#a5a51d1d2d2d"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_mem_entry2_label">
+                            <property name="label" translatable="yes"> Proc2 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#1a1a5f5fb4b4"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_mem_entry3_label">
+                            <property name="label" translatable="yes"> Proc3 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#2626a2a26969"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_mem_entry4_label">
+                            <property name="label" translatable="yes"> Proc4 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#616135358383"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="procinfo_mem_entry5_label">
+                            <property name="label" translatable="yes"> Proc5 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#c6c646460000"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDrawingArea" id="procinfo_history_mem_drawing_area">
+                        <property name="height-request">130</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -30,25 +212,206 @@
         </child>
         <child type="tab">
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <property name="label" translatable="yes">Processes</property>
           </object>
         </child>
         <child>
-          <object class="GtkScrolledWindow" id="ctxinfo_scrolled_window">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
+          <object class="GtkBox">
+            <property name="margin-bottom">12</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">12</property>
+            <property name="homogeneous">True</property>
+            <property name="hexpand">True</property>
             <child>
-              <object class="GtkTreeView" id="ctxinfo_treeview">
-                <property name="reorderable">True</property>
-                <property name="search-column">1</property>
-                <property name="enable-grid-lines">both</property>
-                <property name="enable-tree-lines">True</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection" id="ctxinfo_treeview_select"/>
+              <object class="GtkScrolledWindow" id="ctxinfo_scrolled_window">
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTreeView" id="ctxinfo_treeview">
+                    <property name="reorderable">True</property>
+                    <property name="search-column">1</property>
+                    <property name="enable-grid-lines">both</property>
+                    <property name="enable-tree-lines">True</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="ctxinfo_treeview_select"/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFrame" id="ctxinfo_history_cpu_frame_ctx">
+                <property name="label-xalign">0.03</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">CPU History</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">20</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="hexpand">True</property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_cpu_entry5_label">
+                            <property name="label" translatable="yes"> Proc5 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#a5a51d1d2d2d"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_cpu_entry4_label">
+                            <property name="label" translatable="yes"> Proc4 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#1a1a5f5fb4b4"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_cpu_entry3_label">
+                            <property name="label" translatable="yes"> Proc3 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#2626a2a26969"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_cpu_entry2_label">
+                            <property name="label" translatable="yes"> Proc2 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#616135358383"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_cpu_entry1_label">
+                            <property name="label" translatable="yes"> Proc1 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#c6c646460000"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDrawingArea" id="ctxinfo_history_cpu_drawing_area">
+                        <property name="height-request">130</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFrame" id="ctxinfo_history_mem_frame">
+                <property name="label-xalign">0.03</property>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">Memory History</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="margin-start">5</property>
+                        <property name="margin-end">20</property>
+                        <property name="spacing">4</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="hexpand">True</property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_mem_entry5_label">
+                            <property name="label" translatable="yes"> Proc5 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#a5a51d1d2d2d"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_mem_entry4_label">
+                            <property name="label" translatable="yes"> Proc4 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#1a1a5f5fb4b4"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_mem_entry3_label">
+                            <property name="label" translatable="yes"> Proc3 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#2626a2a26969"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_mem_entry2_label">
+                            <property name="label" translatable="yes"> Proc2 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#616135358383"/>
+                            </attributes>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="ctxinfo_mem_entry1_label">
+                            <property name="label" translatable="yes"> Proc1 </property>
+                            <attributes>
+                              <attribute name="scale" value="0.5"/>
+                              <attribute name="foreground" value="#ffffffffffff"/>
+                              <attribute name="background" value="#c6c646460000"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkDrawingArea" id="ctxinfo_history_mem_drawing_area">
+                        <property name="height-request">130</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                      </object>
+                    </child>
+                  </object>
                 </child>
               </object>
             </child>
@@ -56,17 +419,16 @@
         </child>
         <child type="tab">
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <property name="label" translatable="yes">Contexts</property>
           </object>
         </child>
         <child>
           <object class="GtkScrolledWindow" id="procacct_scrolled_window">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
             <property name="hscrollbar_policy">automatic</property>
             <property name="vscrollbar_policy">automatic</property>
+            <property name="margin-bottom">12</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
             <child>
               <object class="GtkTreeView" id="procacct_treeview">
                 <property name="reorderable">True</property>
@@ -82,8 +444,6 @@
         </child>
         <child type="tab">
           <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
             <property name="label" translatable="yes">Accounting</property>
           </object>
         </child>

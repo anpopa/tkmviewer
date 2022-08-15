@@ -21,6 +21,15 @@
 #include "tkm-procacct-entry.h"
 #include "tkm-procinfo-entry.h"
 
+#include "tkm-cpustat-entry.h"
+#include "tkm-meminfo-entry.h"
+#include "tkm-settings.h"
+#include "tkmv-application.h"
+#include "tkmv-types.h"
+
+#include "libkplot/kplot.h"
+#include <math.h>
+
 enum
 {
   COLUMN_PROCINFO_INDEX,
@@ -115,6 +124,33 @@ static void procacct_list_store_append_entry (GtkListStore *list_store,
 static void reload_procacct_entries (TkmvProcessesView *view,
                                      TkmContext *context);
 
+static void procinfo_cpu_history_draw_function (GtkDrawingArea *area,
+                                                cairo_t *cr, int width,
+                                                int height, gpointer data);
+static void procinfo_mem_history_draw_function (GtkDrawingArea *area,
+                                                cairo_t *cr, int width,
+                                                int height, gpointer data);
+static void procinfo_cpu_history_draw_function_safe (GtkDrawingArea *area,
+                                                     cairo_t *cr, int width,
+                                                     int height,
+                                                     gpointer data);
+static void procinfo_mem_history_draw_function_safe (GtkDrawingArea *area,
+                                                     cairo_t *cr, int width,
+                                                     int height,
+                                                     gpointer data);
+static void ctxinfo_cpu_history_draw_function (GtkDrawingArea *area,
+                                               cairo_t *cr, int width,
+                                               int height, gpointer data);
+static void ctxinfo_mem_history_draw_function (GtkDrawingArea *area,
+                                               cairo_t *cr, int width,
+                                               int height, gpointer data);
+static void ctxinfo_cpu_history_draw_function_safe (GtkDrawingArea *area,
+                                                    cairo_t *cr, int width,
+                                                    int height, gpointer data);
+static void ctxinfo_mem_history_draw_function_safe (GtkDrawingArea *area,
+                                                    cairo_t *cr, int width,
+                                                    int height, gpointer data);
+
 struct _TkmvProcessesView
 {
   GtkBox parent_instance;
@@ -133,6 +169,34 @@ struct _TkmvProcessesView
   GtkScrolledWindow *procacct_scrolled_window;
   GtkTreeView *procacct_treeview;
   GtkTreeSelection *procacct_treeview_select;
+
+  GtkFrame *procinfo_history_cpu_frame;
+  GtkDrawingArea *procinfo_history_cpu_drawing_area;
+  GtkDrawingArea *procinfo_history_mem_drawing_area;
+  GtkDrawingArea *ctxinfo_history_cpu_drawing_area;
+  GtkDrawingArea *ctxinfo_history_mem_drawing_area;
+
+  GtkLabel *procinfo_cpu_entry1_label;
+  GtkLabel *procinfo_cpu_entry2_label;
+  GtkLabel *procinfo_cpu_entry3_label;
+  GtkLabel *procinfo_cpu_entry4_label;
+  GtkLabel *procinfo_cpu_entry5_label;
+  GtkLabel *procinfo_mem_entry1_label;
+  GtkLabel *procinfo_mem_entry2_label;
+  GtkLabel *procinfo_mem_entry3_label;
+  GtkLabel *procinfo_mem_entry4_label;
+  GtkLabel *procinfo_mem_entry5_label;
+
+  GtkLabel *ctxinfo_cpu_entry1_label;
+  GtkLabel *ctxinfo_cpu_entry2_label;
+  GtkLabel *ctxinfo_cpu_entry3_label;
+  GtkLabel *ctxinfo_cpu_entry4_label;
+  GtkLabel *ctxinfo_cpu_entry5_label;
+  GtkLabel *ctxinfo_mem_entry1_label;
+  GtkLabel *ctxinfo_mem_entry2_label;
+  GtkLabel *ctxinfo_mem_entry3_label;
+  GtkLabel *ctxinfo_mem_entry4_label;
+  GtkLabel *ctxinfo_mem_entry5_label;
 };
 
 G_DEFINE_TYPE (TkmvProcessesView, tkmv_processes_view, GTK_TYPE_BOX)
@@ -164,6 +228,59 @@ tkmv_processes_view_class_init (TkmvProcessesViewClass *klass)
                                         procacct_treeview);
   gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
                                         procacct_treeview_select);
+
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_history_cpu_frame);
+
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_history_cpu_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_history_mem_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_history_cpu_drawing_area);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_history_mem_drawing_area);
+
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_cpu_entry1_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_cpu_entry2_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_cpu_entry3_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_cpu_entry4_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_cpu_entry5_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_mem_entry1_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_mem_entry2_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_mem_entry3_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_mem_entry4_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        procinfo_mem_entry5_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_cpu_entry1_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_cpu_entry2_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_cpu_entry3_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_cpu_entry4_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_cpu_entry5_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_mem_entry1_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_mem_entry2_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_mem_entry3_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_mem_entry4_label);
+  gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
+                                        ctxinfo_mem_entry5_label);
 }
 
 static void
@@ -177,6 +294,19 @@ static void
 tkmv_processes_view_widgets_init (TkmvProcessesView *self)
 {
   create_tables (self);
+
+  gtk_drawing_area_set_draw_func (self->procinfo_history_cpu_drawing_area,
+                                  procinfo_cpu_history_draw_function_safe,
+                                  self, NULL);
+  gtk_drawing_area_set_draw_func (self->procinfo_history_mem_drawing_area,
+                                  procinfo_mem_history_draw_function_safe,
+                                  self, NULL);
+  gtk_drawing_area_set_draw_func (self->ctxinfo_history_cpu_drawing_area,
+                                  ctxinfo_cpu_history_draw_function_safe, self,
+                                  NULL);
+  gtk_drawing_area_set_draw_func (self->ctxinfo_history_mem_drawing_area,
+                                  ctxinfo_mem_history_draw_function_safe, self,
+                                  NULL);
 }
 
 static void
@@ -252,18 +382,172 @@ procinfo_add_columns (TkmvProcessesView *self)
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 }
 
+gboolean
+limit_selection_function (GtkTreeSelection *selection, GtkTreeModel *model,
+                          GtkTreePath *path, gboolean path_currently_selected,
+                          gpointer data)
+{
+  TKM_UNUSED (model);
+  TKM_UNUSED (path);
+  TKM_UNUSED (data);
+
+  if (!path_currently_selected)
+    {
+      if (gtk_tree_selection_count_selected_rows (selection) < 5)
+        {
+          return TRUE;
+        }
+      return FALSE;
+    }
+  return TRUE;
+}
+
+static void
+procinfo_selection_foreach_get_pid (GtkTreeModel *model, GtkTreePath *path,
+                                    GtkTreeIter *iter, gpointer data)
+{
+  GList **selected = (GList **)data;
+  guint pid = 0;
+
+  TKM_UNUSED (path);
+
+  gtk_tree_model_get (model, iter, COLUMN_PROCINFO_PID, &pid, -1);
+  *selected = g_list_append (*selected, GINT_TO_POINTER (pid));
+}
+
+static void
+procinfo_selection_foreach_get_name (GtkTreeModel *model, GtkTreePath *path,
+                                     GtkTreeIter *iter, gpointer data)
+{
+  GList **selected = (GList **)data;
+  gchar *name = NULL;
+
+  TKM_UNUSED (path);
+
+  gtk_tree_model_get (model, iter, COLUMN_PROCINFO_NAME, &name, -1);
+  *selected = g_list_append (*selected, name);
+}
+
 static void
 procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvProcessesView *self = (TkmvProcessesView *)data;
-  GtkTreeIter iter;
-  guint idx = 0;
+  GList *selected_pids = NULL;
+  GList *selected_names = NULL;
+  guint selected_count = 0;
 
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->procinfo_store), &iter,
-                        COLUMN_PROCINFO_INDEX, &idx, -1);
+  selected_count = gtk_tree_selection_count_selected_rows (
+      self->procinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (
+      selection, procinfo_selection_foreach_get_pid, &selected_pids);
+  gtk_tree_selection_selected_foreach (
+      selection, procinfo_selection_foreach_get_name, &selected_names);
 
-  g_message ("Proc info list selected index: %d", idx);
+  if (selected_count > 0)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%d]", (gchar *)g_list_nth (selected_names, 0)->data,
+          GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data));
+      gtk_label_set_text (self->procinfo_cpu_entry1_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry1_label),
+                              TRUE);
+      gtk_label_set_text (self->procinfo_mem_entry1_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry1_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry1_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry1_label),
+                              FALSE);
+    }
+
+  if (selected_count > 1)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%d]", (gchar *)g_list_nth (selected_names, 1)->data,
+          GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data));
+      gtk_label_set_text (self->procinfo_cpu_entry2_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry2_label),
+                              TRUE);
+      gtk_label_set_text (self->procinfo_mem_entry2_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry2_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry2_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry2_label),
+                              FALSE);
+    }
+
+  if (selected_count > 2)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%d]", (gchar *)g_list_nth (selected_names, 2)->data,
+          GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data));
+      gtk_label_set_text (self->procinfo_cpu_entry3_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry3_label),
+                              TRUE);
+      gtk_label_set_text (self->procinfo_mem_entry3_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry3_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry3_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry3_label),
+                              FALSE);
+    }
+
+  if (selected_count > 3)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%d]", (gchar *)g_list_nth (selected_names, 3)->data,
+          GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data));
+      gtk_label_set_text (self->procinfo_cpu_entry4_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry4_label),
+                              TRUE);
+      gtk_label_set_text (self->procinfo_mem_entry4_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry4_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry4_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry4_label),
+                              FALSE);
+    }
+
+  if (selected_count > 4)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%d]", (gchar *)g_list_nth (selected_names, 4)->data,
+          GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data));
+      gtk_label_set_text (self->procinfo_cpu_entry5_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry5_label),
+                              TRUE);
+      gtk_label_set_text (self->procinfo_mem_entry5_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry5_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry5_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->procinfo_mem_entry5_label),
+                              FALSE);
+    }
+
+  gtk_widget_queue_draw (GTK_WIDGET (self->procinfo_history_cpu_drawing_area));
+  gtk_widget_queue_draw (GTK_WIDGET (self->procinfo_history_mem_drawing_area));
+
+  g_list_free (selected_pids);
+  g_list_free_full (selected_names, g_free);
 }
 
 static void
@@ -324,17 +608,150 @@ ctxinfo_add_columns (TkmvProcessesView *self)
 }
 
 static void
+ctxinfo_selection_foreach_get_id (GtkTreeModel *model, GtkTreePath *path,
+                                  GtkTreeIter *iter, gpointer data)
+{
+  GList **selected = (GList **)data;
+  gchar *id = NULL;
+
+  TKM_UNUSED (path);
+
+  gtk_tree_model_get (model, iter, COLUMN_CTXINFO_ID, &id, -1);
+  *selected = g_list_append (*selected, id);
+}
+
+static void
+ctxinfo_selection_foreach_get_name (GtkTreeModel *model, GtkTreePath *path,
+                                    GtkTreeIter *iter, gpointer data)
+{
+  GList **selected = (GList **)data;
+  gchar *name = NULL;
+
+  TKM_UNUSED (path);
+
+  gtk_tree_model_get (model, iter, COLUMN_CTXINFO_NAME, &name, -1);
+  *selected = g_list_append (*selected, name);
+}
+
+static void
 ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvProcessesView *self = (TkmvProcessesView *)data;
-  GtkTreeIter iter;
-  guint idx = 0;
+  GList *selected_ids = NULL;
+  GList *selected_names = NULL;
+  guint selected_count = 0;
 
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->ctxinfo_store), &iter,
-                        COLUMN_CTXINFO_INDEX, &idx, -1);
+  selected_count
+      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (
+      selection, ctxinfo_selection_foreach_get_id, &selected_ids);
+  gtk_tree_selection_selected_foreach (
+      selection, ctxinfo_selection_foreach_get_name, &selected_names);
 
-  g_message ("Context info list selected index: %d", idx);
+  if (selected_count > 0)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%s]", (gchar *)g_list_nth (selected_names, 0)->data,
+          (gchar *)g_list_nth (selected_ids, 0)->data);
+      gtk_label_set_text (self->ctxinfo_cpu_entry1_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry1_label),
+                              TRUE);
+      gtk_label_set_text (self->ctxinfo_mem_entry1_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry1_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry1_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry1_label),
+                              FALSE);
+    }
+
+  if (selected_count > 1)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%s]", (gchar *)g_list_nth (selected_names, 1)->data,
+          (gchar *)g_list_nth (selected_ids, 1)->data);
+      gtk_label_set_text (self->ctxinfo_cpu_entry2_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry2_label),
+                              TRUE);
+      gtk_label_set_text (self->ctxinfo_mem_entry2_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry2_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry2_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry2_label),
+                              FALSE);
+    }
+
+  if (selected_count > 2)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%s]", (gchar *)g_list_nth (selected_names, 2)->data,
+          (gchar *)g_list_nth (selected_ids, 2)->data);
+      gtk_label_set_text (self->ctxinfo_cpu_entry3_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry3_label),
+                              TRUE);
+      gtk_label_set_text (self->ctxinfo_mem_entry3_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry3_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry3_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry3_label),
+                              FALSE);
+    }
+
+  if (selected_count > 3)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%s]", (gchar *)g_list_nth (selected_names, 3)->data,
+          (gchar *)g_list_nth (selected_ids, 3)->data);
+      gtk_label_set_text (self->ctxinfo_cpu_entry4_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry4_label),
+                              TRUE);
+      gtk_label_set_text (self->ctxinfo_mem_entry4_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry4_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry4_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry4_label),
+                              FALSE);
+    }
+
+  if (selected_count > 4)
+    {
+      g_autofree gchar *name = g_strdup_printf (
+          "%s[%s]", (gchar *)g_list_nth (selected_names, 4)->data,
+          (gchar *)g_list_nth (selected_ids, 4)->data);
+      gtk_label_set_text (self->ctxinfo_cpu_entry5_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry5_label),
+                              TRUE);
+      gtk_label_set_text (self->ctxinfo_mem_entry5_label, name);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry5_label),
+                              TRUE);
+    }
+  else
+    {
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry5_label),
+                              FALSE);
+      gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_mem_entry5_label),
+                              FALSE);
+    }
+
+  gtk_widget_queue_draw (GTK_WIDGET (self->ctxinfo_history_cpu_drawing_area));
+  gtk_widget_queue_draw (GTK_WIDGET (self->ctxinfo_history_mem_drawing_area));
+
+  g_list_free_full (selected_names, g_free);
 }
 
 static void
@@ -684,7 +1101,9 @@ create_tables (TkmvProcessesView *self)
   self->procinfo_treeview_select
       = gtk_tree_view_get_selection (self->procinfo_treeview);
   gtk_tree_selection_set_mode (self->procinfo_treeview_select,
-                               GTK_SELECTION_SINGLE);
+                               GTK_SELECTION_MULTIPLE);
+  gtk_tree_selection_set_select_function (
+      self->procinfo_treeview_select, limit_selection_function, NULL, NULL);
   g_signal_connect (G_OBJECT (self->procinfo_treeview_select), "changed",
                     G_CALLBACK (procinfo_selection_changed), self);
 
@@ -700,7 +1119,9 @@ create_tables (TkmvProcessesView *self)
   self->ctxinfo_treeview_select
       = gtk_tree_view_get_selection (self->ctxinfo_treeview);
   gtk_tree_selection_set_mode (self->ctxinfo_treeview_select,
-                               GTK_SELECTION_SINGLE);
+                               GTK_SELECTION_MULTIPLE);
+  gtk_tree_selection_set_select_function (
+      self->ctxinfo_treeview_select, limit_selection_function, NULL, NULL);
   g_signal_connect (G_OBJECT (self->ctxinfo_treeview_select), "changed",
                     G_CALLBACK (ctxinfo_selection_changed), self);
 
@@ -765,6 +1186,7 @@ reload_procinfo_entries (TkmvProcessesView *view, TkmContext *context)
 
   /* get first entry */
   TkmProcInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_procinfo_entry_set_index (firstEntry, 0);
   procinfo_list_store_append_entry (view->procinfo_store, firstEntry, &iter);
 
@@ -824,6 +1246,7 @@ reload_ctxinfo_entries (TkmvProcessesView *view, TkmContext *context)
 
   /* get first entry */
   TkmCtxInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_ctxinfo_entry_set_index (firstEntry, 0);
   ctxinfo_list_store_append_entry (view->ctxinfo_store, firstEntry, &iter);
 
@@ -941,6 +1364,7 @@ reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
 
   /* get first entry */
   TkmProcAcctEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_procacct_entry_set_index (firstEntry, 0);
   procacct_list_store_append_entry (view->procacct_store, firstEntry, &iter);
 
@@ -969,6 +1393,1237 @@ reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
 
   gtk_tree_view_set_model (GTK_TREE_VIEW (view->procacct_treeview),
                            GTK_TREE_MODEL (view->procacct_store));
+}
+
+static void
+timestamp_format_procview (double val, char *buf, size_t sz)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  g_assert (buf);
+
+  switch (tkmv_settings_get_time_source (settings))
+    {
+    case DATA_TIME_SOURCE_SYSTEM:
+    case DATA_TIME_SOURCE_RECEIVE:
+      {
+        g_autoptr (GDateTime) dtime
+            = g_date_time_new_from_unix_utc ((guint)val);
+        g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+        snprintf (buf, sz, "%s", text);
+        break;
+      }
+
+    case DATA_TIME_SOURCE_MONOTONIC:
+      {
+        g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
+        snprintf (buf, sz, "%s", text);
+        break;
+      }
+    }
+}
+
+static void
+memory_format_procview (double val, char *buf, size_t sz)
+{
+  g_assert (buf);
+  snprintf (buf, sz, "%u MB", (guint)val / 1024);
+}
+
+static void
+percent_format_procview (double val, char *buf, size_t sz)
+{
+  g_assert (buf);
+  snprintf (buf, sz, "%u %%", (guint)val);
+}
+
+static void
+procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
+                                    int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmvProcessesView *self = (TkmvProcessesView *)data;
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *proc_info_data = tkm_context_get_procinfo_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL;
+  guint points1_count = 0;
+  struct kpair *points2 = NULL;
+  guint points2_count = 0;
+  struct kpair *points3 = NULL;
+  guint points3_count = 0;
+  struct kpair *points4 = NULL;
+  guint points4_count = 0;
+  struct kpair *points5 = NULL;
+  guint points5_count = 0;
+
+  struct kplotcfg plotcfg;
+  struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
+  struct kdata *d1 = NULL;
+  struct kdata *d2 = NULL;
+  struct kdata *d3 = NULL;
+  struct kdata *d4 = NULL;
+  struct kdata *d5 = NULL;
+  struct kplot *p = NULL;
+
+  guint selected_count = 0;
+  GList *selected_pids = NULL;
+
+  TKMV_UNUSED (area);
+
+  if (sessions != NULL)
+    {
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+    }
+
+  selected_count = gtk_tree_selection_count_selected_rows (
+      self->procinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (self->procinfo_treeview_select,
+                                       procinfo_selection_foreach_get_pid,
+                                       &selected_pids);
+
+  if (proc_info_data != NULL)
+    {
+      if (proc_info_data->len > 0)
+        {
+          if (selected_count > 0)
+            {
+              points1 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data))
+                    {
+                      points1[points1_count].x = timestamp;
+                      points1[points1_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_CPU_PERCENT);
+                      points1_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 1)
+            {
+              points2 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data))
+                    {
+                      points2[points2_count].x = timestamp;
+                      points2[points2_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_CPU_PERCENT);
+                      points2_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 2)
+            {
+              points3 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data))
+                    {
+                      points3[points3_count].x = timestamp;
+                      points3[points3_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_CPU_PERCENT);
+                      points3_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 3)
+            {
+              points4 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data))
+                    {
+                      points4[points4_count].x = timestamp;
+                      points4[points4_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_CPU_PERCENT);
+                      points4_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 4)
+            {
+              points5 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data))
+                    {
+                      points5[points5_count].x = timestamp;
+                      points5[points5_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_CPU_PERCENT);
+                      points5_count += 1;
+                    }
+                }
+            }
+        }
+    }
+
+  g_list_free (selected_pids);
+
+  if (points1 != NULL)
+    {
+      d1 = kdata_array_alloc (points1, points1_count);
+    }
+  if (points2 != NULL)
+    {
+      d2 = kdata_array_alloc (points2, points2_count);
+    }
+  if (points3 != NULL)
+    {
+      d3 = kdata_array_alloc (points3, points3_count);
+    }
+  if (points4 != NULL)
+    {
+      d4 = kdata_array_alloc (points4, points4_count);
+    }
+  if (points5 != NULL)
+    {
+      d5 = kdata_array_alloc (points5, points5_count);
+    }
+
+  kplotcfg_defaults (&plotcfg);
+  plotcfg.grid = GRID_ALL;
+  plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
+  plotcfg.extrema_ymin = 0;
+  if (active_session != NULL)
+    {
+      plotcfg.extrema_ymax
+          = (100 * tkm_session_entry_get_device_cpus (active_session));
+    }
+  else
+    {
+      plotcfg.extrema_ymax = 100;
+    }
+  plotcfg.xticlabelfmt = timestamp_format_procview;
+  plotcfg.yticlabelfmt = percent_format_procview;
+
+  p = kplot_alloc (&plotcfg);
+
+  kdatacfg_defaults (&d1_cfg);
+  d1_cfg.line.sz = 1.0;
+  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d1_cfg.line.clr.rgba[0] = 1.0;
+  d1_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
+  if (d1 != NULL)
+    {
+      kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+      kdata_destroy (d1);
+    }
+  if (d2 != NULL)
+    {
+      kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+      kdata_destroy (d2);
+    }
+  if (d3 != NULL)
+    {
+      kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+      kdata_destroy (d3);
+    }
+  if (d4 != NULL)
+    {
+      kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+      kdata_destroy (d4);
+    }
+  if (d5 != NULL)
+    {
+      kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+      kdata_destroy (d5);
+    }
+
+  kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
+
+  kplot_free (p);
+}
+
+static void
+procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
+                                    int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmvProcessesView *self = (TkmvProcessesView *)data;
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *proc_info_data = tkm_context_get_procinfo_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL;
+  guint points1_count = 0;
+  struct kpair *points2 = NULL;
+  guint points2_count = 0;
+  struct kpair *points3 = NULL;
+  guint points3_count = 0;
+  struct kpair *points4 = NULL;
+  guint points4_count = 0;
+  struct kpair *points5 = NULL;
+  guint points5_count = 0;
+
+  struct kplotcfg plotcfg;
+  struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
+  struct kdata *d1 = NULL;
+  struct kdata *d2 = NULL;
+  struct kdata *d3 = NULL;
+  struct kdata *d4 = NULL;
+  struct kdata *d5 = NULL;
+  struct kplot *p = NULL;
+
+  guint selected_count = 0;
+  GList *selected_pids = NULL;
+
+  TKMV_UNUSED (area);
+
+  if (sessions != NULL)
+    {
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+    }
+
+  selected_count = gtk_tree_selection_count_selected_rows (
+      self->procinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (self->procinfo_treeview_select,
+                                       procinfo_selection_foreach_get_pid,
+                                       &selected_pids);
+
+  if (proc_info_data != NULL)
+    {
+      if (proc_info_data->len > 0)
+        {
+          if (selected_count > 0)
+            {
+              points1 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data))
+                    {
+                      points1[points1_count].x = timestamp;
+                      points1[points1_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_VMRSS);
+                      points1_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 1)
+            {
+              points2 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data))
+                    {
+                      points2[points2_count].x = timestamp;
+                      points2[points2_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_VMRSS);
+                      points2_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 2)
+            {
+              points3 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data))
+                    {
+                      points3[points3_count].x = timestamp;
+                      points3[points3_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_VMRSS);
+                      points3_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 3)
+            {
+              points4 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data))
+                    {
+                      points4[points4_count].x = timestamp;
+                      points4[points4_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_VMRSS);
+                      points4_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 4)
+            {
+              points5 = calloc (proc_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < proc_info_data->len; i++)
+                {
+                  TkmProcInfoEntry *entry
+                      = g_ptr_array_index (proc_info_data, i);
+                  gulong timestamp = tkm_procinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
+                      == GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data))
+                    {
+                      points5[points5_count].x = timestamp;
+                      points5[points5_count].y = tkm_procinfo_entry_get_data (
+                          entry, PINFO_DATA_VMRSS);
+                      points5_count += 1;
+                    }
+                }
+            }
+        }
+    }
+
+  g_list_free (selected_pids);
+
+  if (points1 != NULL)
+    {
+      d1 = kdata_array_alloc (points1, points1_count);
+    }
+  if (points2 != NULL)
+    {
+      d2 = kdata_array_alloc (points2, points2_count);
+    }
+  if (points3 != NULL)
+    {
+      d3 = kdata_array_alloc (points3, points3_count);
+    }
+  if (points4 != NULL)
+    {
+      d4 = kdata_array_alloc (points4, points4_count);
+    }
+  if (points5 != NULL)
+    {
+      d5 = kdata_array_alloc (points5, points5_count);
+    }
+
+  kplotcfg_defaults (&plotcfg);
+  plotcfg.grid = GRID_ALL;
+  plotcfg.extrema = EXTREMA_YMIN;
+  plotcfg.extrema_ymin = 0;
+  plotcfg.xticlabelfmt = timestamp_format_procview;
+  plotcfg.yticlabelfmt = memory_format_procview;
+
+  p = kplot_alloc (&plotcfg);
+
+  kdatacfg_defaults (&d1_cfg);
+  d1_cfg.line.sz = 1.0;
+  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d1_cfg.line.clr.rgba[0] = 1.0;
+  d1_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
+  if (d1 != NULL)
+    {
+      kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+      kdata_destroy (d1);
+    }
+  if (d2 != NULL)
+    {
+      kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+      kdata_destroy (d2);
+    }
+  if (d3 != NULL)
+    {
+      kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+      kdata_destroy (d3);
+    }
+  if (d4 != NULL)
+    {
+      kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+      kdata_destroy (d4);
+    }
+  if (d5 != NULL)
+    {
+      kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+      kdata_destroy (d5);
+    }
+
+  kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
+
+  kplot_free (p);
+}
+
+static void
+ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
+                                   int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmvProcessesView *self = (TkmvProcessesView *)data;
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *ctx_info_data = tkm_context_get_ctxinfo_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL;
+  guint points1_count = 0;
+  struct kpair *points2 = NULL;
+  guint points2_count = 0;
+  struct kpair *points3 = NULL;
+  guint points3_count = 0;
+  struct kpair *points4 = NULL;
+  guint points4_count = 0;
+  struct kpair *points5 = NULL;
+  guint points5_count = 0;
+
+  struct kplotcfg plotcfg;
+  struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
+  struct kdata *d1 = NULL;
+  struct kdata *d2 = NULL;
+  struct kdata *d3 = NULL;
+  struct kdata *d4 = NULL;
+  struct kdata *d5 = NULL;
+  struct kplot *p = NULL;
+
+  guint selected_count = 0;
+  GList *selected_ids = NULL;
+
+  TKMV_UNUSED (area);
+
+  if (sessions != NULL)
+    {
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+    }
+
+  selected_count
+      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (self->ctxinfo_treeview_select,
+                                       ctxinfo_selection_foreach_get_id,
+                                       &selected_ids);
+
+  if (ctx_info_data != NULL)
+    {
+      if (ctx_info_data->len > 0)
+        {
+          if (selected_count > 0)
+            {
+              points1 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 0)->data)
+                      == 0)
+                    {
+                      points1[points1_count].x = timestamp;
+                      points1[points1_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_CPU_PERCENT);
+                      points1_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 1)
+            {
+              points2 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 1)->data)
+                      == 0)
+                    {
+                      points2[points2_count].x = timestamp;
+                      points2[points2_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_CPU_PERCENT);
+                      points2_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 2)
+            {
+              points3 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 2)->data)
+                      == 0)
+                    {
+                      points3[points3_count].x = timestamp;
+                      points3[points3_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_CPU_PERCENT);
+                      points3_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 3)
+            {
+              points4 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 3)->data)
+                      == 0)
+                    {
+                      points4[points4_count].x = timestamp;
+                      points4[points4_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_CPU_PERCENT);
+                      points4_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 4)
+            {
+              points5 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 4)->data)
+                      == 0)
+                    {
+                      points5[points5_count].x = timestamp;
+                      points5[points5_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_CPU_PERCENT);
+                      points5_count += 1;
+                    }
+                }
+            }
+        }
+    }
+
+  g_list_free_full (selected_ids, g_free);
+
+  if (points1 != NULL)
+    {
+      d1 = kdata_array_alloc (points1, points1_count);
+    }
+  if (points2 != NULL)
+    {
+      d2 = kdata_array_alloc (points2, points2_count);
+    }
+  if (points3 != NULL)
+    {
+      d3 = kdata_array_alloc (points3, points3_count);
+    }
+  if (points4 != NULL)
+    {
+      d4 = kdata_array_alloc (points4, points4_count);
+    }
+  if (points5 != NULL)
+    {
+      d5 = kdata_array_alloc (points5, points5_count);
+    }
+
+  kplotcfg_defaults (&plotcfg);
+  plotcfg.grid = GRID_ALL;
+  plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
+  plotcfg.extrema_ymin = 0;
+  if (active_session != NULL)
+    {
+      plotcfg.extrema_ymax
+          = (100 * tkm_session_entry_get_device_cpus (active_session));
+    }
+  else
+    {
+      plotcfg.extrema_ymax = 100;
+    }
+  plotcfg.xticlabelfmt = timestamp_format_procview;
+  plotcfg.yticlabelfmt = percent_format_procview;
+
+  p = kplot_alloc (&plotcfg);
+
+  kdatacfg_defaults (&d1_cfg);
+  d1_cfg.line.sz = 1.0;
+  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d1_cfg.line.clr.rgba[0] = 1.0;
+  d1_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
+  if (d1 != NULL)
+    {
+      kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+      kdata_destroy (d1);
+    }
+  if (d2 != NULL)
+    {
+      kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+      kdata_destroy (d2);
+    }
+  if (d3 != NULL)
+    {
+      kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+      kdata_destroy (d3);
+    }
+  if (d4 != NULL)
+    {
+      kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+      kdata_destroy (d4);
+    }
+  if (d5 != NULL)
+    {
+      kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+      kdata_destroy (d5);
+    }
+
+  kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
+
+  kplot_free (p);
+}
+
+static void
+ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
+                                   int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+  TkmvProcessesView *self = (TkmvProcessesView *)data;
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  GPtrArray *ctx_info_data = tkm_context_get_ctxinfo_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  struct kpair *points1 = NULL;
+  guint points1_count = 0;
+  struct kpair *points2 = NULL;
+  guint points2_count = 0;
+  struct kpair *points3 = NULL;
+  guint points3_count = 0;
+  struct kpair *points4 = NULL;
+  guint points4_count = 0;
+  struct kpair *points5 = NULL;
+  guint points5_count = 0;
+
+  struct kplotcfg plotcfg;
+  struct kdatacfg d1_cfg;
+  struct kdatacfg d2_cfg;
+  struct kdatacfg d3_cfg;
+  struct kdatacfg d4_cfg;
+  struct kdatacfg d5_cfg;
+  struct kdata *d1 = NULL;
+  struct kdata *d2 = NULL;
+  struct kdata *d3 = NULL;
+  struct kdata *d4 = NULL;
+  struct kdata *d5 = NULL;
+  struct kplot *p = NULL;
+
+  guint selected_count = 0;
+  GList *selected_ids = NULL;
+
+  TKMV_UNUSED (area);
+
+  if (sessions != NULL)
+    {
+      for (guint i = 0; i < sessions->len; i++)
+        {
+          if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+            {
+              active_session = g_ptr_array_index (sessions, i);
+            }
+        }
+
+      g_assert (active_session);
+      g_assert (tkm_session_entry_get_device_cpus (active_session) > 0);
+    }
+
+  selected_count
+      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+  gtk_tree_selection_selected_foreach (self->ctxinfo_treeview_select,
+                                       ctxinfo_selection_foreach_get_id,
+                                       &selected_ids);
+
+  if (ctx_info_data != NULL)
+    {
+      if (ctx_info_data->len > 0)
+        {
+          if (selected_count > 0)
+            {
+              points1 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 0)->data)
+                      == 0)
+                    {
+                      points1[points1_count].x = timestamp;
+                      points1[points1_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_VMRSS);
+                      points1_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 1)
+            {
+              points2 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 1)->data)
+                      == 0)
+                    {
+                      points2[points2_count].x = timestamp;
+                      points2[points2_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_VMRSS);
+                      points2_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 2)
+            {
+              points3 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 2)->data)
+                      == 0)
+                    {
+                      points3[points3_count].x = timestamp;
+                      points3[points3_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_VMRSS);
+                      points3_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 3)
+            {
+              points4 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 3)->data)
+                      == 0)
+                    {
+                      points4[points4_count].x = timestamp;
+                      points4[points4_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_VMRSS);
+                      points4_count += 1;
+                    }
+                }
+            }
+
+          if (selected_count > 4)
+            {
+              points5 = calloc (ctx_info_data->len, sizeof (struct kpair));
+              for (guint i = 0; i < ctx_info_data->len; i++)
+                {
+                  TkmCtxInfoEntry *entry
+                      = g_ptr_array_index (ctx_info_data, i);
+                  gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
+                      entry, tkmv_settings_get_time_source (settings));
+
+                  if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
+                                 (gchar *)g_list_nth (selected_ids, 4)->data)
+                      == 0)
+                    {
+                      points5[points5_count].x = timestamp;
+                      points5[points5_count].y = tkm_ctxinfo_entry_get_data (
+                          entry, CTXINFO_DATA_VMRSS);
+                      points5_count += 1;
+                    }
+                }
+            }
+        }
+    }
+
+  g_list_free_full (selected_ids, g_free);
+
+  if (points1 != NULL)
+    {
+      d1 = kdata_array_alloc (points1, points1_count);
+    }
+  if (points2 != NULL)
+    {
+      d2 = kdata_array_alloc (points2, points2_count);
+    }
+  if (points3 != NULL)
+    {
+      d3 = kdata_array_alloc (points3, points3_count);
+    }
+  if (points4 != NULL)
+    {
+      d4 = kdata_array_alloc (points4, points4_count);
+    }
+  if (points5 != NULL)
+    {
+      d5 = kdata_array_alloc (points5, points5_count);
+    }
+
+  kplotcfg_defaults (&plotcfg);
+  plotcfg.grid = GRID_ALL;
+  plotcfg.extrema = EXTREMA_YMIN;
+  plotcfg.extrema_ymin = 0;
+  plotcfg.xticlabelfmt = timestamp_format_procview;
+  plotcfg.yticlabelfmt = memory_format_procview;
+
+  p = kplot_alloc (&plotcfg);
+
+  kdatacfg_defaults (&d1_cfg);
+  d1_cfg.line.sz = 1.0;
+  d1_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d1_cfg.line.clr.rgba[0] = 1.0;
+  d1_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d2_cfg);
+  d2_cfg.line.sz = 1.0;
+  d2_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d2_cfg.line.clr.rgba[2] = 1.0;
+  d2_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d3_cfg);
+  d3_cfg.line.sz = 1.0;
+  d3_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d3_cfg.line.clr.rgba[1] = 1.0;
+  d3_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d4_cfg);
+  d4_cfg.line.sz = 1.0;
+  d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d4_cfg.line.clr.rgba[0] = 0.4;
+  d4_cfg.line.clr.rgba[1] = 0.0;
+  d4_cfg.line.clr.rgba[2] = 0.6;
+  d4_cfg.line.clr.rgba[3] = 1.0;
+
+  kdatacfg_defaults (&d5_cfg);
+  d5_cfg.line.sz = 1.0;
+  d5_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+  d5_cfg.line.clr.rgba[0] = 0.9;
+  d5_cfg.line.clr.rgba[1] = 0.4;
+  d5_cfg.line.clr.rgba[2] = 0.3;
+  d5_cfg.line.clr.rgba[3] = 1.0;
+
+  if (d1 != NULL)
+    {
+      kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
+      kdata_destroy (d1);
+    }
+  if (d2 != NULL)
+    {
+      kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
+      kdata_destroy (d2);
+    }
+  if (d3 != NULL)
+    {
+      kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
+      kdata_destroy (d3);
+    }
+  if (d4 != NULL)
+    {
+      kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+      kdata_destroy (d4);
+    }
+  if (d5 != NULL)
+    {
+      kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
+      kdata_destroy (d5);
+    }
+
+  kplot_draw (p, width, height, cr);
+
+  free (points1);
+  free (points2);
+  free (points3);
+  free (points4);
+  free (points5);
+
+  kplot_free (p);
+}
+
+static void
+procinfo_cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                         int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      procinfo_cpu_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+procinfo_mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                         int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      procinfo_mem_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+ctxinfo_cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                        int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      ctxinfo_cpu_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
+}
+
+static void
+ctxinfo_mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
+                                        int width, int height, gpointer data)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+
+  if (tkm_context_data_try_lock (context))
+    {
+      ctxinfo_mem_history_draw_function (area, cr, width, height, data);
+      tkm_context_data_unlock (context);
+    }
 }
 
 void

@@ -241,7 +241,11 @@ ctxinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
                   entry, DATA_TIME_SOURCE_RECEIVE,
                   (guint)g_ascii_strtoull (argv[i], NULL, 10));
             else if (g_strcmp0 (colname[i], "ContextId") == 0)
-              tkm_ctxinfo_entry_set_id (entry, argv[i]);
+              {
+                g_autofree gchar *id = g_strdup_printf (
+                    "%lx", g_ascii_strtoull (argv[i], NULL, 10));
+                tkm_ctxinfo_entry_set_id (entry, id);
+              }
             else if (g_strcmp0 (colname[i], "ContextName") == 0)
               tkm_ctxinfo_entry_set_name (entry, argv[i]);
             else if (g_strcmp0 (colname[i], "TotalCpuTime") == 0)
