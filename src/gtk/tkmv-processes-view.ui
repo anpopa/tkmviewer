@@ -36,6 +36,8 @@
             </child>
             <child>
               <object class="GtkFrame" id="procinfo_history_cpu_frame">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">
@@ -123,6 +125,8 @@
             </child>
             <child>
               <object class="GtkFrame" id="procinfo_history_mem_frame">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">
@@ -243,6 +247,8 @@
             </child>
             <child>
               <object class="GtkFrame" id="ctxinfo_history_cpu_frame_ctx">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">
@@ -330,6 +336,8 @@
             </child>
             <child>
               <object class="GtkFrame" id="ctxinfo_history_mem_frame">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">

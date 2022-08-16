@@ -1717,7 +1717,7 @@ static void
 memory_format_procview (double val, char *buf, size_t sz)
 {
   g_assert (buf);
-  snprintf (buf, sz, "%u MB", (guint)val / 1024);
+  snprintf (buf, sz, "%u KB", (guint)val);
 }
 
 static void
