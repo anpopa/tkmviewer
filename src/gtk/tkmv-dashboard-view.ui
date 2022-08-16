@@ -164,7 +164,7 @@
                             <property name="can-focus">False</property>
                             <property name="hexpand">True</property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                             </attributes>
                           </object>
                         </child>
@@ -174,7 +174,7 @@
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes"> Fork </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#a5a51d1d2d2d"/>
                             </attributes>
@@ -186,7 +186,7 @@
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes"> Exec </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#1a1a5f5fb4b4"/>
                             </attributes>
@@ -198,7 +198,7 @@
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes"> Exit </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#2626a2a26969"/>
                             </attributes>
@@ -210,7 +210,7 @@
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes"> UID </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#616135358383"/>
                             </attributes>
@@ -222,7 +222,7 @@
                             <property name="can-focus">False</property>
                             <property name="label" translatable="yes"> GID </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#c6c646460000"/>
                             </attributes>
@@ -354,7 +354,7 @@
                         <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                         </attributes>
                       </object>
                     </child>
@@ -364,7 +364,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> All </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#a5a51d1d2d2d"/>
                         </attributes>
@@ -376,7 +376,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> User </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#1a1a5f5fb4b4"/>
                         </attributes>
@@ -388,7 +388,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> System </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#2626a2a26969"/>
                         </attributes>
@@ -439,7 +439,7 @@
                         <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                         </attributes>
                       </object>
                     </child>
@@ -449,7 +449,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> MemTotal </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#a5a51d1d2d2d"/>
                         </attributes>
@@ -461,7 +461,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> MemFree </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#1a1a5f5fb4b4"/>
                         </attributes>
@@ -473,7 +473,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> MemAvail </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#2626a2a26969"/>
                         </attributes>
@@ -485,7 +485,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> SwapTotal </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#616135358383"/>
                         </attributes>
@@ -497,7 +497,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> SwapFree </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.8"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#c6c646460000"/>
                         </attributes>
@@ -548,7 +548,7 @@
                         <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                         </attributes>
                       </object>
                     </child>
@@ -558,7 +558,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> CPUSome10 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#a5a51d1d2d2d"/>
                         </attributes>
@@ -570,7 +570,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> CPUSome60 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#1a1a5f5fb4b4"/>
                         </attributes>
@@ -582,7 +582,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> MEMSome10 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#2626a2a26969"/>
                         </attributes>
@@ -594,7 +594,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> MEMSome60 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#616135358383"/>
                         </attributes>
@@ -606,7 +606,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> IOSome10 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#c6c646460000"/>
                         </attributes>
@@ -618,7 +618,7 @@
                         <property name="can-focus">False</property>
                         <property name="label" translatable="yes"> IOSome60 </property>
                         <attributes>
-                          <attribute name="scale" value="0.5"/>
+                          <attribute name="scale" value="0.7"/>
                           <attribute name="foreground" value="#ffffffffffff"/>
                           <attribute name="background" value="#e5e5a5a50a0a"/>
                         </attributes>

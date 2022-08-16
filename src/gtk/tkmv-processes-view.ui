@@ -56,7 +56,7 @@
                           <object class="GtkLabel">
                             <property name="hexpand">True</property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                             </attributes>
                           </object>
                         </child>
@@ -64,7 +64,7 @@
                           <object class="GtkLabel" id="procinfo_cpu_entry1_label">
                             <property name="label" translatable="yes"> Proc1 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#a5a51d1d2d2d"/>
                             </attributes>
@@ -74,7 +74,7 @@
                           <object class="GtkLabel" id="procinfo_cpu_entry2_label">
                             <property name="label" translatable="yes"> Proc2 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#1a1a5f5fb4b4"/>
                             </attributes>
@@ -84,7 +84,7 @@
                           <object class="GtkLabel" id="procinfo_cpu_entry3_label">
                             <property name="label" translatable="yes"> Proc3 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#2626a2a26969"/>
                             </attributes>
@@ -94,7 +94,7 @@
                           <object class="GtkLabel" id="procinfo_cpu_entry4_label">
                             <property name="label" translatable="yes"> Proc4 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#616135358383"/>
                             </attributes>
@@ -104,7 +104,7 @@
                           <object class="GtkLabel" id="procinfo_cpu_entry5_label">
                             <property name="label" translatable="yes"> Proc5 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#c6c646460000"/>
                             </attributes>
@@ -145,7 +145,7 @@
                           <object class="GtkLabel">
                             <property name="hexpand">True</property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                             </attributes>
                           </object>
                         </child>
@@ -153,7 +153,7 @@
                           <object class="GtkLabel" id="procinfo_mem_entry1_label">
                             <property name="label" translatable="yes"> Proc1 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#a5a51d1d2d2d"/>
                             </attributes>
@@ -163,7 +163,7 @@
                           <object class="GtkLabel" id="procinfo_mem_entry2_label">
                             <property name="label" translatable="yes"> Proc2 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#1a1a5f5fb4b4"/>
                             </attributes>
@@ -173,7 +173,7 @@
                           <object class="GtkLabel" id="procinfo_mem_entry3_label">
                             <property name="label" translatable="yes"> Proc3 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#2626a2a26969"/>
                             </attributes>
@@ -183,7 +183,7 @@
                           <object class="GtkLabel" id="procinfo_mem_entry4_label">
                             <property name="label" translatable="yes"> Proc4 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#616135358383"/>
                             </attributes>
@@ -193,7 +193,7 @@
                           <object class="GtkLabel" id="procinfo_mem_entry5_label">
                             <property name="label" translatable="yes"> Proc5 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#c6c646460000"/>
                             </attributes>
@@ -267,7 +267,7 @@
                           <object class="GtkLabel">
                             <property name="hexpand">True</property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                             </attributes>
                           </object>
                         </child>
@@ -275,7 +275,7 @@
                           <object class="GtkLabel" id="ctxinfo_cpu_entry5_label">
                             <property name="label" translatable="yes"> Proc5 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#a5a51d1d2d2d"/>
                             </attributes>
@@ -285,7 +285,7 @@
                           <object class="GtkLabel" id="ctxinfo_cpu_entry4_label">
                             <property name="label" translatable="yes"> Proc4 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#1a1a5f5fb4b4"/>
                             </attributes>
@@ -295,7 +295,7 @@
                           <object class="GtkLabel" id="ctxinfo_cpu_entry3_label">
                             <property name="label" translatable="yes"> Proc3 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#2626a2a26969"/>
                             </attributes>
@@ -305,7 +305,7 @@
                           <object class="GtkLabel" id="ctxinfo_cpu_entry2_label">
                             <property name="label" translatable="yes"> Proc2 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#616135358383"/>
                             </attributes>
@@ -315,7 +315,7 @@
                           <object class="GtkLabel" id="ctxinfo_cpu_entry1_label">
                             <property name="label" translatable="yes"> Proc1 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#c6c646460000"/>
                             </attributes>
@@ -356,7 +356,7 @@
                           <object class="GtkLabel">
                             <property name="hexpand">True</property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                             </attributes>
                           </object>
                         </child>
@@ -364,7 +364,7 @@
                           <object class="GtkLabel" id="ctxinfo_mem_entry5_label">
                             <property name="label" translatable="yes"> Proc5 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#a5a51d1d2d2d"/>
                             </attributes>
@@ -374,7 +374,7 @@
                           <object class="GtkLabel" id="ctxinfo_mem_entry4_label">
                             <property name="label" translatable="yes"> Proc4 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#1a1a5f5fb4b4"/>
                             </attributes>
@@ -384,7 +384,7 @@
                           <object class="GtkLabel" id="ctxinfo_mem_entry3_label">
                             <property name="label" translatable="yes"> Proc3 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#2626a2a26969"/>
                             </attributes>
@@ -394,7 +394,7 @@
                           <object class="GtkLabel" id="ctxinfo_mem_entry2_label">
                             <property name="label" translatable="yes"> Proc2 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#616135358383"/>
                             </attributes>
@@ -404,7 +404,7 @@
                           <object class="GtkLabel" id="ctxinfo_mem_entry1_label">
                             <property name="label" translatable="yes"> Proc1 </property>
                             <attributes>
-                              <attribute name="scale" value="0.5"/>
+                              <attribute name="scale" value="0.8"/>
                               <attribute name="foreground" value="#ffffffffffff"/>
                               <attribute name="background" value="#c6c646460000"/>
                             </attributes>
