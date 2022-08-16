@@ -32,7 +32,6 @@
 
 enum
 {
-  COLUMN_PROCINFO_INDEX,
   COLUMN_PROCINFO_NAME,
   COLUMN_PROCINFO_PID,
   COLUMN_PROCINFO_PPID,
@@ -45,7 +44,6 @@ enum
 
 enum
 {
-  COLUMN_CTXINFO_INDEX,
   COLUMN_CTXINFO_NAME,
   COLUMN_CTXINFO_ID,
   COLUMN_CTXINFO_CPU_TIME,
@@ -56,7 +54,6 @@ enum
 
 enum
 {
-  COLUMN_PROCACCT_INDEX,
   COLUMN_PROCACCT_NAME,
   COLUMN_PROCACCT_PID,
   COLUMN_PROCACCT_PPID,
@@ -315,15 +312,6 @@ procinfo_add_columns (TkmvProcessesView *self)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_PROCINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->procinfo_treeview, column);
-
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
@@ -331,6 +319,8 @@ procinfo_add_columns (TkmvProcessesView *self)
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_NAME);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column pid */
@@ -339,6 +329,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "PID", renderer, "text", COLUMN_PROCINFO_PID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_PID);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column ppid */
@@ -347,6 +339,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "PPID", renderer, "text", COLUMN_PROCINFO_PPID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_PPID);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column context */
@@ -355,6 +349,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "Context", renderer, "text", COLUMN_PROCINFO_CONTEXT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_CONTEXT);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column cputime */
@@ -363,6 +359,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "CPUTime", renderer, "text", COLUMN_PROCINFO_CPU_TIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_CPU_TIME);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column cpupercent */
@@ -371,6 +369,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "CPUPercent", renderer, "text", COLUMN_PROCINFO_CPU_PERCENT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_CPU_PERCENT);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 
   /* column vmrss */
@@ -379,6 +379,8 @@ procinfo_add_columns (TkmvProcessesView *self)
       "RSS", renderer, "text", COLUMN_PROCINFO_VMRSS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_PROCINFO_VMRSS);
   gtk_tree_view_append_column (self->procinfo_treeview, column);
 }
 
@@ -556,15 +558,6 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_CTXINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->ctxinfo_treeview, column);
-
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
@@ -572,6 +565,8 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_CTXINFO_NAME);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 
   /* column id */
@@ -580,6 +575,8 @@ ctxinfo_add_columns (TkmvProcessesView *self)
                                                      COLUMN_CTXINFO_ID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_CTXINFO_ID);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 
   /* column cputime */
@@ -588,6 +585,8 @@ ctxinfo_add_columns (TkmvProcessesView *self)
       "CPUTime", renderer, "text", COLUMN_CTXINFO_CPU_TIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_CTXINFO_CPU_TIME);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 
   /* column cpupercent */
@@ -596,6 +595,8 @@ ctxinfo_add_columns (TkmvProcessesView *self)
       "CPUPercent", renderer, "text", COLUMN_CTXINFO_CPU_PERCENT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_CTXINFO_CPU_PERCENT);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 
   /* column vmrss */
@@ -604,6 +605,8 @@ ctxinfo_add_columns (TkmvProcessesView *self)
       "RSS", renderer, "text", COLUMN_CTXINFO_VMRSS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
+                                           COLUMN_CTXINFO_VMRSS);
   gtk_tree_view_append_column (self->ctxinfo_treeview, column);
 }
 
@@ -759,15 +762,6 @@ procacct_add_columns (TkmvProcessesView *self)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
-
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_PROCACCT_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->procacct_treeview, column);
 
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
@@ -1081,9 +1075,249 @@ procacct_selection_changed (GtkTreeSelection *selection, gpointer data)
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->procacct_store), &iter,
-                        COLUMN_PROCACCT_INDEX, &idx, -1);
+                        COLUMN_PROCACCT_PID, &idx, -1);
 
-  g_message ("Proc accounting list selected index: %d", idx);
+  g_message ("Proc accounting list selected pid: %d", idx);
+}
+
+int
+procinfo_sort_iter_compare_func (GtkTreeModel *model, GtkTreeIter *a,
+                                 GtkTreeIter *b, gpointer userdata)
+{
+  int sortcol = GPOINTER_TO_INT (userdata);
+  int ret = 0; /* default if egual */
+
+  switch (sortcol)
+    {
+    case COLUMN_PROCINFO_NAME:
+      {
+        char *name1, *name2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_NAME, &name1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_NAME, &name2, -1);
+
+        if (name1 == NULL || name2 == NULL)
+          {
+            if (name1 == NULL && name2 == NULL)
+              break; /* both equal => ret = 0 */
+
+            ret = (name1 == NULL) ? -1 : 1;
+          }
+        else
+          {
+            ret = g_utf8_collate (name1, name2);
+          }
+
+        g_free (name1);
+        g_free (name2);
+      }
+      break;
+
+    case COLUMN_PROCINFO_CONTEXT:
+      {
+        char *name1, *name2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CONTEXT, &name1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CONTEXT, &name2, -1);
+
+        if (name1 == NULL || name2 == NULL)
+          {
+            if (name1 == NULL && name2 == NULL)
+              break; /* both equal => ret = 0 */
+
+            ret = (name1 == NULL) ? -1 : 1;
+          }
+        else
+          {
+            ret = g_utf8_collate (name1, name2);
+          }
+
+        g_free (name1);
+        g_free (name2);
+      }
+      break;
+
+    case COLUMN_PROCINFO_PID:
+      {
+        guint pid1, pid2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_PID, &pid1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_PID, &pid2, -1);
+
+        if (pid1 != pid2)
+          {
+            ret = (pid1 > pid2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_PROCINFO_PPID:
+      {
+        guint ppid1, ppid2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_PPID, &ppid1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_PPID, &ppid2, -1);
+
+        if (ppid1 != ppid2)
+          {
+            ret = (ppid1 > ppid2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_PROCINFO_CPU_TIME:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_TIME, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_TIME, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_PROCINFO_CPU_PERCENT:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_PERCENT, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_PERCENT, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_PROCINFO_VMRSS:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_PROCINFO_VMRSS, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_PROCINFO_VMRSS, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    default:
+      g_return_val_if_reached (0);
+    }
+
+  return ret;
+}
+
+int
+ctxinfo_sort_iter_compare_func (GtkTreeModel *model, GtkTreeIter *a,
+                                GtkTreeIter *b, gpointer userdata)
+{
+  int sortcol = GPOINTER_TO_INT (userdata);
+  int ret = 0; /* default if egual */
+
+  switch (sortcol)
+    {
+    case COLUMN_CTXINFO_NAME:
+      {
+        char *name1, *name2;
+
+        gtk_tree_model_get (model, a, COLUMN_CTXINFO_NAME, &name1, -1);
+        gtk_tree_model_get (model, b, COLUMN_CTXINFO_NAME, &name2, -1);
+
+        if (name1 == NULL || name2 == NULL)
+          {
+            if (name1 == NULL && name2 == NULL)
+              break; /* both equal => ret = 0 */
+
+            ret = (name1 == NULL) ? -1 : 1;
+          }
+        else
+          {
+            ret = g_utf8_collate (name1, name2);
+          }
+
+        g_free (name1);
+        g_free (name2);
+      }
+      break;
+
+    case COLUMN_CTXINFO_ID:
+      {
+        char *name1, *name2;
+
+        gtk_tree_model_get (model, a, COLUMN_CTXINFO_ID, &name1, -1);
+        gtk_tree_model_get (model, b, COLUMN_CTXINFO_ID, &name2, -1);
+
+        if (name1 == NULL || name2 == NULL)
+          {
+            if (name1 == NULL && name2 == NULL)
+              break; /* both equal => ret = 0 */
+
+            ret = (name1 == NULL) ? -1 : 1;
+          }
+        else
+          {
+            ret = g_utf8_collate (name1, name2);
+          }
+
+        g_free (name1);
+        g_free (name2);
+      }
+      break;
+
+    case COLUMN_CTXINFO_CPU_TIME:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_TIME, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_TIME, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_CTXINFO_CPU_PERCENT:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_PERCENT, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_PERCENT, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    case COLUMN_CTXINFO_VMRSS:
+      {
+        guint val1, val2;
+
+        gtk_tree_model_get (model, a, COLUMN_CTXINFO_VMRSS, &val1, -1);
+        gtk_tree_model_get (model, b, COLUMN_CTXINFO_VMRSS, &val2, -1);
+
+        if (val1 != val2)
+          {
+            ret = (val1 > val2) ? 1 : -1;
+          }
+      }
+      break;
+
+    default:
+      g_return_val_if_reached (0);
+    }
+
+  return ret;
 }
 
 static void
@@ -1091,8 +1325,8 @@ create_tables (TkmvProcessesView *self)
 {
   /* create procinfo store */
   self->procinfo_store = gtk_list_store_new (
-      PROCINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT,
-      G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+      PROCINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+      G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->procinfo_treeview,
                            GTK_TREE_MODEL (self->procinfo_store));
   procinfo_add_columns (self);
@@ -1104,13 +1338,46 @@ create_tables (TkmvProcessesView *self)
                                GTK_SELECTION_MULTIPLE);
   gtk_tree_selection_set_select_function (
       self->procinfo_treeview_select, limit_selection_function, NULL, NULL);
+
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_NAME,
+      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_NAME),
+      NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PID,
+      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PID),
+      NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PPID,
+      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PPID),
+      NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CONTEXT,
+      procinfo_sort_iter_compare_func,
+      GINT_TO_POINTER (COLUMN_PROCINFO_CONTEXT), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_TIME,
+      procinfo_sort_iter_compare_func,
+      GINT_TO_POINTER (COLUMN_PROCINFO_CPU_TIME), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
+      procinfo_sort_iter_compare_func,
+      GINT_TO_POINTER (COLUMN_PROCINFO_CPU_PERCENT), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_VMRSS,
+      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_VMRSS),
+      NULL);
+  gtk_tree_sortable_set_sort_column_id (
+      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
+      GTK_SORT_DESCENDING);
+
   g_signal_connect (G_OBJECT (self->procinfo_treeview_select), "changed",
                     G_CALLBACK (procinfo_selection_changed), self);
 
   /* create ctxinfo store */
-  self->ctxinfo_store = gtk_list_store_new (
-      CTXINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING,
-      G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+  self->ctxinfo_store
+      = gtk_list_store_new (CTXINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
+                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->ctxinfo_treeview,
                            GTK_TREE_MODEL (self->ctxinfo_store));
   ctxinfo_add_columns (self);
@@ -1122,19 +1389,44 @@ create_tables (TkmvProcessesView *self)
                                GTK_SELECTION_MULTIPLE);
   gtk_tree_selection_set_select_function (
       self->ctxinfo_treeview_select, limit_selection_function, NULL, NULL);
+
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_NAME,
+      ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_NAME),
+      NULL);
+  gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (self->ctxinfo_store),
+                                   COLUMN_CTXINFO_ID,
+                                   ctxinfo_sort_iter_compare_func,
+                                   GINT_TO_POINTER (COLUMN_CTXINFO_ID), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_TIME,
+      ctxinfo_sort_iter_compare_func,
+      GINT_TO_POINTER (COLUMN_CTXINFO_CPU_TIME), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
+      ctxinfo_sort_iter_compare_func,
+      GINT_TO_POINTER (COLUMN_CTXINFO_CPU_PERCENT), NULL);
+  gtk_tree_sortable_set_sort_func (
+      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_VMRSS,
+      ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_VMRSS),
+      NULL);
+  gtk_tree_sortable_set_sort_column_id (
+      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
+      GTK_SORT_DESCENDING);
+
   g_signal_connect (G_OBJECT (self->ctxinfo_treeview_select), "changed",
                     G_CALLBACK (ctxinfo_selection_changed), self);
 
   /* create procacct store */
   self->procacct_store = gtk_list_store_new (
-      PROCACCT_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_UINT,
-      G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_LONG, G_TYPE_LONG,
+      PROCACCT_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+      G_TYPE_UINT, G_TYPE_UINT, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
+      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
   gtk_tree_view_set_model (self->procacct_treeview,
                            GTK_TREE_MODEL (self->procacct_store));
   procacct_add_columns (self);
@@ -1154,8 +1446,7 @@ procinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_PROCINFO_INDEX,
-      tkm_procinfo_entry_get_index (entry), COLUMN_PROCINFO_NAME,
+      list_store, iter, COLUMN_PROCINFO_NAME,
       tkm_procinfo_entry_get_name (entry), COLUMN_PROCINFO_PID,
       tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID),
       COLUMN_PROCINFO_PPID,
@@ -1218,8 +1509,7 @@ ctxinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_CTXINFO_INDEX,
-      tkm_ctxinfo_entry_get_index (entry), COLUMN_CTXINFO_NAME,
+      list_store, iter, COLUMN_CTXINFO_NAME,
       tkm_ctxinfo_entry_get_name (entry), COLUMN_CTXINFO_ID,
       tkm_ctxinfo_entry_get_id (entry), COLUMN_CTXINFO_CPU_TIME,
       tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_TIME),
@@ -1277,8 +1567,7 @@ procacct_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_PROCACCT_INDEX,
-      tkm_procacct_entry_get_index (entry), COLUMN_PROCACCT_NAME,
+      list_store, iter, COLUMN_PROCACCT_NAME,
       tkm_procacct_entry_get_name (entry), COLUMN_PROCACCT_PID,
       tkm_procacct_entry_get_data (entry, PACCT_DATA_PID),
       COLUMN_PROCACCT_PPID,
@@ -2565,7 +2854,26 @@ ctxinfo_mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
 void
 tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
 {
+  guint selected_count = 0;
+
   reload_procinfo_entries (view, context);
   reload_ctxinfo_entries (view, context);
   reload_procacct_entries (view, context);
+
+  /* select first entry in proc and context tables */
+  selected_count = gtk_tree_selection_count_selected_rows (
+      view->procinfo_treeview_select);
+  if (selected_count == 0)
+    {
+      GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
+      gtk_tree_selection_select_path (view->procinfo_treeview_select, path);
+    }
+
+  selected_count
+      = gtk_tree_selection_count_selected_rows (view->ctxinfo_treeview_select);
+  if (selected_count == 0)
+    {
+      GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
+      gtk_tree_selection_select_path (view->ctxinfo_treeview_select, path);
+    }
 }

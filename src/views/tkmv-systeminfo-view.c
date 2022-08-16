@@ -25,7 +25,6 @@
 
 enum
 {
-  COLUMN_CPUINFO_INDEX,
   COLUMN_CPUINFO_NAME,
   COLUMN_CPUINFO_ALL,
   COLUMN_CPUINFO_SYS,
@@ -35,7 +34,6 @@ enum
 
 enum
 {
-  COLUMN_MEMINFO_INDEX,
   COLUMN_MEMINFO_NAME,
   COLUMN_MEMINFO_MEM_TOTAL,
   COLUMN_MEMINFO_MEM_FREE,
@@ -53,7 +51,6 @@ enum
 
 enum
 {
-  COLUMN_BUDDYINFO_INDEX,
   COLUMN_BUDDYINFO_NAME,
   COLUMN_BUDDYINFO_ZONE,
   COLUMN_BUDDYINFO_DATA,
@@ -62,7 +59,6 @@ enum
 
 enum
 {
-  COLUMN_WLANINFO_INDEX,
   COLUMN_WLANINFO_NAME,
   COLUMN_WLANINFO_STATUS,
   COLUMN_WLANINFO_QUALITY_LINK,
@@ -78,7 +74,6 @@ enum
 
 enum
 {
-  COLUMN_DISKINFO_INDEX,
   COLUMN_DISKINFO_NAME,
   COLUMN_DISKINFO_MAJOR,
   COLUMN_DISKINFO_MINOR,
@@ -228,15 +223,6 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
 
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_CPUINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->cpuinfo_treeview, column);
-
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
@@ -276,13 +262,13 @@ cpuinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
   GtkTreeIter iter;
-  guint idx = 0;
+  g_autofree gchar *name = NULL;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->cpuinfo_store), &iter,
-                        COLUMN_CPUINFO_INDEX, &idx, -1);
+                        COLUMN_CPUINFO_NAME, &name, -1);
 
-  g_message ("CPU info list selected index: %d", idx);
+  g_message ("CPU info list selected index: %s", name);
 }
 
 static void
@@ -290,15 +276,6 @@ meminfo_add_columns (TkmvSysteminfoView *self)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
-
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_MEMINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->meminfo_treeview, column);
 
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
@@ -387,13 +364,13 @@ meminfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
   GtkTreeIter iter;
-  guint idx = 0;
+  g_autofree gchar *name = NULL;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->meminfo_store), &iter,
-                        COLUMN_MEMINFO_INDEX, &idx, -1);
+                        COLUMN_MEMINFO_NAME, &name, -1);
 
-  g_message ("Memory info list selected index: %d", idx);
+  g_message ("Memory info list selected index: %s", name);
 }
 
 static void
@@ -401,15 +378,6 @@ buddyinfo_add_columns (TkmvSysteminfoView *self)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
-
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_BUDDYINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->buddyinfo_treeview, column);
 
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
@@ -442,13 +410,13 @@ buddyinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
   GtkTreeIter iter;
-  guint idx = 0;
+  g_autofree gchar *name = NULL;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->buddyinfo_store), &iter,
-                        COLUMN_BUDDYINFO_INDEX, &idx, -1);
+                        COLUMN_BUDDYINFO_NAME, &name, -1);
 
-  g_message ("Buddy info list selected index: %d", idx);
+  g_message ("Buddy info list selected index: %s", name);
 }
 
 static void
@@ -456,15 +424,6 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
-
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_WLANINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->wlaninfo_treeview, column);
 
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
@@ -553,13 +512,13 @@ wlaninfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
   GtkTreeIter iter;
-  guint idx = 0;
+  g_autofree gchar *name = NULL;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->wlaninfo_store), &iter,
-                        COLUMN_WLANINFO_INDEX, &idx, -1);
+                        COLUMN_WLANINFO_NAME, &name, -1);
 
-  g_message ("Wireless info list selected index: %d", idx);
+  g_message ("Wireless info list selected index: %s", name);
 }
 
 static void
@@ -567,15 +526,6 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *column;
-
-  /* column index */
-  renderer = gtk_cell_renderer_text_new ();
-  column = gtk_tree_view_column_new_with_attributes (
-      "Index", renderer, "text", COLUMN_DISKINFO_INDEX, NULL);
-  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                   GTK_TREE_VIEW_COLUMN_FIXED);
-  gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 60);
-  gtk_tree_view_append_column (self->diskinfo_treeview, column);
 
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
@@ -683,13 +633,13 @@ diskinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
   TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
   GtkTreeIter iter;
-  guint idx = 0;
+  g_autofree gchar *name = NULL;
 
   if (gtk_tree_selection_get_selected (selection, NULL, &iter))
     gtk_tree_model_get (GTK_TREE_MODEL (self->diskinfo_store), &iter,
-                        COLUMN_DISKINFO_INDEX, &idx, -1);
+                        COLUMN_DISKINFO_NAME, &name, -1);
 
-  g_message ("Disk info list selected index: %d", idx);
+  g_message ("Disk info list selected index: %s", name);
 }
 
 static void
@@ -697,8 +647,8 @@ create_tables (TkmvSysteminfoView *self)
 {
   /* create cpuinfo store */
   self->cpuinfo_store
-      = gtk_list_store_new (CPUINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING,
-                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+      = gtk_list_store_new (CPUINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT,
+                            G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->cpuinfo_treeview,
                            GTK_TREE_MODEL (self->cpuinfo_store));
   cpuinfo_add_columns (self);
@@ -713,9 +663,9 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create meminfo store */
   self->meminfo_store = gtk_list_store_new (
-      MEMINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_ULONG,
+      MEMINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_ULONG, G_TYPE_ULONG,
       G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG,
-      G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG);
+      G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG);
   gtk_tree_view_set_model (self->meminfo_treeview,
                            GTK_TREE_MODEL (self->meminfo_store));
   meminfo_add_columns (self);
@@ -729,9 +679,8 @@ create_tables (TkmvSysteminfoView *self)
                     G_CALLBACK (meminfo_selection_changed), self);
 
   /* create buddyinfo store */
-  self->buddyinfo_store
-      = gtk_list_store_new (BUDDYINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING,
-                            G_TYPE_STRING, G_TYPE_STRING);
+  self->buddyinfo_store = gtk_list_store_new (
+      BUDDYINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   gtk_tree_view_set_model (self->buddyinfo_treeview,
                            GTK_TREE_MODEL (self->buddyinfo_store));
   buddyinfo_add_columns (self);
@@ -745,10 +694,10 @@ create_tables (TkmvSysteminfoView *self)
                     G_CALLBACK (buddyinfo_selection_changed), self);
 
   /* create wlaninfo store */
-  self->wlaninfo_store = gtk_list_store_new (
-      WLANINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_STRING,
-      G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
-      G_TYPE_INT, G_TYPE_INT);
+  self->wlaninfo_store
+      = gtk_list_store_new (WLANINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
+                            G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
+                            G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
   gtk_tree_view_set_model (self->wlaninfo_treeview,
                            GTK_TREE_MODEL (self->wlaninfo_store));
   wlaninfo_add_columns (self);
@@ -763,9 +712,9 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create diskinfo store */
   self->diskinfo_store = gtk_list_store_new (
-      DISKINFO_NUM_COLUMNS, G_TYPE_UINT, G_TYPE_STRING, G_TYPE_LONG,
+      DISKINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_LONG, G_TYPE_LONG,
       G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
+      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
   gtk_tree_view_set_model (self->diskinfo_treeview,
                            GTK_TREE_MODEL (self->diskinfo_store));
   diskinfo_add_columns (self);
@@ -784,8 +733,7 @@ cpuinfo_list_store_append_entry (GtkListStore *list_store,
                                  TkmCpuStatEntry *entry, GtkTreeIter *iter)
 {
   gtk_list_store_append (list_store, iter);
-  gtk_list_store_set (list_store, iter, COLUMN_CPUINFO_INDEX,
-                      tkm_cpustat_entry_get_index (entry), COLUMN_CPUINFO_NAME,
+  gtk_list_store_set (list_store, iter, COLUMN_CPUINFO_NAME,
                       tkm_cpustat_entry_get_name (entry), COLUMN_CPUINFO_ALL,
                       tkm_cpustat_entry_get_all (entry), COLUMN_CPUINFO_SYS,
                       tkm_cpustat_entry_get_sys (entry), COLUMN_CPUINFO_USR,
@@ -839,9 +787,7 @@ meminfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_MEMINFO_INDEX,
-      tkm_meminfo_entry_get_index (entry), COLUMN_MEMINFO_NAME, "main",
-      COLUMN_MEMINFO_MEM_TOTAL,
+      list_store, iter, COLUMN_MEMINFO_NAME, "main", COLUMN_MEMINFO_MEM_TOTAL,
       tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL),
       COLUMN_MEMINFO_MEM_FREE,
       tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE),
@@ -894,8 +840,7 @@ buddyinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_BUDDYINFO_INDEX,
-      tkm_buddyinfo_entry_get_index (entry), COLUMN_BUDDYINFO_NAME,
+      list_store, iter, COLUMN_BUDDYINFO_NAME,
       tkm_buddyinfo_entry_get_name (entry), COLUMN_BUDDYINFO_ZONE,
       tkm_buddyinfo_entry_get_zone (entry), COLUMN_BUDDYINFO_DATA,
       tkm_buddyinfo_entry_get_data (entry), -1);
@@ -949,8 +894,7 @@ wlaninfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_WLANINFO_INDEX,
-      tkm_wireless_entry_get_index (entry), COLUMN_WLANINFO_NAME,
+      list_store, iter, COLUMN_WLANINFO_NAME,
       tkm_wireless_entry_get_name (entry), COLUMN_WLANINFO_STATUS,
       tkm_wireless_entry_get_status (entry), COLUMN_WLANINFO_QUALITY_LINK,
       tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LINK),
@@ -1018,8 +962,7 @@ diskinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_DISKINFO_INDEX,
-      tkm_diskstat_entry_get_index (entry), COLUMN_DISKINFO_NAME,
+      list_store, iter, COLUMN_DISKINFO_NAME,
       tkm_diskstat_entry_get_name (entry), COLUMN_DISKINFO_MAJOR,
       tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MAJOR),
       COLUMN_DISKINFO_MINOR,
