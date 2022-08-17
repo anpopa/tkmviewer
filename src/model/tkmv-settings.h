@@ -35,6 +35,7 @@ typedef struct _TkmvSettings
 
   GList *recent_files;
   gsize recent_files_count;
+  gboolean auto_timeline_refresh;
 
   grefcount rc;
 } TkmvSettings;
@@ -60,6 +61,9 @@ DataTimeSource tkmv_settings_get_time_source (TkmvSettings *tkms);
 void tkmv_settings_set_time_source (TkmvSettings *tkms, DataTimeSource ts);
 DataTimeInterval tkmv_settings_get_time_interval (TkmvSettings *tkms);
 void tkmv_settings_set_time_interval (TkmvSettings *tkms, DataTimeInterval ti);
+gboolean tkmv_settings_get_auto_timeline_refresh (TkmvSettings *tkms);
+void tkmv_settings_set_auto_timeline_refresh (TkmvSettings *tkms,
+                                              gboolean state);
 
 void tkmv_settings_load_general_settings (TkmvSettings *tkms);
 void tkmv_settings_store_general_settings (TkmvSettings *tkms);

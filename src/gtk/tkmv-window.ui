@@ -318,7 +318,7 @@
                         <property name="has-frame">True</property>
                         <property name="icon-name">dialog-information-symbolic</property>
                         <style>
-                          <class name="suggested-action"/>
+                          <class name="raised"/>
                         </style>
                       </object>
                     </child>
@@ -410,6 +410,16 @@
                           <attribute name="font-desc" value="Monospace"/>
                           <attribute name="variant" value="normal"/>
                         </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="timeline_refresh_button">
+                        <property name="visible">True</property>
+                        <property name="has-frame">True</property>
+                        <property name="icon-name">view-refresh-symbolic</property>
+                        <style>
+                          <class name="raised"/>
+                        </style>
                       </object>
                     </child>
                   </object>

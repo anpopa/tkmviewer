@@ -90,6 +90,7 @@ struct _TkmvWindow
   GtkScale *timestamp_scale;
   GtkLabel *timestamp_text;
   GtkAdjustment *timestamp_scale_adjustment;
+  GtkButton *timeline_refresh_button;
 
   /* Session info */
   GtkDialog *session_info_dialog;
@@ -142,6 +143,8 @@ tkmv_window_class_init (TkmvWindowClass *klass)
                                         timestamp_scale);
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         timestamp_text);
+  gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
+                                        timeline_refresh_button);
 
   gtk_widget_class_bind_template_child (widget_class, TkmvWindow,
                                         session_info_dialog);
@@ -332,7 +335,6 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
       = tkmv_application_get_context (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   TkmSessionEntry *active_session = NULL;
-  guint adjustment_sec = 1;
 
   g_assert (window);
 
@@ -354,25 +356,6 @@ tools_time_interval_changed (GtkComboBox *self, gpointer _tkmv_window)
     }
 
   g_assert (active_session);
-
-  switch (tkmv_settings_get_time_interval (settings))
-    {
-    case DATA_TIME_INTERVAL_10S:
-    case DATA_TIME_INTERVAL_1M:
-    case DATA_TIME_INTERVAL_10M:
-      adjustment_sec = 1;
-      break;
-    case DATA_TIME_INTERVAL_1H:
-      adjustment_sec = 60;
-      break;
-    case DATA_TIME_INTERVAL_24H:
-    default:
-      adjustment_sec = 3600;
-      break;
-    }
-
-  gtk_adjustment_set_page_increment (window->timestamp_scale_adjustment,
-                                     adjustment_sec);
 
   gtk_range_set_range (
       GTK_RANGE (window->timestamp_scale),
@@ -425,9 +408,12 @@ tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
   tools_set_timestamp_text (window, tkmv_settings_get_time_source (settings),
                             gtk_range_get_value (self));
 
-  tkmv_application_load_data (tkmv_application_instance (),
-                              tkm_session_entry_get_hash (active_session),
-                              gtk_range_get_value (self));
+  if (tkmv_settings_get_auto_timeline_refresh (settings))
+    {
+      tkmv_application_load_data (tkmv_application_instance (),
+                                  tkm_session_entry_get_hash (active_session),
+                                  gtk_range_get_value (self));
+    }
 }
 
 // Function to open a dialog box with a message
@@ -512,6 +498,40 @@ session_info_dialog (GtkButton *self, gpointer _tkmv_window)
 }
 
 static void
+timeline_refresh_button_clicked (GtkButton *self, gpointer user_data)
+{
+  TkmvWindow *window = (TkmvWindow *)user_data;
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  TKMV_UNUSED (self);
+  g_assert (window);
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+
+  tkmv_application_load_data (
+      tkmv_application_instance (),
+      tkm_session_entry_get_hash (active_session),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+}
+
+static void
 window_toolbar_init (TkmvWindow *self)
 {
   TkmvSettings *settings
@@ -533,6 +553,8 @@ window_toolbar_init (TkmvWindow *self)
                     G_CALLBACK (tools_time_interval_changed), self);
   g_signal_connect (G_OBJECT (self->timestamp_scale), "value-changed",
                     G_CALLBACK (tools_timestamp_scale_value_changed), self);
+  g_signal_connect (G_OBJECT (self->timeline_refresh_button), "clicked",
+                    G_CALLBACK (timeline_refresh_button_clicked), self);
 }
 
 static void

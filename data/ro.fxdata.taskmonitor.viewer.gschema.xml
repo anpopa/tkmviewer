@@ -26,5 +26,10 @@
       <summary>Default time source</summary>
       <description>Default time source to report data</description>
     </key>
+	  <key name="auto-timeline-refresh" type="b">
+      <default>false</default>
+      <summary>Automatically refresh on timeline</summary>
+      <description>Refresh data when timeline slider changes</description>
+    </key>
 	</schema>
 </schemalist>

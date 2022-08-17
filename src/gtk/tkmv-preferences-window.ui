@@ -3,8 +3,8 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
   <template class="TkmvPreferencesWindow" parent="AdwPreferencesWindow">
-    <property name="default-width">640</property>
-    <property name="default-height">480</property>
+    <property name="default-width">480</property>
+    <property name="default-height">320</property>
     <child>
       <object class="AdwPreferencesPage">
         <property name="icon_name">preferences-window-layout-symbolic</property>
@@ -17,6 +17,7 @@
             <child>
               <object class="AdwComboRow" id="interval_combo_row">
                 <property name="title" translatable="yes">Default Time Interval</property>
+                <property name="subtitle" translatable="yes">Data load interval from current timestamp</property>
                 <property name="model">
                   <object class="GtkStringList">
                     <items>
@@ -34,6 +35,7 @@
             <child>
               <object class="AdwComboRow" id="source_combo_row">
                 <property name="title" translatable="yes">Default Time Source</property>
+                <property name="subtitle" translatable="yes">Entry timestamp source</property>
                 <property name="model">
                   <object class="GtkStringList">
                     <items>
@@ -43,6 +45,19 @@
                     </items>
                   </object>
                 </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="refresh_action_row">
+                <property name="title" translatable="yes">Automatically refresh timeline</property>
+                <property name="subtitle" translatable="yes">Timeline slider will automatically refresh data</property>
+                <property name="activatable-widget">refresh_action_switch</property>
+                <child>
+                  <object class="GtkSwitch" id="refresh_action_switch">
+                    <property name="valign">center</property>
+                    <property name="state">True</property>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

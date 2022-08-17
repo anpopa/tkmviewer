@@ -29,6 +29,7 @@ struct _TkmvPreferencesWindow
   /* General */
   AdwComboRow *source_combo_row;
   AdwComboRow *interval_combo_row;
+  GtkSwitch *refresh_action_switch;
 };
 
 G_DEFINE_TYPE (TkmvPreferencesWindow, tkmv_preferences_window,
@@ -60,6 +61,8 @@ tkmv_preferences_window_class_init (TkmvPreferencesWindowClass *klass)
                                         source_combo_row);
   gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
                                         interval_combo_row);
+  gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
+                                        refresh_action_switch);
 }
 
 static void
@@ -77,6 +80,8 @@ tkmv_preferences_window_load_settings (TkmvPreferencesWindow *self)
   adw_combo_row_set_selected (
       self->interval_combo_row,
       (guint)tkmv_settings_get_time_interval (settings));
+  gtk_switch_set_state (self->refresh_action_switch,
+                        tkmv_settings_get_auto_timeline_refresh (settings));
 }
 
 static void
@@ -109,6 +114,21 @@ interval_combo_row_selected (AdwComboRow *self, GParamSpec *pspec,
   tkmv_settings_store_general_settings (settings);
 }
 
+gboolean
+refresh_action_state_set (GtkSwitch *self, gboolean state, gpointer user_data)
+{
+  TkmvSettings *settings
+      = tkmv_application_get_settings (tkmv_application_instance ());
+
+  TKMV_UNUSED (self);
+  TKMV_UNUSED (user_data);
+
+  tkmv_settings_set_auto_timeline_refresh (settings, state);
+  tkmv_settings_store_general_settings (settings);
+
+  return FALSE;
+}
+
 static void
 tkmv_preferences_window_init (TkmvPreferencesWindow *self)
 {
@@ -120,4 +140,6 @@ tkmv_preferences_window_init (TkmvPreferencesWindow *self)
                     G_CALLBACK (source_combo_row_selected), self);
   g_signal_connect (G_OBJECT (self->interval_combo_row), "notify::selected",
                     G_CALLBACK (interval_combo_row_selected), self);
+  g_signal_connect (G_OBJECT (self->refresh_action_switch), "state-set",
+                    G_CALLBACK (refresh_action_state_set), self);
 }

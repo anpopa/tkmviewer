@@ -252,6 +252,8 @@ tkmv_settings_load_general_settings (TkmvSettings *tkms)
   tkmv_settings_set_time_interval (
       tkms, (DataTimeInterval)g_settings_get_uint (tkms->gsettings,
                                                    "default-time-interval"));
+  tkms->auto_timeline_refresh
+      = g_settings_get_boolean (tkms->gsettings, "auto-timeline-refresh");
 }
 
 void
@@ -262,6 +264,8 @@ tkmv_settings_store_general_settings (TkmvSettings *tkms)
                        (guint)tkmv_settings_get_time_source (tkms));
   g_settings_set_uint (tkms->gsettings, "default-time-interval",
                        (guint)tkmv_settings_get_time_interval (tkms));
+  g_settings_set_boolean (tkms->gsettings, "auto-timeline-refresh",
+                          tkms->auto_timeline_refresh);
 }
 
 DataTimeSource
@@ -294,6 +298,20 @@ tkmv_settings_set_time_interval (TkmvSettings *tkms, DataTimeInterval ti)
   g_assert (tkms);
   g_assert (tkms->tkm_settings);
   tkm_settings_set_data_time_interval (tkms->tkm_settings, ti);
+}
+
+gboolean
+tkmv_settings_get_auto_timeline_refresh (TkmvSettings *tkms)
+{
+  g_assert (tkms);
+  return tkms->auto_timeline_refresh;
+}
+
+void
+tkmv_settings_set_auto_timeline_refresh (TkmvSettings *tkms, gboolean state)
+{
+  g_assert (tkms);
+  tkms->auto_timeline_refresh = state;
 }
 
 void
