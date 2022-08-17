@@ -1069,15 +1069,8 @@ procacct_add_columns (TkmvProcessesView *self)
 static void
 procacct_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvProcessesView *self = (TkmvProcessesView *)data;
-  GtkTreeIter iter;
-  guint idx = 0;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->procacct_store), &iter,
-                        COLUMN_PROCACCT_PID, &idx, -1);
-
-  g_message ("Proc accounting list selected pid: %d", idx);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 int

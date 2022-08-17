@@ -22,6 +22,7 @@
 #include "tkm-diskstat-entry.h"
 #include "tkm-meminfo-entry.h"
 #include "tkm-wireless-entry.h"
+#include "tkmv-types.h"
 
 enum
 {
@@ -260,15 +261,8 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
 static void
 cpuinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
-  GtkTreeIter iter;
-  g_autofree gchar *name = NULL;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->cpuinfo_store), &iter,
-                        COLUMN_CPUINFO_NAME, &name, -1);
-
-  g_message ("CPU info list selected index: %s", name);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 static void
@@ -362,15 +356,8 @@ meminfo_add_columns (TkmvSysteminfoView *self)
 static void
 meminfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
-  GtkTreeIter iter;
-  g_autofree gchar *name = NULL;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->meminfo_store), &iter,
-                        COLUMN_MEMINFO_NAME, &name, -1);
-
-  g_message ("Memory info list selected index: %s", name);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 static void
@@ -408,15 +395,8 @@ buddyinfo_add_columns (TkmvSysteminfoView *self)
 static void
 buddyinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
-  GtkTreeIter iter;
-  g_autofree gchar *name = NULL;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->buddyinfo_store), &iter,
-                        COLUMN_BUDDYINFO_NAME, &name, -1);
-
-  g_message ("Buddy info list selected index: %s", name);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 static void
@@ -510,15 +490,8 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
 static void
 wlaninfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
-  GtkTreeIter iter;
-  g_autofree gchar *name = NULL;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->wlaninfo_store), &iter,
-                        COLUMN_WLANINFO_NAME, &name, -1);
-
-  g_message ("Wireless info list selected index: %s", name);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 static void
@@ -655,15 +628,8 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
 static void
 diskinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
-  TkmvSysteminfoView *self = (TkmvSysteminfoView *)data;
-  GtkTreeIter iter;
-  g_autofree gchar *name = NULL;
-
-  if (gtk_tree_selection_get_selected (selection, NULL, &iter))
-    gtk_tree_model_get (GTK_TREE_MODEL (self->diskinfo_store), &iter,
-                        COLUMN_DISKINFO_NAME, &name, -1);
-
-  g_message ("Disk info list selected index: %s", name);
+  TKMV_UNUSED (selection);
+  TKMV_UNUSED (data);
 }
 
 int

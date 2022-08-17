@@ -218,6 +218,19 @@ action_open_recent_file_3 (GSimpleAction *action, GVariant *parameter,
     }
 }
 
+static void
+app_reload_action (GSimpleAction *action, GVariant *parameter,
+                   gpointer user_data)
+{
+  TkmvApplication *self = TKMV_APPLICATION (user_data);
+
+  TKMV_UNUSED (action);
+  TKMV_UNUSED (parameter);
+  g_assert (self);
+
+  tkmv_window_request_update_data (self->main_window);
+}
+
 TkmContext *
 tkmv_application_get_context (TkmvApplication *app)
 {
@@ -263,6 +276,12 @@ tkmv_application_init (TkmvApplication *self)
                     G_CALLBACK (action_open_recent_file_3), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_3));
 
+  GSimpleAction *reload_action = g_simple_action_new ("reload_action", NULL);
+
+  g_signal_connect (reload_action, "activate", G_CALLBACK (app_reload_action),
+                    self);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (reload_action));
+
   GSimpleAction *preferences_action
       = g_simple_action_new ("preferences", NULL);
   g_signal_connect (preferences_action, "activate",
@@ -272,6 +291,12 @@ tkmv_application_init (TkmvApplication *self)
   gtk_application_set_accels_for_action (GTK_APPLICATION (self), "app.quit",
                                          (const char *[]){
                                              "<primary>q",
+                                             NULL,
+                                         });
+  gtk_application_set_accels_for_action (GTK_APPLICATION (self),
+                                         "app.reload_action",
+                                         (const char *[]){
+                                             "r",
                                              NULL,
                                          });
   /* Set our singletone instance */

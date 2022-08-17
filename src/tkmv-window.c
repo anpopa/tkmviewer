@@ -403,8 +403,6 @@ tools_timestamp_scale_value_changed (GtkRange *self, gpointer _tkmv_window)
 
   g_assert (active_session);
 
-  g_message ("Timestamp value %f", gtk_range_get_value (self));
-
   tools_set_timestamp_text (window, tkmv_settings_get_time_source (settings),
                             gtk_range_get_value (self));
 
@@ -501,34 +499,11 @@ static void
 timeline_refresh_button_clicked (GtkButton *self, gpointer user_data)
 {
   TkmvWindow *window = (TkmvWindow *)user_data;
-  TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
-  GPtrArray *sessions = tkm_context_get_session_entries (context);
-  TkmSessionEntry *active_session = NULL;
 
   TKMV_UNUSED (self);
   g_assert (window);
 
-  if (sessions == NULL)
-    return;
-
-  if (sessions->len == 0)
-    return;
-
-  for (guint i = 0; i < sessions->len; i++)
-    {
-      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
-        {
-          active_session = g_ptr_array_index (sessions, i);
-        }
-    }
-
-  g_assert (active_session);
-
-  tkmv_application_load_data (
-      tkmv_application_instance (),
-      tkm_session_entry_get_hash (active_session),
-      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
+  tkmv_window_request_update_data (window);
 }
 
 static void
@@ -879,4 +854,36 @@ tkmv_window_update_views_content (TkmvWindow *window)
 
   tkm_context_data_lock (context);
   g_main_context_invoke (NULL, update_views_content_invoke, window);
+}
+
+void
+tkmv_window_request_update_data (TkmvWindow *window)
+{
+  TkmContext *context
+      = tkmv_application_get_context (tkmv_application_instance ());
+  GPtrArray *sessions = tkm_context_get_session_entries (context);
+  TkmSessionEntry *active_session = NULL;
+
+  g_assert (window);
+
+  if (sessions == NULL)
+    return;
+
+  if (sessions->len == 0)
+    return;
+
+  for (guint i = 0; i < sessions->len; i++)
+    {
+      if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
+        {
+          active_session = g_ptr_array_index (sessions, i);
+        }
+    }
+
+  g_assert (active_session);
+
+  tkmv_application_load_data (
+      tkmv_application_instance (),
+      tkm_session_entry_get_hash (active_session),
+      gtk_range_get_value (GTK_RANGE (window->timestamp_scale)));
 }
