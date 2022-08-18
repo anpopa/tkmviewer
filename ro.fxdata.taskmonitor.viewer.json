@@ -31,7 +31,7 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/alinp/Projects/TkmViewer"
+                    "url" : "https://gitlab.com/taskmonitor/tkmviewer.git"
                 }
             ]
         }

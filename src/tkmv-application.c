@@ -123,8 +123,8 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
 
   gtk_show_about_dialog (window, "program-name", "TkmViewer", "authors",
-                         authors, "website", "http://www.fxdata.ro", "version",
-                         "0.9.0", "comments", "Task Monitor Viewer",
+                         authors, "website", "https://gitlab.com/taskmonitor/tkmviewer",
+                         "version", "1.0.0", "comments", "Task Monitor Viewer",
                          "license_type", GTK_LICENSE_GPL_3_0, "logo",
                          gtk_image_get_paintable (GTK_IMAGE (image)), NULL);
 }
