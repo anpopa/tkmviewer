@@ -650,32 +650,29 @@ on_open_file_response (GtkDialog *dialog, int response, gpointer user_data)
     }
 
   update_open_button_menu (self);
-  gtk_window_destroy (GTK_WINDOW (dialog));
 }
 
 static void
 open_button_clicked (GtkButton *self, gpointer user_data)
 {
   TkmvWindow *window = (TkmvWindow *)user_data;
-
   g_autoptr (GtkFileFilter) filter = NULL;
-  GtkWidget *dialog;
 
   TKMV_UNUSED (self);
 
-  dialog = gtk_file_chooser_dialog_new (
-      "Open File", GTK_WINDOW (user_data), GTK_FILE_CHOOSER_ACTION_OPEN,
-      "_Cancel", GTK_RESPONSE_CANCEL, "_Open", GTK_RESPONSE_ACCEPT, NULL);
-  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), FALSE);
+  GtkFileChooserNative *native;
+  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+
+  native = gtk_file_chooser_native_new ("Open File", GTK_WINDOW (window),
+                                        action, "_Open", "_Cancel");
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_pattern (filter, "*.tkm.db");
-  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog), filter);
+  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (native), filter);
 
-  gtk_widget_show (dialog);
-
-  g_signal_connect (dialog, "response", G_CALLBACK (on_open_file_response),
+  g_signal_connect (native, "response", G_CALLBACK (on_open_file_response),
                     window);
+  gtk_native_dialog_show (GTK_NATIVE_DIALOG (native));
 }
 
 static void
