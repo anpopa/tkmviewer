@@ -63,7 +63,7 @@ typedef struct _TkmEntryPool
 
   /* entry data pools */
   GMutex entries_lock;
-  gchar *input_file;
+  gchar *input_file_uri;
   sqlite3 *input_database;
 
   GPtrArray *session_entries;

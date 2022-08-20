@@ -404,10 +404,10 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 static void
 close_database (TkmEntryPool *entrypool)
 {
-  if (entrypool->input_file != NULL)
+  if (entrypool->input_file_uri != NULL)
     {
-      g_free (entrypool->input_file);
-      entrypool->input_file = NULL;
+      g_free (entrypool->input_file_uri);
+      entrypool->input_file_uri = NULL;
     }
 
   if (entrypool->input_database != NULL)
@@ -431,12 +431,14 @@ do_open_database_file (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 
   close_database (entrypool);
 
-  entrypool->input_file
-      = g_strdup ((const gchar *)(g_list_first (args)->data));
-  if (sqlite3_open_v2 (entrypool->input_file, &entrypool->input_database,
-                       SQLITE_OPEN_READONLY, NULL))
+  entrypool->input_file_uri = g_strdup_printf (
+      "file://%s?immutable=1", (const gchar *)(g_list_first (args)->data));
+
+  g_message ("Open input file URI: %s", entrypool->input_file_uri);
+  if (sqlite3_open_v2 (entrypool->input_file_uri, &entrypool->input_database,
+                       SQLITE_OPEN_READONLY | SQLITE_OPEN_URI, NULL))
     {
-      g_warning ("Cannot open database at path %s", entrypool->input_file);
+      g_warning ("Cannot open database at path %s", entrypool->input_file_uri);
       if (callback != NULL)
         callback (ACTION_STATUS_FAILED, event->action);
     }
@@ -481,7 +483,7 @@ tkm_entrypool_new (GMainContext *context, TkmTaskPool *taskpool,
   entrypool->taskpool = tkm_taskpool_ref (taskpool);
   entrypool->settings = tkm_settings_ref (settings);
   entrypool->context = context;
-  entrypool->input_file = NULL;
+  entrypool->input_file_uri = NULL;
   entrypool->input_database = NULL;
 
   entrypool->session_entries = NULL;
@@ -524,8 +526,8 @@ tkm_entrypool_unref (TkmEntryPool *entrypool)
       if (entrypool->settings != NULL)
         tkm_settings_unref (entrypool->settings);
 
-      if (entrypool->input_file != NULL)
-        g_free (entrypool->input_file);
+      if (entrypool->input_file_uri != NULL)
+        g_free (entrypool->input_file_uri);
 
       main_entries_free (entrypool);
 
