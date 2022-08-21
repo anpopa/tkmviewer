@@ -421,6 +421,7 @@ static void
 do_open_database_file (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 {
   TkmActionStatusCallback callback = tkm_action_get_callback (event->action);
+  gint error_code = 0;
   GList *args = NULL;
 
   g_assert (entrypool);
@@ -432,13 +433,13 @@ do_open_database_file (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
   close_database (entrypool);
 
   entrypool->input_file_uri = g_strdup_printf (
-      "file://%s?immutable=1", (const gchar *)(g_list_first (args)->data));
+      "file://%s?vfs=unix-none", (const gchar *)(g_list_first (args)->data));
 
   g_message ("Open input file URI: %s", entrypool->input_file_uri);
-  if (sqlite3_open_v2 (entrypool->input_file_uri, &entrypool->input_database,
-                       SQLITE_OPEN_READONLY | SQLITE_OPEN_URI, NULL))
+  if ((error_code = sqlite3_open_v2 (entrypool->input_file_uri, &entrypool->input_database,
+                       SQLITE_OPEN_READONLY |  SQLITE_OPEN_URI, NULL)) != SQLITE_OK )
     {
-      g_warning ("Cannot open database at path %s", entrypool->input_file_uri);
+      g_warning ("Cannot open database at path %s. Error: %s", entrypool->input_file_uri, sqlite3_errstr(error_code));
       if (callback != NULL)
         callback (ACTION_STATUS_FAILED, event->action);
     }
