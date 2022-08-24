@@ -44,6 +44,14 @@
     <control>touch</control>
   </recommends>
   <releases>
+    <release version="1.0.1" date="2022-08-24">
+      <description>
+        <p>Bug fixes</p>
+        <ul>
+          <li>Update symbolic icon</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.0" date="2022-08-17">
       <description>
         <p>Initial release</p>
