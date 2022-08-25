@@ -19,6 +19,8 @@ by using this command:
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak install flathub ro.fxdata.taskmonitor.viewer
 
+<a href="https://flathub.org/apps/details/ro.fxdata.taskmonitor.viewer"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" width="200"/></a>
+
 Getting in touch
 ----------------
 If you have questions about TkmViewer, you can contact me by email: alin.popa@fxdata.ro.
