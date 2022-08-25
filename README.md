@@ -4,8 +4,8 @@ TaskMonitorViewer
 
 **TkmViewer** is grafical user interface to visualize output SQLite3 data format from taskmonitor daemon. Data can be collected from device using **tkm-reader**. For more details regarding the complete **TaskMonitor** please check https://gitlab.com/taskmonitor/taskmonitor.    
 
-![Screenshot 1](./data/screenshots/tkmviewer-1.png)
-![Screesnhot 2](./data/screenshots/tkmviewer-4.png)
+<img src="./data/screenshots/tkmviewer-1.png" alt="tkmviewer-1" width="320"/>
+<img src="./data/screenshots/tkmviewer-2.png" alt="tkmviewer-2" width="320"/>
 
 Flatpak builds
 --------------
