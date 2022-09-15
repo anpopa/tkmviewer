@@ -43,6 +43,7 @@ typedef struct _TkmCpuStatEntry
   guint all;
   guint sys;
   guint usr;
+  guint iow;
 
   grefcount rc;
 } TkmCpuStatEntry;
@@ -67,6 +68,8 @@ guint tkm_cpustat_entry_get_sys (TkmCpuStatEntry *entry);
 void tkm_cpustat_entry_set_sys (TkmCpuStatEntry *entry, guint val);
 guint tkm_cpustat_entry_get_usr (TkmCpuStatEntry *entry);
 void tkm_cpustat_entry_set_usr (TkmCpuStatEntry *entry, guint val);
+guint tkm_cpustat_entry_get_iow (TkmCpuStatEntry *entry);
+void tkm_cpustat_entry_set_iow (TkmCpuStatEntry *entry, guint val);
 
 GPtrArray *tkm_cpustat_entry_get_all_entries (sqlite3 *db,
                                               const char *session_hash,

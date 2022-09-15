@@ -190,6 +190,20 @@ tkm_cpustat_entry_set_usr (TkmCpuStatEntry *entry, guint val)
   entry->usr = val;
 }
 
+guint
+tkm_cpustat_entry_get_iow (TkmCpuStatEntry *entry)
+{
+  g_assert (entry);
+  return entry->iow;
+}
+
+void
+tkm_cpustat_entry_set_iow (TkmCpuStatEntry *entry, guint val)
+{
+  g_assert (entry);
+  entry->iow = val;
+}
+
 static int
 cpustat_sqlite_callback (void *data, int argc, char **argv, char **colname)
 {
@@ -238,6 +252,9 @@ cpustat_sqlite_callback (void *data, int argc, char **argv, char **colname)
                   entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
             else if (g_strcmp0 (colname[i], "CPUStatUsr") == 0)
               tkm_cpustat_entry_set_usr (
+                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+            else if (g_strcmp0 (colname[i], "CPUStatIow") == 0)
+              tkm_cpustat_entry_set_iow (
                   entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
           }
 

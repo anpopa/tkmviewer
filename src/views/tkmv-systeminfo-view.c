@@ -30,6 +30,7 @@ enum
   COLUMN_CPUINFO_ALL,
   COLUMN_CPUINFO_SYS,
   COLUMN_CPUINFO_USR,
+  COLUMN_CPUINFO_IOW,
   CPUINFO_NUM_COLUMNS
 };
 
@@ -253,6 +254,14 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes ("USR", renderer, "text",
                                                      COLUMN_CPUINFO_USR, NULL);
+  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
+                                   GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  gtk_tree_view_append_column (self->cpuinfo_treeview, column);
+
+  /* column iow */
+  renderer = gtk_cell_renderer_text_new ();
+  column = gtk_tree_view_column_new_with_attributes ("IOW", renderer, "text",
+                                                     COLUMN_CPUINFO_IOW, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->cpuinfo_treeview, column);
@@ -838,7 +847,7 @@ create_tables (TkmvSysteminfoView *self)
   /* create cpuinfo store */
   self->cpuinfo_store
       = gtk_list_store_new (CPUINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT,
-                            G_TYPE_UINT, G_TYPE_UINT);
+                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->cpuinfo_treeview,
                            GTK_TREE_MODEL (self->cpuinfo_store));
   cpuinfo_add_columns (self);
@@ -976,7 +985,8 @@ cpuinfo_list_store_append_entry (GtkListStore *list_store,
                       tkm_cpustat_entry_get_name (entry), COLUMN_CPUINFO_ALL,
                       tkm_cpustat_entry_get_all (entry), COLUMN_CPUINFO_SYS,
                       tkm_cpustat_entry_get_sys (entry), COLUMN_CPUINFO_USR,
-                      tkm_cpustat_entry_get_usr (entry), -1);
+                      tkm_cpustat_entry_get_usr (entry), COLUMN_CPUINFO_IOW,
+                      tkm_cpustat_entry_get_iow (entry), -1);
 }
 
 static void
