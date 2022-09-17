@@ -374,6 +374,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   struct kpair *points1 = NULL;
   struct kpair *points2 = NULL;
   struct kpair *points3 = NULL;
+  struct kpair *points4 = NULL;
 
   struct kplotcfg plotcfg;
   struct kplot *p;
@@ -404,6 +405,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           points1 = calloc (cpu_data->len, sizeof (struct kpair));
           points2 = calloc (cpu_data->len, sizeof (struct kpair));
           points3 = calloc (cpu_data->len, sizeof (struct kpair));
+          points4 = calloc (cpu_data->len, sizeof (struct kpair));
         }
 
       for (guint i = 0; i < cpu_data->len; i++)
@@ -418,6 +420,8 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
               points2[cnt].y = tkm_cpustat_entry_get_usr (entry);
               points3[cnt].x = points1[cnt].x;
               points3[cnt].y = tkm_cpustat_entry_get_sys (entry);
+              points4[cnt].x = points1[cnt].x;
+              points4[cnt].y = tkm_cpustat_entry_get_iow (entry);
               cnt += 1;
             }
         }
@@ -483,12 +487,29 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
       kdata_destroy (d3);
     }
+    if (points4 != NULL)
+    {
+      struct kdata *d4 = kdata_array_alloc (points4, cnt);
+      struct kdatacfg d4_cfg;
+
+      kdatacfg_defaults (&d4_cfg);
+      d4_cfg.line.sz = 1.0;
+      d4_cfg.line.clr.type = KPLOTCTYPE_RGBA;
+      d4_cfg.line.clr.rgba[0] = 0.4;
+      d4_cfg.line.clr.rgba[1] = 0.0;
+      d4_cfg.line.clr.rgba[2] = 0.6;
+      d4_cfg.line.clr.rgba[3] = 1.0;
+
+      kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
+      kdata_destroy (d4);
+    }
 
   kplot_draw (p, width, height, cr);
 
   free (points1);
   free (points2);
   free (points3);
+  free (points4);
 
   kplot_free (p);
 }

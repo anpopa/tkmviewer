@@ -394,6 +394,18 @@
                         </attributes>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes"> IoWait </property>
+                        <attributes>
+                          <attribute name="scale" value="0.8"/>
+                          <attribute name="foreground" value="#ffffffffffff"/>
+                          <attribute name="background" value="#616135358383"/>
+                        </attributes>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child>
