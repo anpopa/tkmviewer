@@ -431,15 +431,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   plotcfg.grid = GRID_ALL;
   plotcfg.extrema = EXTREMA_YMAX | EXTREMA_YMIN;
   plotcfg.extrema_ymin = 0;
-  if (active_session != NULL)
-    {
-      plotcfg.extrema_ymax
-          = (100 * tkm_session_entry_get_device_cpus (active_session));
-    }
-  else
-    {
-      plotcfg.extrema_ymax = 100;
-    }
+  plotcfg.extrema_ymax = 100;
   plotcfg.xticlabelfmt = timestamp_format;
   plotcfg.yticlabelfmt = percent_format;
 
@@ -911,30 +903,24 @@ update_instant_cpu_frame (TkmvDashboardView *view)
 
   gtk_level_bar_set_value (
       view->cpu_all_level_bar,
-      (double)tkm_cpustat_entry_get_all (entry)
-          / tkm_session_entry_get_device_cpus (active_session));
+      (double)tkm_cpustat_entry_get_all (entry));
   gtk_level_bar_set_value (
       view->cpu_usr_level_bar,
-      (double)tkm_cpustat_entry_get_usr (entry)
-          / tkm_session_entry_get_device_cpus (active_session));
+      (double)tkm_cpustat_entry_get_usr (entry));
   gtk_level_bar_set_value (
       view->cpu_sys_level_bar,
-      (double)tkm_cpustat_entry_get_sys (entry)
-          / tkm_session_entry_get_device_cpus (active_session));
+      (double)tkm_cpustat_entry_get_sys (entry));
 
   snprintf (buf, sizeof (buf), "All - %u %%",
-            tkm_cpustat_entry_get_all (entry)
-                / tkm_session_entry_get_device_cpus (active_session));
+            tkm_cpustat_entry_get_all (entry));
   gtk_label_set_text (view->cpu_all_level_label, buf);
 
   snprintf (buf, sizeof (buf), "Usr - %3u %%",
-            tkm_cpustat_entry_get_usr (entry)
-                / tkm_session_entry_get_device_cpus (active_session));
+            tkm_cpustat_entry_get_usr (entry));
   gtk_label_set_text (view->cpu_usr_level_label, buf);
 
   snprintf (buf, sizeof (buf), "Sys - %3u %%",
-            tkm_cpustat_entry_get_sys (entry)
-                / tkm_session_entry_get_device_cpus (active_session));
+            tkm_cpustat_entry_get_sys (entry));
   gtk_label_set_text (view->cpu_sys_level_label, buf);
 
   g_assert (view);
