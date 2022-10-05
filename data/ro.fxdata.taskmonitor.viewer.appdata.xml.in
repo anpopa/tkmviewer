@@ -44,6 +44,14 @@
     <control>touch</control>
   </recommends>
   <releases>
+    <release version="1.0.2" date="2022-08-24">
+      <description>
+        <p>Taskmonitor v1.5.2 compatibility</p>
+        <ul>
+          <li>Update interfaces in sync with taskmonitor output</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.1" date="2022-08-24">
       <description>
         <p>Bug fixes</p>
