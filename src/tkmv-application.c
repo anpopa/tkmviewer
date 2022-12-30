@@ -109,24 +109,26 @@ static void
 tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
                              gpointer user_data)
 {
+  static const char *developers[] = {"Alin Popa", NULL};
   TkmvApplication *self = TKMV_APPLICATION (user_data);
   GtkWindow *window = NULL;
-  const gchar *authors[] = { "Alin Popa <alin.popa@fxdata.ro>", NULL };
-  GtkWidget *image = gtk_image_new_from_resource (
-      "/ro/fxdata/taskmonitor/viewer/icons/scalable/actions/"
-      "tkmviewer-icon.svg");
 
   TKMV_UNUSED (action);
   TKMV_UNUSED (parameter);
-  g_return_if_fail (TKMV_IS_APPLICATION (self));
+  g_assert (TKMV_IS_APPLICATION (self));
 
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
 
-  gtk_show_about_dialog (
-      window, "program-name", "TkmViewer", "authors", authors, "website",
-      "https://gitlab.com/taskmonitor/tkmviewer", "version", "1.0.2",
-      "comments", "Task Monitor Viewer", "license_type", GTK_LICENSE_GPL_3_0,
-      "logo", gtk_image_get_paintable (GTK_IMAGE (image)), NULL);
+  adw_show_about_window (window,
+                         "application-name", "TkmViewer",
+                         "application-icon", "ro.fxdata.taskmonitor.viewer",
+                         "website", "https://gitlab.com/taskmonitor/tkmviewer",
+                         "developer-name", "Alin Popa",
+                         "license-type", GTK_LICENSE_GPL_3_0,
+                         "version", "1.0.3",
+                         "developers", developers,
+                         "copyright", "© 2022 Alin Popa",
+                         NULL);
 }
 
 static void
@@ -139,7 +141,7 @@ tkmv_application_show_preferences (GSimpleAction *action, GVariant *parameter,
 
   TKMV_UNUSED (action);
   TKMV_UNUSED (parameter);
-  g_return_if_fail (TKMV_IS_APPLICATION (self));
+  g_assert (TKMV_IS_APPLICATION (self));
 
   window = gtk_application_get_active_window (GTK_APPLICATION (self));
   preferences = g_object_new (TKMV_TYPE_PREFERENCES_WINDOW, NULL);
