@@ -8,6 +8,12 @@
     <file>gtk/tkmv-preferences-window.ui</file>
     <file>gtk/help-overlay.ui</file>
   </gresource>
+  <gresource prefix="/ro/fxdata/taskmonitor/viewer/dashboard">
+    <file>views/dashboard-webview/index.html</file>
+    <file>views/dashboard-webview/script.js</file>
+    <file>views/dashboard-webview/style.css</file>
+    <file>views/dashboard-webview/plotly-latest.min.js</file>
+  </gresource>
   <gresource prefix="/ro/fxdata/taskmonitor/viewer/icons/scalable/actions/">
     <file alias="tkmviewer-icon.svg">assets/icons/scalable/application/tkmviewer-icon.svg</file>
     <file alias="clock-stopwatch-symbolic.svg">assets/icons/scalable/actions/clock-stopwatch-symbolic.svg</file>

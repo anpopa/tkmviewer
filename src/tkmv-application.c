@@ -125,7 +125,7 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
                          "website", "https://gitlab.com/taskmonitor/tkmviewer",
                          "developer-name", "Alin Popa",
                          "license-type", GTK_LICENSE_GPL_3_0,
-                         "version", "1.0.3",
+                         "version", TKMV_VERSION,
                          "developers", developers,
                          "copyright", "© 2022 Alin Popa",
                          NULL);
@@ -241,11 +241,77 @@ tkmv_application_get_context (TkmvApplication *app)
 }
 
 static void
+tkmv_application_runtime_directory_init (TkmvApplication *self)
+{
+  g_autofree gchar *tkmvtmp = NULL;
+  g_autofree gchar *resvtmp = NULL;
+
+  g_assert (self);
+
+  tkmvtmp = g_strdup_printf ("%s/app/%s/data", getenv ("XDG_RUNTIME_DIR"), getenv ("FLATPAK_ID"));
+  if (!g_file_test (tkmvtmp, G_FILE_TEST_IS_DIR))
+    {
+      if (g_mkdir_with_parents (tkmvtmp, 0755) == -1)
+        g_error ("Fail to create tmp root structure");
+    }
+
+  resvtmp = g_strdup_printf ("%s/views/resources", tkmvtmp);
+  if (!g_file_test (resvtmp, G_FILE_TEST_IS_DIR))
+    {
+      if (g_mkdir_with_parents (resvtmp, 0755) == -1)
+        g_error ("Fail to create tmp resources view structure");
+    }
+
+  /* Create resources files from GResources */
+  {
+    g_autofree gchar *res_index_path = g_strdup_printf ("%s/index.html", resvtmp);
+    g_autoptr (GFile) dest = g_file_new_for_path (res_index_path);
+    g_autoptr (GFile) src = g_file_new_for_uri (
+      "resource:////ro/fxdata/taskmonitor/viewer/dashboard/views/dashboard-webview/index.html");
+
+    if (!g_file_copy (src, dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, NULL))
+      g_error ("Failed to copy index file to tmp");
+  }
+
+  {
+    g_autofree gchar *res_script_path = g_strdup_printf ("%s/script.js", resvtmp);
+    g_autoptr (GFile) dest = g_file_new_for_path (res_script_path);
+    g_autoptr (GFile) src = g_file_new_for_uri (
+      "resource:////ro/fxdata/taskmonitor/viewer/dashboard/views/dashboard-webview/script.js");
+
+    if (!g_file_copy (src, dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, NULL))
+      g_error ("Failed to copy script file to tmp");
+  }
+
+  {
+    g_autofree gchar *res_style_path = g_strdup_printf ("%s/style.css", resvtmp);
+    g_autoptr (GFile) dest = g_file_new_for_path (res_style_path);
+    g_autoptr (GFile) src = g_file_new_for_uri (
+      "resource:////ro/fxdata/taskmonitor/viewer/dashboard/views/dashboard-webview/style.css");
+
+    if (!g_file_copy (src, dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, NULL))
+      g_error ("Failed to copy style file to tmp");
+  }
+
+  {
+    g_autofree gchar *res_script_path = g_strdup_printf ("%s/plotly-latest.min.js", resvtmp);
+    g_autoptr (GFile) dest = g_file_new_for_path (res_script_path);
+    g_autoptr (GFile) src = g_file_new_for_uri (
+      "resource:////ro/fxdata/taskmonitor/viewer/dashboard/views/dashboard-webview/plotly-latest.min.js");
+
+    if (!g_file_copy (src, dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, NULL))
+      g_error ("Failed to copy script file to tmp");
+  }
+}
+
+static void
 tkmv_application_init (TkmvApplication *self)
 {
   self->settings = tkmv_settings_new ();
   self->tkm_context
       = tkm_context_new (tkmv_settings_get_tkm_settings (self->settings));
+
+  tkmv_application_runtime_directory_init (self);
 
   g_autoptr (GSimpleAction) quit_action = g_simple_action_new ("quit", NULL);
   g_signal_connect_swapped (quit_action, "activate",

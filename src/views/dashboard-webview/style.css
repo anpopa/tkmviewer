@@ -1,0 +1,45 @@
+#container {
+    width:100%;
+    text-align:center;
+}
+
+#cpuGauge {
+    float:left;
+    width:20%;
+    height: 200px;
+}
+
+#eventPlot {
+    display: inline-block;
+    margin:0 auto;
+    width:60%;
+    height: 200px;
+}
+
+#memGauge {
+    float:right;
+    width:20%;
+    height: 200px;
+}
+
+#memPlot {
+    display: inline-block;
+    margin:0 auto;
+    width:100%;
+    height: 200px;
+}
+
+#cpuPlot {
+    display: inline-block;
+    margin:0 auto;
+    width:100%;
+    height: 200px;
+}
+
+#ioPlot {
+    display: inline-block;
+    margin:0 auto;
+    width:100%;
+    height: 200px;
+}
+

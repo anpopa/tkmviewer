@@ -26,4 +26,9 @@ G_BEGIN_DECLS
 #define TKMV_UNUSED(x) (void)(x)
 #endif
 
+#define TKMV_VERSION "@version@"
+#define TKMV_INSTALL_PREFIX "@install_prefix@"
+#define TKMV_WEBEXT_PATH "@install_prefix@/@lib_install_path@/webext"
+#define TKMV_BUILD_ROOT "@build_path@"
+
 G_END_DECLS
