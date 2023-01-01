@@ -38,7 +38,7 @@ main (int argc, char *argv[])
    * desktop features such as file opening and single-instance applications.
    */
   app = tkmv_application_new ("ro.fxdata.taskmonitor.viewer",
-                              G_APPLICATION_FLAGS_NONE);
+                              G_APPLICATION_DEFAULT_FLAGS);
 
   /*
    * Run the application. This function will block until the application

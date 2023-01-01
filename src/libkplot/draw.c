@@ -299,6 +299,7 @@ kplotctx_draw_yerrline_start(struct kplotctx *ctx,
 {
 	size_t	 start;
 
+	(void)ctx;
 	/* Overlap between both point sets. */
 	*end = d->datas[0]->pairsz < d->datas[1]->pairsz ?
 		d->datas[0]->pairsz : d->datas[1]->pairsz;

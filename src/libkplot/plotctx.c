@@ -103,6 +103,7 @@ kplotctx_line_fix(const struct kplotctx *ctx, double sz, double pos)
 {
 	double	 v;
 
+	(void)ctx;
 	if (0 == (int)sz % 2)
 		return(pos);
 	v = pos - floor(pos);
