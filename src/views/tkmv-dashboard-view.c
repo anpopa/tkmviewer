@@ -26,7 +26,10 @@
 #include "tkmv-types.h"
 
 #include "libkplot/kplot.h"
+#include "libkplot/extern.h"
 #include <math.h>
+
+#define KPOINTS_OPTIMIZATION_START_LIMIT (1024)
 
 static void tkmv_dashboard_view_widgets_init (TkmvDashboardView *self);
 static void update_instant_cpu_frame (TkmvDashboardView *view);
@@ -203,15 +206,14 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   GPtrArray *events_data = tkm_context_get_procevent_entries (context);
   TkmSessionEntry *active_session = NULL;
 
-  struct kpair *points1 = NULL; /* Forks */
-  struct kpair *points2 = NULL; /* Execs */
-  struct kpair *points3 = NULL; /* Exits */
-  struct kpair *points4 = NULL; /* UIDs */
-  struct kpair *points5 = NULL; /* GIDs */
+  struct kdata *d1 = NULL; /* Forks */
+  struct kdata *d2 = NULL; /* Execs */
+  struct kdata *d3 = NULL; /* Exits */
+  struct kdata *d4 = NULL; /* UIDs */
+  struct kdata *d5 = NULL; /* GIDs */
 
   struct kplotcfg plotcfg;
   struct kplot *p;
-  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
@@ -232,36 +234,86 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (events_data != NULL)
     {
-      if (events_data->len > 0)
+      g_autofree guint *entry_index_set = calloc(events_data->len, sizeof(guint));
+      guint entry_count = 0;
+
+      if (events_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
         {
-          points1 = calloc (events_data->len, sizeof (struct kpair));
-          points2 = calloc (events_data->len, sizeof (struct kpair));
-          points3 = calloc (events_data->len, sizeof (struct kpair));
-          points4 = calloc (events_data->len, sizeof (struct kpair));
-          points5 = calloc (events_data->len, sizeof (struct kpair));
+          for (guint i = 0; i < events_data->len; i++)
+            entry_index_set[entry_count++] = i;
+        }
+      else
+        {
+          entry_index_set[entry_count++] = 0;
+          for (guint i = 1; i < events_data->len; i++)
+            {
+              TkmProcEventEntry *prev_entry = g_ptr_array_index (events_data, entry_index_set[entry_count-1]);
+              TkmProcEventEntry *entry = g_ptr_array_index (events_data, i);
+              gboolean should_add = false;
+
+              if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_FORKS)
+                  != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_FORKS))
+                {
+                  should_add = true;
+                }
+              else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXECS)
+                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXECS))
+                {
+                  should_add = true;
+                }
+              else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXITS)
+                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXITS))
+                {
+                  should_add = true;
+                }
+              else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_UIDS)
+                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_UIDS))
+                {
+                  should_add = true;
+                }
+              else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_GIDS)
+                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_GIDS))
+                {
+                  should_add = true;
+                }
+
+              if (should_add || (i == (events_data->len - 1)))
+                {
+                  entry_index_set[entry_count++] = i;
+                }
+            }
         }
 
-      for (guint i = 0; i < events_data->len; i++)
+      if (entry_count > 0)
         {
-          TkmProcEventEntry *entry = g_ptr_array_index (events_data, i);
+          g_debug ("Dashboard procevent EVENTS entry_count = %u", entry_count);
+          d1 = kdata_array_alloc (NULL, entry_count);
+          d2 = kdata_array_alloc (NULL, entry_count);
+          d3 = kdata_array_alloc (NULL, entry_count);
+          d4 = kdata_array_alloc (NULL, entry_count);
+          d5 = kdata_array_alloc (NULL, entry_count);
+        }
 
-          points1[cnt].x = tkm_procevent_entry_get_timestamp (
+      for (guint i = 0; i < entry_count; i++)
+        {
+          TkmProcEventEntry *entry = g_ptr_array_index (events_data, entry_index_set[i]);
+
+          d1->pairs[i].x = tkm_procevent_entry_get_timestamp (
               entry, tkmv_settings_get_time_source (settings));
-          points1[cnt].y
+          d1->pairs[i].y
               = tkm_procevent_entry_get_data (entry, PEVENT_DATA_FORKS);
-          points2[cnt].x = points1[cnt].x;
-          points2[cnt].y
+          d2->pairs[i].x = d1->pairs[i].x;
+          d2->pairs[i].y
               = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXECS);
-          points3[cnt].x = points1[cnt].x;
-          points3[cnt].y
+          d3->pairs[i].x = d1->pairs[i].x;
+          d3->pairs[i].y
               = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXITS);
-          points4[cnt].x = points1[cnt].x;
-          points4[cnt].y
+          d4->pairs[i].x = d1->pairs[i].x;
+          d4->pairs[i].y
               = tkm_procevent_entry_get_data (entry, PEVENT_DATA_UIDS);
-          points5[cnt].x = points1[cnt].x;
-          points5[cnt].y
+          d5->pairs[i].x = d1->pairs[i].x;
+          d5->pairs[i].y
               = tkm_procevent_entry_get_data (entry, PEVENT_DATA_GIDS);
-          cnt += 1;
         }
     }
 
@@ -273,9 +325,8 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   p = kplot_alloc (&plotcfg);
 
-  if (points1 != NULL)
+  if (d1 != NULL)
     {
-      struct kdata *d1 = kdata_array_alloc (points1, cnt);
       struct kdatacfg d1_cfg;
 
       kdatacfg_defaults (&d1_cfg);
@@ -285,11 +336,9 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d1_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
-      kdata_destroy (d1);
     }
-  if (points2 != NULL)
+  if (d2 != NULL)
     {
-      struct kdata *d2 = kdata_array_alloc (points2, cnt);
       struct kdatacfg d2_cfg;
 
       kdatacfg_defaults (&d2_cfg);
@@ -299,11 +348,9 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d2_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
-      kdata_destroy (d2);
     }
-  if (points3 != NULL)
+  if (d3 != NULL)
     {
-      struct kdata *d3 = kdata_array_alloc (points3, cnt);
       struct kdatacfg d3_cfg;
 
       kdatacfg_defaults (&d3_cfg);
@@ -313,11 +360,9 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d3_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
-      kdata_destroy (d3);
     }
-  if (points4 != NULL)
+  if (d4 != NULL)
     {
-      struct kdata *d4 = kdata_array_alloc (points4, cnt);
       struct kdatacfg d4_cfg;
 
       kdatacfg_defaults (&d4_cfg);
@@ -329,11 +374,9 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d4_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
-      kdata_destroy (d4);
     }
-  if (points5 != NULL)
+  if (d5 != NULL)
     {
-      struct kdata *d5 = kdata_array_alloc (points5, cnt);
       struct kdatacfg d5_cfg;
 
       kdatacfg_defaults (&d5_cfg);
@@ -345,16 +388,15 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d5_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
-      kdata_destroy (d5);
     }
 
   kplot_draw (p, width, height, cr);
 
-  free (points1);
-  free (points2);
-  free (points3);
-  free (points4);
-  free (points5);
+  kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
+  kdata_destroy (d5);
 
   kplot_free (p);
 }
@@ -371,14 +413,13 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
   TkmSessionEntry *active_session = NULL;
 
-  struct kpair *points1 = NULL;
-  struct kpair *points2 = NULL;
-  struct kpair *points3 = NULL;
-  struct kpair *points4 = NULL;
+  struct kdata *d1 = NULL; /* all */
+  struct kdata *d2 = NULL; /* usr */
+  struct kdata *d3 = NULL; /* sys */
+  struct kdata *d4 = NULL; /* iow */
 
   struct kplotcfg plotcfg;
   struct kplot *p;
-  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
@@ -400,29 +441,86 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (cpu_data != NULL)
     {
-      if (cpu_data->len > 0)
+      g_autofree guint *entry_index_set = calloc(cpu_data->len, sizeof(guint));
+      guint entry_count = 0;
+
+      if (cpu_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
         {
-          points1 = calloc (cpu_data->len, sizeof (struct kpair));
-          points2 = calloc (cpu_data->len, sizeof (struct kpair));
-          points3 = calloc (cpu_data->len, sizeof (struct kpair));
-          points4 = calloc (cpu_data->len, sizeof (struct kpair));
+          for (guint i = 0; i < cpu_data->len; i++)
+            {
+              TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, i);
+
+              if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
+                {
+                  entry_index_set[entry_count++] = i;
+                }
+            }
+        }
+      else
+        {
+          entry_index_set[entry_count++] = 0;
+          for (guint i = 1; i < cpu_data->len; i++)
+            {
+              TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, i);
+
+              if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
+                {
+                  TkmCpuStatEntry *prev_entry = g_ptr_array_index (cpu_data, entry_index_set[entry_count-1]);
+                  gboolean should_add = false;
+
+                  if (tkm_cpustat_entry_get_all (entry)
+                      != tkm_cpustat_entry_get_all (prev_entry))
+                    {
+                      should_add = true;
+                    }
+                  else if (tkm_cpustat_entry_get_usr (entry)
+                          != tkm_cpustat_entry_get_usr (prev_entry))
+                    {
+                      should_add = true;
+                    }
+                  else if (tkm_cpustat_entry_get_sys (entry)
+                          != tkm_cpustat_entry_get_sys (prev_entry))
+                    {
+                      should_add = true;
+                    }
+                  else if (tkm_cpustat_entry_get_iow (entry)
+                          != tkm_cpustat_entry_get_iow (prev_entry))
+                    {
+                      should_add = true;
+                    }
+
+                  if (should_add)
+                    {
+                      entry_index_set[entry_count++] = i;
+                    }
+                }
+            }
         }
 
-      for (guint i = 0; i < cpu_data->len; i++)
+      if (entry_count > 0)
         {
-          TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, i);
+          g_debug ("Dashboard cpustat CPU entry_count = %u", entry_count);
+          d1 = kdata_array_alloc (NULL, entry_count);
+          d2 = kdata_array_alloc (NULL, entry_count);
+          d3 = kdata_array_alloc (NULL, entry_count);
+          d4 = kdata_array_alloc (NULL, entry_count);
+        }
+
+      for (guint i = 0; i < entry_count; i++)
+        {
+          TkmCpuStatEntry *entry = g_ptr_array_index (cpu_data, entry_index_set[i]);
+
           if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
             {
-              points1[cnt].x = tkm_cpustat_entry_get_timestamp (
+              d1->pairs[i].x = tkm_cpustat_entry_get_timestamp (
                   entry, tkmv_settings_get_time_source (settings));
-              points1[cnt].y = tkm_cpustat_entry_get_all (entry);
-              points2[cnt].x = points1[cnt].x;
-              points2[cnt].y = tkm_cpustat_entry_get_usr (entry);
-              points3[cnt].x = points1[cnt].x;
-              points3[cnt].y = tkm_cpustat_entry_get_sys (entry);
-              points4[cnt].x = points1[cnt].x;
-              points4[cnt].y = tkm_cpustat_entry_get_iow (entry);
-              cnt += 1;
+              d1->pairs[i].y = tkm_cpustat_entry_get_all (entry);
+              d2->pairs[i].x = d1->pairs[i].x;
+              d2->pairs[i].y = tkm_cpustat_entry_get_usr (entry);
+              d3->pairs[i].x = d1->pairs[i].x;
+              d3->pairs[i].y = tkm_cpustat_entry_get_sys (entry);
+              d4->pairs[i].x = d1->pairs[i].x;
+              d4->pairs[i].y = tkm_cpustat_entry_get_iow (entry);
             }
         }
     }
@@ -437,9 +535,8 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   p = kplot_alloc (&plotcfg);
 
-  if (points1 != NULL)
+  if (d1 != NULL)
     {
-      struct kdata *d1 = kdata_array_alloc (points1, cnt);
       struct kdatacfg d1_cfg;
 
       kdatacfg_defaults (&d1_cfg);
@@ -449,11 +546,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d1_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
-      kdata_destroy (d1);
     }
-  if (points2 != NULL)
+  if (d2 != NULL)
     {
-      struct kdata *d2 = kdata_array_alloc (points2, cnt);
       struct kdatacfg d2_cfg;
 
       kdatacfg_defaults (&d2_cfg);
@@ -463,11 +558,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d2_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
-      kdata_destroy (d2);
     }
-  if (points3 != NULL)
+  if (d3 != NULL)
     {
-      struct kdata *d3 = kdata_array_alloc (points3, cnt);
       struct kdatacfg d3_cfg;
 
       kdatacfg_defaults (&d3_cfg);
@@ -477,11 +570,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d3_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
-      kdata_destroy (d3);
     }
-    if (points4 != NULL)
+  if (d4 != NULL)
     {
-      struct kdata *d4 = kdata_array_alloc (points4, cnt);
       struct kdatacfg d4_cfg;
 
       kdatacfg_defaults (&d4_cfg);
@@ -493,15 +584,14 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d4_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
-      kdata_destroy (d4);
     }
 
   kplot_draw (p, width, height, cr);
 
-  free (points1);
-  free (points2);
-  free (points3);
-  free (points4);
+  kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
 
   kplot_free (p);
 }
@@ -518,15 +608,14 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   GPtrArray *mem_data = tkm_context_get_meminfo_entries (context);
   TkmSessionEntry *active_session = NULL;
 
-  struct kpair *points1 = NULL; /* MemTotal */
-  struct kpair *points2 = NULL; /* MemFree */
-  struct kpair *points3 = NULL; /* MemAvail */
-  struct kpair *points4 = NULL; /* SwapTotal */
-  struct kpair *points5 = NULL; /* SwapFree */
+  struct kdata *d1 = NULL; /* MemTotal */
+  struct kdata *d2 = NULL; /* MemFree */
+  struct kdata *d3 = NULL; /* MemAvail */
+  struct kdata *d4 = NULL; /* SwapTotal */
+  struct kdata *d5 = NULL; /* SwapFree */
 
   struct kplotcfg plotcfg;
   struct kplot *p;
-  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
@@ -548,36 +637,86 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (mem_data != NULL)
     {
-      if (mem_data->len > 0)
+      g_autofree guint *entry_index_set = calloc(mem_data->len, sizeof(guint));
+      guint entry_count = 0;
+
+      if (mem_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
         {
-          points1 = calloc (mem_data->len, sizeof (struct kpair));
-          points2 = calloc (mem_data->len, sizeof (struct kpair));
-          points3 = calloc (mem_data->len, sizeof (struct kpair));
-          points4 = calloc (mem_data->len, sizeof (struct kpair));
-          points5 = calloc (mem_data->len, sizeof (struct kpair));
+          for (guint i = 0; i < mem_data->len; i++)
+            entry_index_set[entry_count++] = i;
+        }
+      else
+        {
+          entry_index_set[entry_count++] = 0;
+          for (guint i = 1; i < mem_data->len; i++)
+            {
+              TkmMemInfoEntry *prev_entry = g_ptr_array_index (mem_data, entry_index_set[entry_count-1]);
+              TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, i);
+              gboolean should_add = false;
+
+              if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL)
+                  != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_TOTAL))
+                {
+                  should_add = true;
+                }
+              else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE)
+                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_FREE))
+                {
+                  should_add = true;
+                }
+              else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL)
+                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_AVAIL))
+                {
+                  should_add = true;
+                }
+              else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL)
+                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_TOTAL))
+                {
+                  should_add = true;
+                }
+              else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE)
+                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_FREE))
+                {
+                  should_add = true;
+                }
+
+              if (should_add || (i == (mem_data->len - 1)))
+                {
+                  entry_index_set[entry_count++] = i;
+                }
+            }
         }
 
-      for (guint i = 0; i < mem_data->len; i++)
+      if (entry_count > 0)
         {
-          TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, i);
+          g_debug ("Dashboard meminfo MEM entry_count = %u", entry_count);
+          d1 = kdata_array_alloc (NULL, entry_count);
+          d2 = kdata_array_alloc (NULL, entry_count);
+          d3 = kdata_array_alloc (NULL, entry_count);
+          d4 = kdata_array_alloc (NULL, entry_count);
+          d5 = kdata_array_alloc (NULL, entry_count);
+        }
 
-          points1[cnt].x = tkm_meminfo_entry_get_timestamp (
+      for (guint i = 0; i < entry_count; i++)
+        {
+          TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, entry_index_set[i]);
+
+          d1->pairs[i].x = tkm_meminfo_entry_get_timestamp (
               entry, tkmv_settings_get_time_source (settings));
-          points1[cnt].y
+          d1->pairs[i].y
               = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL);
-          points2[cnt].x = points1[cnt].x;
-          points2[cnt].y
+          d2->pairs[i].x = d1->pairs[i].x;
+          d2->pairs[i].y
               = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE);
-          points3[cnt].x = points1[cnt].x;
-          points3[cnt].y
+          d3->pairs[i].x = d1->pairs[i].x;
+          d3->pairs[i].y
               = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL);
-          points4[cnt].x = points1[cnt].x;
-          points4[cnt].y
+          d4->pairs[i].x = d1->pairs[i].x;
+          d4->pairs[i].y
               = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL);
-          points5[cnt].x = points1[cnt].x;
-          points5[cnt].y
+          d5->pairs[i].x = d1->pairs[i].x;
+          d5->pairs[i].y
               = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE);
-          cnt += 1;
         }
     }
 
@@ -590,9 +729,8 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   p = kplot_alloc (&plotcfg);
 
-  if (points1 != NULL)
+  if (d1 != NULL)
     {
-      struct kdata *d1 = kdata_array_alloc (points1, cnt);
       struct kdatacfg d1_cfg;
 
       kdatacfg_defaults (&d1_cfg);
@@ -602,11 +740,9 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d1_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
-      kdata_destroy (d1);
     }
-  if (points2 != NULL)
+  if (d2 != NULL)
     {
-      struct kdata *d2 = kdata_array_alloc (points2, cnt);
       struct kdatacfg d2_cfg;
 
       kdatacfg_defaults (&d2_cfg);
@@ -616,11 +752,9 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d2_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
-      kdata_destroy (d2);
     }
-  if (points3 != NULL)
+  if (d3 != NULL)
     {
-      struct kdata *d3 = kdata_array_alloc (points3, cnt);
       struct kdatacfg d3_cfg;
 
       kdatacfg_defaults (&d3_cfg);
@@ -630,11 +764,9 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d3_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
-      kdata_destroy (d3);
     }
-  if (points4 != NULL)
+  if (d4 != NULL)
     {
-      struct kdata *d4 = kdata_array_alloc (points4, cnt);
       struct kdatacfg d4_cfg;
 
       kdatacfg_defaults (&d4_cfg);
@@ -646,11 +778,9 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d4_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
-      kdata_destroy (d4);
     }
-  if (points5 != NULL)
+  if (d5 != NULL)
     {
-      struct kdata *d5 = kdata_array_alloc (points5, cnt);
       struct kdatacfg d5_cfg;
 
       kdatacfg_defaults (&d5_cfg);
@@ -662,16 +792,15 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d5_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
-      kdata_destroy (d5);
     }
 
   kplot_draw (p, width, height, cr);
 
-  free (points1);
-  free (points2);
-  free (points3);
-  free (points4);
-  free (points5);
+  kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
+  kdata_destroy (d5);
 
   kplot_free (p);
 }
@@ -688,16 +817,15 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
   GPtrArray *psi_data = tkm_context_get_pressure_entries (context);
   TkmSessionEntry *active_session = NULL;
 
-  struct kpair *points1 = NULL; /* CPUSome10 */
-  struct kpair *points2 = NULL; /* CPUSome60 */
-  struct kpair *points3 = NULL; /* MEMSome10 */
-  struct kpair *points4 = NULL; /* MEMSome60 */
-  struct kpair *points5 = NULL; /* IOSome10 */
-  struct kpair *points6 = NULL; /* IOSome60 */
+  struct kdata *d1 = NULL; /* CPUSome10 */
+  struct kdata *d2 = NULL; /* CPUSome60 */
+  struct kdata *d3 = NULL; /* MEMSome10 */
+  struct kdata *d4 = NULL; /* MEMSome60 */
+  struct kdata *d5 = NULL; /* IOSome10 */
+  struct kdata *d6 = NULL; /* IOSome60 */
 
   struct kplotcfg plotcfg;
   struct kplot *p = NULL;
-  guint cnt = 0;
 
   TKMV_UNUSED (area);
   TKMV_UNUSED (data);
@@ -719,40 +847,95 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (psi_data != NULL)
     {
-      if (psi_data->len > 0)
+      g_autofree guint *entry_index_set = calloc(psi_data->len, sizeof(guint));
+      guint entry_count = 0;
+
+      if (psi_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
         {
-          points1 = calloc (psi_data->len, sizeof (struct kpair));
-          points2 = calloc (psi_data->len, sizeof (struct kpair));
-          points3 = calloc (psi_data->len, sizeof (struct kpair));
-          points4 = calloc (psi_data->len, sizeof (struct kpair));
-          points5 = calloc (psi_data->len, sizeof (struct kpair));
-          points6 = calloc (psi_data->len, sizeof (struct kpair));
+          for (guint i = 0; i < psi_data->len; i++)
+            entry_index_set[entry_count++] = i;
+        }
+      else
+        {
+          entry_index_set[entry_count++] = 0;
+          for (guint i = 1; i < psi_data->len; i++)
+            {
+              TkmPressureEntry *prev_entry = g_ptr_array_index (psi_data, entry_index_set[entry_count-1]);
+              TkmPressureEntry *entry = g_ptr_array_index (psi_data, i);
+              gboolean should_add = false;
+
+              if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_CPU_SOME_AVG10)
+                  != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_CPU_SOME_AVG10))
+                {
+                  should_add = true;
+                }
+              else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_CPU_SOME_AVG60)
+                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_CPU_SOME_AVG60))
+                {
+                  should_add = true;
+                }
+              else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_MEM_SOME_AVG10)
+                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG10))
+                {
+                  should_add = true;
+                }
+              else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_MEM_SOME_AVG60)
+                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG60))
+                {
+                  should_add = true;
+                }
+              else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_IO_SOME_AVG10)
+                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG10))
+                {
+                  should_add = true;
+                }
+              else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_IO_SOME_AVG60)
+                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG60))
+                {
+                  should_add = true;
+                }
+
+              if (should_add || (i == (psi_data->len - 1)))
+                {
+                  entry_index_set[entry_count++] = i;
+                }
+            }
         }
 
-      for (guint i = 0; i < psi_data->len; i++)
+      if (entry_count > 0)
         {
-          TkmPressureEntry *entry = g_ptr_array_index (psi_data, i);
+          g_debug ("Dashboard pressure PSI entry_count = %u", entry_count);
+          d1 = kdata_array_alloc (NULL, entry_count);
+          d2 = kdata_array_alloc (NULL, entry_count);
+          d3 = kdata_array_alloc (NULL, entry_count);
+          d4 = kdata_array_alloc (NULL, entry_count);
+          d5 = kdata_array_alloc (NULL, entry_count);
+          d6 = kdata_array_alloc (NULL, entry_count);
+        }
 
-          points1[cnt].x = tkm_pressure_entry_get_timestamp (
+      for (guint i = 0; i < entry_count; i++)
+        {
+          TkmPressureEntry *entry = g_ptr_array_index (psi_data, entry_index_set[i]);
+
+          d1->pairs[i].x = tkm_pressure_entry_get_timestamp (
               entry, tkmv_settings_get_time_source (settings));
-          points1[cnt].y = tkm_pressure_entry_get_data_avg (
+          d1->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_CPU_SOME_AVG10);
-          points2[cnt].x = points1[cnt].x;
-          points2[cnt].y = tkm_pressure_entry_get_data_avg (
+          d2->pairs[i].x = d1->pairs[i].x;
+          d2->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_CPU_SOME_AVG60);
-          points3[cnt].x = points1[cnt].x;
-          points3[cnt].y = tkm_pressure_entry_get_data_avg (
+          d3->pairs[i].x = d1->pairs[i].x;
+          d3->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_MEM_SOME_AVG10);
-          points4[cnt].x = points1[cnt].x;
-          points4[cnt].y = tkm_pressure_entry_get_data_avg (
+          d4->pairs[i].x = d1->pairs[i].x;
+          d4->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_MEM_SOME_AVG60);
-          points5[cnt].x = points1[cnt].x;
-          points5[cnt].y = tkm_pressure_entry_get_data_avg (
+          d5->pairs[i].x = d1->pairs[i].x;
+          d5->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_IO_SOME_AVG10);
-          points6[cnt].x = points1[cnt].x;
-          points6[cnt].y = tkm_pressure_entry_get_data_avg (
+          d6->pairs[i].x = d1->pairs[i].x;
+          d6->pairs[i].y = tkm_pressure_entry_get_data_avg (
               entry, PSI_DATA_IO_SOME_AVG60);
-          cnt += 1;
         }
     }
 
@@ -765,9 +948,8 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   p = kplot_alloc (&plotcfg);
 
-  if (points1 != NULL)
+  if (d1 != NULL)
     {
-      struct kdata *d1 = kdata_array_alloc (points1, cnt);
       struct kdatacfg d1_cfg;
 
       kdatacfg_defaults (&d1_cfg);
@@ -777,11 +959,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d1_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d1, KPLOT_LINES, &d1_cfg);
-      kdata_destroy (d1);
     }
-  if (points2 != NULL)
+  if (d2 != NULL)
     {
-      struct kdata *d2 = kdata_array_alloc (points2, cnt);
       struct kdatacfg d2_cfg;
 
       kdatacfg_defaults (&d2_cfg);
@@ -791,11 +971,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d2_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d2, KPLOT_LINES, &d2_cfg);
-      kdata_destroy (d2);
     }
-  if (points3 != NULL)
+  if (d3 != NULL)
     {
-      struct kdata *d3 = kdata_array_alloc (points3, cnt);
       struct kdatacfg d3_cfg;
 
       kdatacfg_defaults (&d3_cfg);
@@ -805,11 +983,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d3_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d3, KPLOT_LINES, &d3_cfg);
-      kdata_destroy (d3);
     }
-  if (points4 != NULL)
+  if (d4 != NULL)
     {
-      struct kdata *d4 = kdata_array_alloc (points4, cnt);
       struct kdatacfg d4_cfg;
 
       kdatacfg_defaults (&d4_cfg);
@@ -821,11 +997,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d4_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d4, KPLOT_LINES, &d4_cfg);
-      kdata_destroy (d4);
     }
-  if (points5 != NULL)
+  if (d5 != NULL)
     {
-      struct kdata *d5 = kdata_array_alloc (points5, cnt);
       struct kdatacfg d5_cfg;
 
       kdatacfg_defaults (&d5_cfg);
@@ -837,11 +1011,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d5_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d5, KPLOT_LINES, &d5_cfg);
-      kdata_destroy (d5);
     }
-  if (points6 != NULL)
+  if (d6 != NULL)
     {
-      struct kdata *d6 = kdata_array_alloc (points6, cnt);
       struct kdatacfg d6_cfg;
 
       kdatacfg_defaults (&d6_cfg);
@@ -853,17 +1025,16 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
       d6_cfg.line.clr.rgba[3] = 1.0;
 
       kplot_attach_data (p, d6, KPLOT_LINES, &d6_cfg);
-      kdata_destroy (d6);
     }
 
   kplot_draw (p, width, height, cr);
 
-  free (points1);
-  free (points2);
-  free (points3);
-  free (points4);
-  free (points5);
-  free (points6);
+  kdata_destroy (d1);
+  kdata_destroy (d2);
+  kdata_destroy (d3);
+  kdata_destroy (d4);
+  kdata_destroy (d5);
+  kdata_destroy (d6);
 
   kplot_free (p);
 }
@@ -1052,3 +1223,5 @@ tkmv_dashboard_view_update_content (TkmvDashboardView *view)
   gtk_widget_queue_draw (GTK_WIDGET (view->history_events_drawing_area));
   gtk_widget_queue_draw (GTK_WIDGET (view->history_psi_drawing_area));
 }
+
+

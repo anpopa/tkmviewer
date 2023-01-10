@@ -31,10 +31,9 @@
 struct kdata *
 kdata_array_alloc(const struct kpair *np, size_t npsz)
 {
-	struct kdata	*d;
-	size_t		 i;
+	struct kdata	*d = calloc(1, sizeof(struct kdata));
 
-	if (NULL == (d = calloc(1, sizeof(struct kdata))))
+	if (NULL == d)
 		return(NULL);
 
 	d->pairsz = npsz;
@@ -44,10 +43,7 @@ kdata_array_alloc(const struct kpair *np, size_t npsz)
 		return(NULL);
 	}
 
-	if (NULL == np)
-		for (i = 0; i < d->pairsz; i++)
-			d->pairs[i].x = i;
-	else
+	if (NULL != np)
 		memcpy(d->pairs, np, d->pairsz * sizeof(struct kpair));
 
 	d->refs = 1;
