@@ -24,21 +24,19 @@
 #include "tkm-procacct-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum ProcAcct query type
  */
-typedef enum _ProcAcctQueryType
-{
+typedef enum _ProcAcctQueryType {
   PROCACCT_GET_ENTRIES,
 } ProcAcctQueryType;
 
 /**
  * @enum ProcAcct query data object
  */
-typedef struct _ProcAcctQueryData
-{
+typedef struct _ProcAcctQueryData {
   ProcAcctQueryType type;
   gpointer response;
 } ProcAcctQueryData;
@@ -118,8 +116,10 @@ tkm_procacct_entry_get_timestamp (TkmProcAcctEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -137,12 +137,15 @@ tkm_procacct_entry_set_timestamp (TkmProcAcctEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -426,167 +429,167 @@ procacct_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case PROCACCT_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmProcAcctEntry) entry = tkm_procacct_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmProcAcctEntry) entry = tkm_procacct_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_procacct_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_procacct_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_procacct_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcComm") == 0)
-              tkm_procacct_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "AcPid") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_PID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcPPid") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_PPID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcUid") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_UID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcGid") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_GID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcUTime") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_UTIME,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "AcSTime") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_STIME,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuCount") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CPU_COUNT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuRunRealTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CPU_RUN_REAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuRunVirtualTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CPU_RUN_VIRTUAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuDelayTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CPU_DELAY_TOTAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuDelayAverage") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CPU_DELAY_AVG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CoreMem") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_CORE_MEM,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "VirtMem") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_VIRT_MEM,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "HiwaterRss") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_HIGH_WATER_RSS,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "HiwaterVm") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_HIGH_WATER_VM,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "Nvcsw") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_NVCSW,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "Nivcsw") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_NIVCSW,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapinCount") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_SWAPIN_COUNT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapinDelayTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_SWAPIN_DELAY_TOTAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapinDelayAverage") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_SWAPIN_DELAY_AVG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "BlkIOCount") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_BLKIO_COUNT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "BlkIODelayTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_BLKIO_DELAY_TOTAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "BlkIODelayAverage") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_BLKIO_DELAY_AVG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOStorageReadBytes") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_STORAGE_READ,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOStorageWriteBytes") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_STORAGE_WRITE,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOReadChar") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_READ_CHAR,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOWriteChar") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_WRITE_CHAR,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOReadSyscalls") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_READ_SYSCALLS,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOWriteSyscalls") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_IO_WRITE_SYSCALLS,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "FreePagesCount") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_FREEPAGE_COUNT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "FreePagesDelayTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_FREEPAGE_DELAY_TOTAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "FreePagesDelayAverage") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_FREEPAGE_DELAY_AVG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ThrashingCount") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_TRASHING_COUNT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ThrashingDelayTotal") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_TRASHING_DELAY_TOTAL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ThrashingDelayAverage") == 0)
-              tkm_procacct_entry_set_data (
-                  entry, PACCT_DATA_TRASHING_DELAY_AVG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_procacct_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_procacct_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_procacct_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcComm") == 0)
+            tkm_procacct_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "AcPid") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_PID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcPPid") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_PPID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcUid") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_UID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcGid") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_GID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcUTime") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_UTIME,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "AcSTime") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_STIME,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuCount") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CPU_COUNT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuRunRealTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CPU_RUN_REAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuRunVirtualTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CPU_RUN_VIRTUAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuDelayTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CPU_DELAY_TOTAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuDelayAverage") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CPU_DELAY_AVG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CoreMem") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_CORE_MEM,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "VirtMem") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_VIRT_MEM,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "HiwaterRss") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_HIGH_WATER_RSS,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "HiwaterVm") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_HIGH_WATER_VM,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "Nvcsw") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_NVCSW,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "Nivcsw") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_NIVCSW,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapinCount") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_SWAPIN_COUNT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapinDelayTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_SWAPIN_DELAY_TOTAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapinDelayAverage") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_SWAPIN_DELAY_AVG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "BlkIOCount") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_BLKIO_COUNT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "BlkIODelayTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_BLKIO_DELAY_TOTAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "BlkIODelayAverage") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_BLKIO_DELAY_AVG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOStorageReadBytes") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_STORAGE_READ,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOStorageWriteBytes") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_STORAGE_WRITE,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOReadChar") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_READ_CHAR,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOWriteChar") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_WRITE_CHAR,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOReadSyscalls") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_READ_SYSCALLS,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOWriteSyscalls") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_IO_WRITE_SYSCALLS,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "FreePagesCount") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_FREEPAGE_COUNT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "FreePagesDelayTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_FREEPAGE_DELAY_TOTAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "FreePagesDelayAverage") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_FREEPAGE_DELAY_AVG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ThrashingCount") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_TRASHING_COUNT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ThrashingDelayTotal") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_TRASHING_DELAY_TOTAL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ThrashingDelayAverage") == 0)
+            tkm_procacct_entry_set_data (
+              entry, PACCT_DATA_TRASHING_DELAY_AVG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_procacct_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_procacct_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -614,7 +617,7 @@ tkm_procacct_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   ProcAcctQueryData data
-      = { .type = PROCACCT_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = PROCACCT_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, procacct_entry_free);
 

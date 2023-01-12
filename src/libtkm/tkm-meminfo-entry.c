@@ -24,21 +24,19 @@
 #include "tkm-meminfo-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum MemInfo query type
  */
-typedef enum _MemInfoQueryType
-{
+typedef enum _MemInfoQueryType {
   MEMINFO_GET_ENTRIES,
 } MemInfoQueryType;
 
 /**
  * @enum MemInfo query data object
  */
-typedef struct _MemInfoQueryData
-{
+typedef struct _MemInfoQueryData {
   MemInfoQueryType type;
   gpointer response;
 } MemInfoQueryData;
@@ -97,8 +95,10 @@ tkm_meminfo_entry_get_timestamp (TkmMemInfoEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -116,12 +116,15 @@ tkm_meminfo_entry_set_timestamp (TkmMemInfoEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -237,69 +240,69 @@ meminfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case MEMINFO_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmMemInfoEntry) entry = tkm_meminfo_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmMemInfoEntry) entry = tkm_meminfo_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_meminfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_meminfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_meminfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MemTotal") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_MEM_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MemFree") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_MEM_FREE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MemAvail") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_MEM_AVAIL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MemCached") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_MEM_CACHED,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MemAvailPercent") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_MEM_PERCENT,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapTotal") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_SWAP_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapFree") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_SWAP_FREE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "SwapCached") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_SWAP_CACHED,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CmaTotal") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_CMA_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CmaFree") == 0)
-              tkm_meminfo_entry_set_data (
-                  entry, MINFO_DATA_CMA_FREE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_meminfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_meminfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_meminfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemTotal") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_MEM_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemFree") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_MEM_FREE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemAvail") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_MEM_AVAIL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemCached") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_MEM_CACHED,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemAvailPercent") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_MEM_PERCENT,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapTotal") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_SWAP_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapFree") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_SWAP_FREE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "SwapCached") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_SWAP_CACHED,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CmaTotal") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_CMA_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CmaFree") == 0)
+            tkm_meminfo_entry_set_data (
+              entry, MINFO_DATA_CMA_FREE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_meminfo_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_meminfo_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -327,7 +330,7 @@ tkm_meminfo_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   MemInfoQueryData data
-      = { .type = MEMINFO_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = MEMINFO_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, meminfo_entry_free);
 

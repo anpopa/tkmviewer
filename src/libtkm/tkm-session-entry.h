@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _TkmSessionEntry
-{
+typedef struct _TkmSessionEntry {
   guint idx;
 
   gchar *hash;

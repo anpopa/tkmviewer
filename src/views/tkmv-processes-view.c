@@ -31,8 +31,7 @@
 #include "libkplot/extern.h"
 #include <math.h>
 
-enum
-{
+enum {
   COLUMN_PROCINFO_NAME,
   COLUMN_PROCINFO_PID,
   COLUMN_PROCINFO_PPID,
@@ -43,8 +42,7 @@ enum
   PROCINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_CTXINFO_NAME,
   COLUMN_CTXINFO_ID,
   COLUMN_CTXINFO_CPU_TIME,
@@ -53,8 +51,7 @@ enum
   CTXINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_PROCACCT_NAME,
   COLUMN_PROCACCT_PID,
   COLUMN_PROCACCT_PPID,
@@ -149,8 +146,7 @@ static void ctxinfo_mem_history_draw_function_safe (GtkDrawingArea *area,
                                                     cairo_t *cr, int width,
                                                     int height, gpointer data);
 
-struct _TkmvProcessesView
-{
+struct _TkmvProcessesView {
   GtkBox parent_instance;
 
   GtkListStore *procinfo_store;
@@ -205,8 +201,8 @@ tkmv_processes_view_class_init (TkmvProcessesViewClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (
-      widget_class,
-      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-processes-view.ui");
+    widget_class,
+    "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-processes-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, TkmvProcessesView,
                                         procinfo_scrolled_window);
@@ -316,7 +312,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_PROCINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_PROCINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -327,7 +323,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column pid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "PID", renderer, "text", COLUMN_PROCINFO_PID, NULL);
+    "PID", renderer, "text", COLUMN_PROCINFO_PID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -337,7 +333,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column ppid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "PPID", renderer, "text", COLUMN_PROCINFO_PPID, NULL);
+    "PPID", renderer, "text", COLUMN_PROCINFO_PPID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -347,7 +343,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column context */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Context", renderer, "text", COLUMN_PROCINFO_CONTEXT, NULL);
+    "Context", renderer, "text", COLUMN_PROCINFO_CONTEXT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -357,7 +353,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column cputime */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUTime", renderer, "text", COLUMN_PROCINFO_CPU_TIME, NULL);
+    "CPUTime", renderer, "text", COLUMN_PROCINFO_CPU_TIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -367,7 +363,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column cpupercent */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUPercent", renderer, "text", COLUMN_PROCINFO_CPU_PERCENT, NULL);
+    "CPUPercent", renderer, "text", COLUMN_PROCINFO_CPU_PERCENT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -377,7 +373,7 @@ procinfo_add_columns (TkmvProcessesView *self)
   /* column vmrss */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "RSS", renderer, "text", COLUMN_PROCINFO_VMRSS, NULL);
+    "RSS", renderer, "text", COLUMN_PROCINFO_VMRSS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -440,17 +436,17 @@ procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   guint selected_count = 0;
 
   selected_count = gtk_tree_selection_count_selected_rows (
-      self->procinfo_treeview_select);
+    self->procinfo_treeview_select);
   gtk_tree_selection_selected_foreach (
-      selection, procinfo_selection_foreach_get_pid, &selected_pids);
+    selection, procinfo_selection_foreach_get_pid, &selected_pids);
   gtk_tree_selection_selected_foreach (
-      selection, procinfo_selection_foreach_get_name, &selected_names);
+    selection, procinfo_selection_foreach_get_name, &selected_names);
 
   if (selected_count > 0)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%d]", (gchar *)g_list_nth (selected_names, 0)->data,
-          GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data));
+        "%s[%d]", (gchar *)g_list_nth (selected_names, 0)->data,
+        GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data));
       gtk_label_set_text (self->procinfo_cpu_entry1_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry1_label),
                               TRUE);
@@ -469,8 +465,8 @@ procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 1)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%d]", (gchar *)g_list_nth (selected_names, 1)->data,
-          GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data));
+        "%s[%d]", (gchar *)g_list_nth (selected_names, 1)->data,
+        GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data));
       gtk_label_set_text (self->procinfo_cpu_entry2_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry2_label),
                               TRUE);
@@ -489,8 +485,8 @@ procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 2)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%d]", (gchar *)g_list_nth (selected_names, 2)->data,
-          GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data));
+        "%s[%d]", (gchar *)g_list_nth (selected_names, 2)->data,
+        GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data));
       gtk_label_set_text (self->procinfo_cpu_entry3_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry3_label),
                               TRUE);
@@ -509,8 +505,8 @@ procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 3)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%d]", (gchar *)g_list_nth (selected_names, 3)->data,
-          GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data));
+        "%s[%d]", (gchar *)g_list_nth (selected_names, 3)->data,
+        GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data));
       gtk_label_set_text (self->procinfo_cpu_entry4_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry4_label),
                               TRUE);
@@ -529,8 +525,8 @@ procinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 4)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%d]", (gchar *)g_list_nth (selected_names, 4)->data,
-          GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data));
+        "%s[%d]", (gchar *)g_list_nth (selected_names, 4)->data,
+        GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data));
       gtk_label_set_text (self->procinfo_cpu_entry5_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->procinfo_cpu_entry5_label),
                               TRUE);
@@ -562,7 +558,7 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_CTXINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_CTXINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -583,7 +579,7 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   /* column cputime */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUTime", renderer, "text", COLUMN_CTXINFO_CPU_TIME, NULL);
+    "CPUTime", renderer, "text", COLUMN_CTXINFO_CPU_TIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -593,7 +589,7 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   /* column cpupercent */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUPercent", renderer, "text", COLUMN_CTXINFO_CPU_PERCENT, NULL);
+    "CPUPercent", renderer, "text", COLUMN_CTXINFO_CPU_PERCENT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -603,7 +599,7 @@ ctxinfo_add_columns (TkmvProcessesView *self)
   /* column vmrss */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "RSS", renderer, "text", COLUMN_CTXINFO_VMRSS, NULL);
+    "RSS", renderer, "text", COLUMN_CTXINFO_VMRSS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -646,17 +642,17 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   guint selected_count = 0;
 
   selected_count
-      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+    = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
   gtk_tree_selection_selected_foreach (
-      selection, ctxinfo_selection_foreach_get_id, &selected_ids);
+    selection, ctxinfo_selection_foreach_get_id, &selected_ids);
   gtk_tree_selection_selected_foreach (
-      selection, ctxinfo_selection_foreach_get_name, &selected_names);
+    selection, ctxinfo_selection_foreach_get_name, &selected_names);
 
   if (selected_count > 0)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%s]", (gchar *)g_list_nth (selected_names, 0)->data,
-          (gchar *)g_list_nth (selected_ids, 0)->data);
+        "%s[%s]", (gchar *)g_list_nth (selected_names, 0)->data,
+        (gchar *)g_list_nth (selected_ids, 0)->data);
       gtk_label_set_text (self->ctxinfo_cpu_entry1_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry1_label),
                               TRUE);
@@ -675,8 +671,8 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 1)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%s]", (gchar *)g_list_nth (selected_names, 1)->data,
-          (gchar *)g_list_nth (selected_ids, 1)->data);
+        "%s[%s]", (gchar *)g_list_nth (selected_names, 1)->data,
+        (gchar *)g_list_nth (selected_ids, 1)->data);
       gtk_label_set_text (self->ctxinfo_cpu_entry2_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry2_label),
                               TRUE);
@@ -695,8 +691,8 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 2)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%s]", (gchar *)g_list_nth (selected_names, 2)->data,
-          (gchar *)g_list_nth (selected_ids, 2)->data);
+        "%s[%s]", (gchar *)g_list_nth (selected_names, 2)->data,
+        (gchar *)g_list_nth (selected_ids, 2)->data);
       gtk_label_set_text (self->ctxinfo_cpu_entry3_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry3_label),
                               TRUE);
@@ -715,8 +711,8 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 3)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%s]", (gchar *)g_list_nth (selected_names, 3)->data,
-          (gchar *)g_list_nth (selected_ids, 3)->data);
+        "%s[%s]", (gchar *)g_list_nth (selected_names, 3)->data,
+        (gchar *)g_list_nth (selected_ids, 3)->data);
       gtk_label_set_text (self->ctxinfo_cpu_entry4_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry4_label),
                               TRUE);
@@ -735,8 +731,8 @@ ctxinfo_selection_changed (GtkTreeSelection *selection, gpointer data)
   if (selected_count > 4)
     {
       g_autofree gchar *name = g_strdup_printf (
-          "%s[%s]", (gchar *)g_list_nth (selected_names, 4)->data,
-          (gchar *)g_list_nth (selected_ids, 4)->data);
+        "%s[%s]", (gchar *)g_list_nth (selected_names, 4)->data,
+        (gchar *)g_list_nth (selected_ids, 4)->data);
       gtk_label_set_text (self->ctxinfo_cpu_entry5_label, name);
       gtk_widget_set_visible (GTK_WIDGET (self->ctxinfo_cpu_entry5_label),
                               TRUE);
@@ -767,7 +763,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_PROCACCT_NAME, NULL);
+    "Name", renderer, "text", COLUMN_PROCACCT_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -776,7 +772,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column pid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "PID", renderer, "text", COLUMN_PROCACCT_PID, NULL);
+    "PID", renderer, "text", COLUMN_PROCACCT_PID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -784,7 +780,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column ppid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "PPID", renderer, "text", COLUMN_PROCACCT_PPID, NULL);
+    "PPID", renderer, "text", COLUMN_PROCACCT_PPID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -792,7 +788,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column uid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "UID", renderer, "text", COLUMN_PROCACCT_UID, NULL);
+    "UID", renderer, "text", COLUMN_PROCACCT_UID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -800,7 +796,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column gid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "GID", renderer, "text", COLUMN_PROCACCT_GID, NULL);
+    "GID", renderer, "text", COLUMN_PROCACCT_GID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -808,7 +804,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column utime */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "UTime", renderer, "text", COLUMN_PROCACCT_UTIME, NULL);
+    "UTime", renderer, "text", COLUMN_PROCACCT_UTIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -816,7 +812,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column stime */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "STime", renderer, "text", COLUMN_PROCACCT_STIME, NULL);
+    "STime", renderer, "text", COLUMN_PROCACCT_STIME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -824,7 +820,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column cpucount */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUCnt", renderer, "text", COLUMN_PROCACCT_CPU_COUNT, NULL);
+    "CPUCnt", renderer, "text", COLUMN_PROCACCT_CPU_COUNT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -832,7 +828,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column cpurunreal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPURunReal", renderer, "text", COLUMN_PROCACCT_CPU_RUN_REAL, NULL);
+    "CPURunReal", renderer, "text", COLUMN_PROCACCT_CPU_RUN_REAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -840,7 +836,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column cpurunvirt */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPURunVirt", renderer, "text", COLUMN_PROCACCT_CPU_RUN_VIRTUAL, NULL);
+    "CPURunVirt", renderer, "text", COLUMN_PROCACCT_CPU_RUN_VIRTUAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -848,8 +844,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column cpudelaytotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUDelayTotal", renderer, "text", COLUMN_PROCACCT_CPU_DELAY_TOTAL,
-      NULL);
+    "CPUDelayTotal", renderer, "text", COLUMN_PROCACCT_CPU_DELAY_TOTAL,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -857,7 +853,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column cpudelayavg */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CPUDelayAvg", renderer, "text", COLUMN_PROCACCT_CPU_DELAY_AVG, NULL);
+    "CPUDelayAvg", renderer, "text", COLUMN_PROCACCT_CPU_DELAY_AVG, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -865,7 +861,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column coremem */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CoreMem", renderer, "text", COLUMN_PROCACCT_CORE_MEM, NULL);
+    "CoreMem", renderer, "text", COLUMN_PROCACCT_CORE_MEM, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -873,7 +869,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column virtmem */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "VirtMem", renderer, "text", COLUMN_PROCACCT_VIRT_MEM, NULL);
+    "VirtMem", renderer, "text", COLUMN_PROCACCT_VIRT_MEM, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -881,7 +877,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column hiwaterrss */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "HiWaterRSS", renderer, "text", COLUMN_PROCACCT_HIGH_WATER_RSS, NULL);
+    "HiWaterRSS", renderer, "text", COLUMN_PROCACCT_HIGH_WATER_RSS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -889,7 +885,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column hiwatervm */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "HiWaterVM", renderer, "text", COLUMN_PROCACCT_HIGH_WATER_VM, NULL);
+    "HiWaterVM", renderer, "text", COLUMN_PROCACCT_HIGH_WATER_VM, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -897,7 +893,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column nvcsw */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "NVCSW", renderer, "text", COLUMN_PROCACCT_NVCSW, NULL);
+    "NVCSW", renderer, "text", COLUMN_PROCACCT_NVCSW, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -905,7 +901,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column nivcsw */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "NIVCSW", renderer, "text", COLUMN_PROCACCT_NIVCSW, NULL);
+    "NIVCSW", renderer, "text", COLUMN_PROCACCT_NIVCSW, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -913,7 +909,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column swapincount */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapinCount", renderer, "text", COLUMN_PROCACCT_SWAPIN_COUNT, NULL);
+    "SwapinCount", renderer, "text", COLUMN_PROCACCT_SWAPIN_COUNT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -921,8 +917,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column swapindelaytotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapinDelayTotal", renderer, "text", COLUMN_PROCACCT_SWAPIN_DELAY_TOTAL,
-      NULL);
+    "SwapinDelayTotal", renderer, "text", COLUMN_PROCACCT_SWAPIN_DELAY_TOTAL,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -930,8 +926,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column swapindelayavg */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapinDelayAvg", renderer, "text", COLUMN_PROCACCT_SWAPIN_DELAY_AVG,
-      NULL);
+    "SwapinDelayAvg", renderer, "text", COLUMN_PROCACCT_SWAPIN_DELAY_AVG,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -939,7 +935,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column blkiocount */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "BlkIoCount", renderer, "text", COLUMN_PROCACCT_BLKIO_COUNT, NULL);
+    "BlkIoCount", renderer, "text", COLUMN_PROCACCT_BLKIO_COUNT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -947,8 +943,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column blkiodelaytotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "BlkIoDelayTotal", renderer, "text", COLUMN_PROCACCT_BLKIO_DELAY_TOTAL,
-      NULL);
+    "BlkIoDelayTotal", renderer, "text", COLUMN_PROCACCT_BLKIO_DELAY_TOTAL,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -956,8 +952,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column blkiodelayavg */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "BlkIoDelayAvg", renderer, "text", COLUMN_PROCACCT_BLKIO_DELAY_AVG,
-      NULL);
+    "BlkIoDelayAvg", renderer, "text", COLUMN_PROCACCT_BLKIO_DELAY_AVG,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -965,8 +961,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column iostorageread */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOStorageRead", renderer, "text", COLUMN_PROCACCT_IO_STORAGE_READ,
-      NULL);
+    "IOStorageRead", renderer, "text", COLUMN_PROCACCT_IO_STORAGE_READ,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -974,8 +970,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column iostoragewrite */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOStorageWrite", renderer, "text", COLUMN_PROCACCT_IO_STORAGE_WRITE,
-      NULL);
+    "IOStorageWrite", renderer, "text", COLUMN_PROCACCT_IO_STORAGE_WRITE,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -983,7 +979,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column ioreadchr */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOReadChr", renderer, "text", COLUMN_PROCACCT_IO_READ_CHAR, NULL);
+    "IOReadChr", renderer, "text", COLUMN_PROCACCT_IO_READ_CHAR, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -991,7 +987,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column iowritechr */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOWriteChr", renderer, "text", COLUMN_PROCACCT_IO_WRITE_CHAR, NULL);
+    "IOWriteChr", renderer, "text", COLUMN_PROCACCT_IO_WRITE_CHAR, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -999,8 +995,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column ioreadsyscall */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOReadSyscall", renderer, "text", COLUMN_PROCACCT_IO_READ_SYSCALLS,
-      NULL);
+    "IOReadSyscall", renderer, "text", COLUMN_PROCACCT_IO_READ_SYSCALLS,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1008,8 +1004,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column iowritesyscall */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOWriteSyscall", renderer, "text", COLUMN_PROCACCT_IO_WRITE_SYSCALLS,
-      NULL);
+    "IOWriteSyscall", renderer, "text", COLUMN_PROCACCT_IO_WRITE_SYSCALLS,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1017,7 +1013,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column freepagecount */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "FreePageCount", renderer, "text", COLUMN_PROCACCT_FREEPAGE_COUNT, NULL);
+    "FreePageCount", renderer, "text", COLUMN_PROCACCT_FREEPAGE_COUNT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1025,8 +1021,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column freepagedelaytotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "FreePageDelayTotal", renderer, "text",
-      COLUMN_PROCACCT_FREEPAGE_DELAY_TOTAL, NULL);
+    "FreePageDelayTotal", renderer, "text",
+    COLUMN_PROCACCT_FREEPAGE_DELAY_TOTAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1034,8 +1030,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column freepagedelayavg */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "FreePageDelayAvg", renderer, "text", COLUMN_PROCACCT_FREEPAGE_DELAY_AVG,
-      NULL);
+    "FreePageDelayAvg", renderer, "text", COLUMN_PROCACCT_FREEPAGE_DELAY_AVG,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1043,7 +1039,7 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column trashingcount */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "TrashingCount", renderer, "text", COLUMN_PROCACCT_TRASHING_COUNT, NULL);
+    "TrashingCount", renderer, "text", COLUMN_PROCACCT_TRASHING_COUNT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1051,8 +1047,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column trashingdelaytotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "TrashingDelayTotal", renderer, "text",
-      COLUMN_PROCACCT_TRASHING_DELAY_TOTAL, NULL);
+    "TrashingDelayTotal", renderer, "text",
+    COLUMN_PROCACCT_TRASHING_DELAY_TOTAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1060,8 +1056,8 @@ procacct_add_columns (TkmvProcessesView *self)
   /* column trashingdelayavg */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "TrashingDelayAvg", renderer, "text", COLUMN_PROCACCT_TRASHING_DELAY_AVG,
-      NULL);
+    "TrashingDelayAvg", renderer, "text", COLUMN_PROCACCT_TRASHING_DELAY_AVG,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->procacct_treeview, column);
@@ -1084,122 +1080,122 @@ procinfo_sort_iter_compare_func (GtkTreeModel *model, GtkTreeIter *a,
   switch (sortcol)
     {
     case COLUMN_PROCINFO_NAME:
-      {
-        char *name1, *name2;
+    {
+      char *name1, *name2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_NAME, &name1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_NAME, &name2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_NAME, &name1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_NAME, &name2, -1);
 
-        if (name1 == NULL || name2 == NULL)
-          {
-            if (name1 == NULL && name2 == NULL)
-              break; /* both equal => ret = 0 */
+      if (name1 == NULL || name2 == NULL)
+        {
+          if (name1 == NULL && name2 == NULL)
+            break;   /* both equal => ret = 0 */
 
-            ret = (name1 == NULL) ? -1 : 1;
-          }
-        else
-          {
-            ret = g_utf8_collate (name1, name2);
-          }
+          ret = (name1 == NULL) ? -1 : 1;
+        }
+      else
+        {
+          ret = g_utf8_collate (name1, name2);
+        }
 
-        g_free (name1);
-        g_free (name2);
-      }
-      break;
+      g_free (name1);
+      g_free (name2);
+    }
+    break;
 
     case COLUMN_PROCINFO_CONTEXT:
-      {
-        char *name1, *name2;
+    {
+      char *name1, *name2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CONTEXT, &name1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CONTEXT, &name2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_CONTEXT, &name1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_CONTEXT, &name2, -1);
 
-        if (name1 == NULL || name2 == NULL)
-          {
-            if (name1 == NULL && name2 == NULL)
-              break; /* both equal => ret = 0 */
+      if (name1 == NULL || name2 == NULL)
+        {
+          if (name1 == NULL && name2 == NULL)
+            break;   /* both equal => ret = 0 */
 
-            ret = (name1 == NULL) ? -1 : 1;
-          }
-        else
-          {
-            ret = g_utf8_collate (name1, name2);
-          }
+          ret = (name1 == NULL) ? -1 : 1;
+        }
+      else
+        {
+          ret = g_utf8_collate (name1, name2);
+        }
 
-        g_free (name1);
-        g_free (name2);
-      }
-      break;
+      g_free (name1);
+      g_free (name2);
+    }
+    break;
 
     case COLUMN_PROCINFO_PID:
-      {
-        guint pid1, pid2;
+    {
+      guint pid1, pid2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_PID, &pid1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_PID, &pid2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_PID, &pid1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_PID, &pid2, -1);
 
-        if (pid1 != pid2)
-          {
-            ret = (pid1 > pid2) ? 1 : -1;
-          }
-      }
-      break;
+      if (pid1 != pid2)
+        {
+          ret = (pid1 > pid2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_PROCINFO_PPID:
-      {
-        guint ppid1, ppid2;
+    {
+      guint ppid1, ppid2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_PPID, &ppid1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_PPID, &ppid2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_PPID, &ppid1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_PPID, &ppid2, -1);
 
-        if (ppid1 != ppid2)
-          {
-            ret = (ppid1 > ppid2) ? 1 : -1;
-          }
-      }
-      break;
+      if (ppid1 != ppid2)
+        {
+          ret = (ppid1 > ppid2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_PROCINFO_CPU_TIME:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_TIME, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_TIME, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_TIME, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_TIME, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_PROCINFO_CPU_PERCENT:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_PERCENT, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_PERCENT, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_CPU_PERCENT, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_CPU_PERCENT, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_PROCINFO_VMRSS:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_PROCINFO_VMRSS, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_PROCINFO_VMRSS, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_PROCINFO_VMRSS, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_PROCINFO_VMRSS, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     default:
       g_return_val_if_reached (0);
@@ -1218,94 +1214,94 @@ ctxinfo_sort_iter_compare_func (GtkTreeModel *model, GtkTreeIter *a,
   switch (sortcol)
     {
     case COLUMN_CTXINFO_NAME:
-      {
-        char *name1, *name2;
+    {
+      char *name1, *name2;
 
-        gtk_tree_model_get (model, a, COLUMN_CTXINFO_NAME, &name1, -1);
-        gtk_tree_model_get (model, b, COLUMN_CTXINFO_NAME, &name2, -1);
+      gtk_tree_model_get (model, a, COLUMN_CTXINFO_NAME, &name1, -1);
+      gtk_tree_model_get (model, b, COLUMN_CTXINFO_NAME, &name2, -1);
 
-        if (name1 == NULL || name2 == NULL)
-          {
-            if (name1 == NULL && name2 == NULL)
-              break; /* both equal => ret = 0 */
+      if (name1 == NULL || name2 == NULL)
+        {
+          if (name1 == NULL && name2 == NULL)
+            break;   /* both equal => ret = 0 */
 
-            ret = (name1 == NULL) ? -1 : 1;
-          }
-        else
-          {
-            ret = g_utf8_collate (name1, name2);
-          }
+          ret = (name1 == NULL) ? -1 : 1;
+        }
+      else
+        {
+          ret = g_utf8_collate (name1, name2);
+        }
 
-        g_free (name1);
-        g_free (name2);
-      }
-      break;
+      g_free (name1);
+      g_free (name2);
+    }
+    break;
 
     case COLUMN_CTXINFO_ID:
-      {
-        char *name1, *name2;
+    {
+      char *name1, *name2;
 
-        gtk_tree_model_get (model, a, COLUMN_CTXINFO_ID, &name1, -1);
-        gtk_tree_model_get (model, b, COLUMN_CTXINFO_ID, &name2, -1);
+      gtk_tree_model_get (model, a, COLUMN_CTXINFO_ID, &name1, -1);
+      gtk_tree_model_get (model, b, COLUMN_CTXINFO_ID, &name2, -1);
 
-        if (name1 == NULL || name2 == NULL)
-          {
-            if (name1 == NULL && name2 == NULL)
-              break; /* both equal => ret = 0 */
+      if (name1 == NULL || name2 == NULL)
+        {
+          if (name1 == NULL && name2 == NULL)
+            break;   /* both equal => ret = 0 */
 
-            ret = (name1 == NULL) ? -1 : 1;
-          }
-        else
-          {
-            ret = g_utf8_collate (name1, name2);
-          }
+          ret = (name1 == NULL) ? -1 : 1;
+        }
+      else
+        {
+          ret = g_utf8_collate (name1, name2);
+        }
 
-        g_free (name1);
-        g_free (name2);
-      }
-      break;
+      g_free (name1);
+      g_free (name2);
+    }
+    break;
 
     case COLUMN_CTXINFO_CPU_TIME:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_TIME, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_TIME, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_TIME, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_TIME, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_CTXINFO_CPU_PERCENT:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_PERCENT, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_PERCENT, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_CTXINFO_CPU_PERCENT, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_CTXINFO_CPU_PERCENT, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_CTXINFO_VMRSS:
-      {
-        guint val1, val2;
+    {
+      guint val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_CTXINFO_VMRSS, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_CTXINFO_VMRSS, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_CTXINFO_VMRSS, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_CTXINFO_VMRSS, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     default:
       g_return_val_if_reached (0);
@@ -1319,115 +1315,115 @@ create_tables (TkmvProcessesView *self)
 {
   /* create procinfo store */
   self->procinfo_store = gtk_list_store_new (
-      PROCINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
-      G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+    PROCINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+    G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->procinfo_treeview,
                            GTK_TREE_MODEL (self->procinfo_store));
   procinfo_add_columns (self);
 
   /* register selection handler */
   self->procinfo_treeview_select
-      = gtk_tree_view_get_selection (self->procinfo_treeview);
+    = gtk_tree_view_get_selection (self->procinfo_treeview);
   gtk_tree_selection_set_mode (self->procinfo_treeview_select,
                                GTK_SELECTION_MULTIPLE);
   gtk_tree_selection_set_select_function (
-      self->procinfo_treeview_select, limit_selection_function, NULL, NULL);
+    self->procinfo_treeview_select, limit_selection_function, NULL, NULL);
 
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_NAME,
-      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_NAME),
-      NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_NAME,
+    procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_NAME),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PID,
-      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PID),
-      NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PID,
+    procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PID),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PPID,
-      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PPID),
-      NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_PPID,
+    procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_PPID),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CONTEXT,
-      procinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_PROCINFO_CONTEXT), NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CONTEXT,
+    procinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_PROCINFO_CONTEXT), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_TIME,
-      procinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_PROCINFO_CPU_TIME), NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_TIME,
+    procinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_PROCINFO_CPU_TIME), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
-      procinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_PROCINFO_CPU_PERCENT), NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
+    procinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_PROCINFO_CPU_PERCENT), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_VMRSS,
-      procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_VMRSS),
-      NULL);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_VMRSS,
+    procinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_PROCINFO_VMRSS),
+    NULL);
   gtk_tree_sortable_set_sort_column_id (
-      GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
-      GTK_SORT_DESCENDING);
+    GTK_TREE_SORTABLE (self->procinfo_store), COLUMN_PROCINFO_CPU_PERCENT,
+    GTK_SORT_DESCENDING);
 
   g_signal_connect (G_OBJECT (self->procinfo_treeview_select), "changed",
                     G_CALLBACK (procinfo_selection_changed), self);
 
   /* create ctxinfo store */
   self->ctxinfo_store
-      = gtk_list_store_new (CTXINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
-                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+    = gtk_list_store_new (CTXINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
+                          G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->ctxinfo_treeview,
                            GTK_TREE_MODEL (self->ctxinfo_store));
   ctxinfo_add_columns (self);
 
   /* register selection handler */
   self->ctxinfo_treeview_select
-      = gtk_tree_view_get_selection (self->ctxinfo_treeview);
+    = gtk_tree_view_get_selection (self->ctxinfo_treeview);
   gtk_tree_selection_set_mode (self->ctxinfo_treeview_select,
                                GTK_SELECTION_MULTIPLE);
   gtk_tree_selection_set_select_function (
-      self->ctxinfo_treeview_select, limit_selection_function, NULL, NULL);
+    self->ctxinfo_treeview_select, limit_selection_function, NULL, NULL);
 
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_NAME,
-      ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_NAME),
-      NULL);
+    GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_NAME,
+    ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_NAME),
+    NULL);
   gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (self->ctxinfo_store),
                                    COLUMN_CTXINFO_ID,
                                    ctxinfo_sort_iter_compare_func,
                                    GINT_TO_POINTER (COLUMN_CTXINFO_ID), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_TIME,
-      ctxinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_CTXINFO_CPU_TIME), NULL);
+    GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_TIME,
+    ctxinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_CTXINFO_CPU_TIME), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
-      ctxinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_CTXINFO_CPU_PERCENT), NULL);
+    GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
+    ctxinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_CTXINFO_CPU_PERCENT), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_VMRSS,
-      ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_VMRSS),
-      NULL);
+    GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_VMRSS,
+    ctxinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_CTXINFO_VMRSS),
+    NULL);
   gtk_tree_sortable_set_sort_column_id (
-      GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
-      GTK_SORT_DESCENDING);
+    GTK_TREE_SORTABLE (self->ctxinfo_store), COLUMN_CTXINFO_CPU_PERCENT,
+    GTK_SORT_DESCENDING);
 
   g_signal_connect (G_OBJECT (self->ctxinfo_treeview_select), "changed",
                     G_CALLBACK (ctxinfo_selection_changed), self);
 
   /* create procacct store */
   self->procacct_store = gtk_list_store_new (
-      PROCACCT_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
-      G_TYPE_UINT, G_TYPE_UINT, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
+    PROCACCT_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT, G_TYPE_UINT,
+    G_TYPE_UINT, G_TYPE_UINT, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
   gtk_tree_view_set_model (self->procacct_treeview,
                            GTK_TREE_MODEL (self->procacct_store));
   procacct_add_columns (self);
 
   /* register selection handler */
   self->procacct_treeview_select
-      = gtk_tree_view_get_selection (self->procacct_treeview);
+    = gtk_tree_view_get_selection (self->procacct_treeview);
   gtk_tree_selection_set_mode (self->procacct_treeview_select,
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->procacct_treeview_select), "changed",
@@ -1440,18 +1436,18 @@ procinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_PROCINFO_NAME,
-      tkm_procinfo_entry_get_name (entry), COLUMN_PROCINFO_PID,
-      tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID),
-      COLUMN_PROCINFO_PPID,
-      tkm_procinfo_entry_get_data (entry, PINFO_DATA_PPID),
-      COLUMN_PROCINFO_CONTEXT, tkm_procinfo_entry_get_context (entry),
-      COLUMN_PROCINFO_CPU_TIME,
-      tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_TIME),
-      COLUMN_PROCINFO_CPU_PERCENT,
-      tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_PERCENT),
-      COLUMN_PROCINFO_VMRSS,
-      tkm_procinfo_entry_get_data (entry, PINFO_DATA_VMRSS), -1);
+    list_store, iter, COLUMN_PROCINFO_NAME,
+    tkm_procinfo_entry_get_name (entry), COLUMN_PROCINFO_PID,
+    tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID),
+    COLUMN_PROCINFO_PPID,
+    tkm_procinfo_entry_get_data (entry, PINFO_DATA_PPID),
+    COLUMN_PROCINFO_CONTEXT, tkm_procinfo_entry_get_context (entry),
+    COLUMN_PROCINFO_CPU_TIME,
+    tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_TIME),
+    COLUMN_PROCINFO_CPU_PERCENT,
+    tkm_procinfo_entry_get_data (entry, PINFO_DATA_CPU_PERCENT),
+    COLUMN_PROCINFO_VMRSS,
+    tkm_procinfo_entry_get_data (entry, PINFO_DATA_VMRSS), -1);
 }
 
 static void
@@ -1503,14 +1499,14 @@ ctxinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_CTXINFO_NAME,
-      tkm_ctxinfo_entry_get_name (entry), COLUMN_CTXINFO_ID,
-      tkm_ctxinfo_entry_get_id (entry), COLUMN_CTXINFO_CPU_TIME,
-      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_TIME),
-      COLUMN_CTXINFO_CPU_PERCENT,
-      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_PERCENT),
-      COLUMN_CTXINFO_VMRSS,
-      tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_VMRSS), -1);
+    list_store, iter, COLUMN_CTXINFO_NAME,
+    tkm_ctxinfo_entry_get_name (entry), COLUMN_CTXINFO_ID,
+    tkm_ctxinfo_entry_get_id (entry), COLUMN_CTXINFO_CPU_TIME,
+    tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_TIME),
+    COLUMN_CTXINFO_CPU_PERCENT,
+    tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_CPU_PERCENT),
+    COLUMN_CTXINFO_VMRSS,
+    tkm_ctxinfo_entry_get_data (entry, CTXINFO_DATA_VMRSS), -1);
 }
 
 static void
@@ -1561,73 +1557,73 @@ procacct_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_PROCACCT_NAME,
-      tkm_procacct_entry_get_name (entry), COLUMN_PROCACCT_PID,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_PID),
-      COLUMN_PROCACCT_PPID,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_PPID),
-      COLUMN_PROCACCT_UID, tkm_procacct_entry_get_data (entry, PACCT_DATA_UID),
-      COLUMN_PROCACCT_GID, tkm_procacct_entry_get_data (entry, PACCT_DATA_GID),
-      COLUMN_PROCACCT_UTIME,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_UTIME),
-      COLUMN_PROCACCT_STIME,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_STIME),
-      COLUMN_PROCACCT_CPU_COUNT,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_COUNT),
-      COLUMN_PROCACCT_CPU_RUN_REAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_REAL),
-      COLUMN_PROCACCT_CPU_RUN_VIRTUAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_VIRTUAL),
-      COLUMN_PROCACCT_CPU_DELAY_TOTAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_TOTAL),
-      COLUMN_PROCACCT_CPU_DELAY_AVG,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_AVG),
-      COLUMN_PROCACCT_CORE_MEM,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_CORE_MEM),
-      COLUMN_PROCACCT_VIRT_MEM,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_VIRT_MEM),
-      COLUMN_PROCACCT_HIGH_WATER_RSS,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_HIGH_WATER_RSS),
-      COLUMN_PROCACCT_NVCSW,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_NVCSW),
-      COLUMN_PROCACCT_NIVCSW,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_NIVCSW),
-      COLUMN_PROCACCT_SWAPIN_COUNT,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_COUNT),
-      COLUMN_PROCACCT_SWAPIN_DELAY_TOTAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_TOTAL),
-      COLUMN_PROCACCT_SWAPIN_DELAY_AVG,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_AVG),
-      COLUMN_PROCACCT_BLKIO_COUNT,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_COUNT),
-      COLUMN_PROCACCT_BLKIO_DELAY_TOTAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_TOTAL),
-      COLUMN_PROCACCT_BLKIO_DELAY_AVG,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_AVG),
-      COLUMN_PROCACCT_IO_STORAGE_READ,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_READ),
-      COLUMN_PROCACCT_IO_STORAGE_WRITE,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_WRITE),
-      COLUMN_PROCACCT_IO_READ_CHAR,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_CHAR),
-      COLUMN_PROCACCT_IO_WRITE_CHAR,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_CHAR),
-      COLUMN_PROCACCT_IO_READ_SYSCALLS,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_SYSCALLS),
-      COLUMN_PROCACCT_IO_WRITE_SYSCALLS,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_SYSCALLS),
-      COLUMN_PROCACCT_FREEPAGE_COUNT,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_COUNT),
-      COLUMN_PROCACCT_FREEPAGE_DELAY_TOTAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_TOTAL),
-      COLUMN_PROCACCT_FREEPAGE_DELAY_AVG,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_AVG),
-      COLUMN_PROCACCT_TRASHING_COUNT,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_COUNT),
-      COLUMN_PROCACCT_TRASHING_DELAY_TOTAL,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_TOTAL),
-      COLUMN_PROCACCT_TRASHING_DELAY_AVG,
-      tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_AVG), -1);
+    list_store, iter, COLUMN_PROCACCT_NAME,
+    tkm_procacct_entry_get_name (entry), COLUMN_PROCACCT_PID,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_PID),
+    COLUMN_PROCACCT_PPID,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_PPID),
+    COLUMN_PROCACCT_UID, tkm_procacct_entry_get_data (entry, PACCT_DATA_UID),
+    COLUMN_PROCACCT_GID, tkm_procacct_entry_get_data (entry, PACCT_DATA_GID),
+    COLUMN_PROCACCT_UTIME,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_UTIME),
+    COLUMN_PROCACCT_STIME,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_STIME),
+    COLUMN_PROCACCT_CPU_COUNT,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_COUNT),
+    COLUMN_PROCACCT_CPU_RUN_REAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_REAL),
+    COLUMN_PROCACCT_CPU_RUN_VIRTUAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_RUN_VIRTUAL),
+    COLUMN_PROCACCT_CPU_DELAY_TOTAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_TOTAL),
+    COLUMN_PROCACCT_CPU_DELAY_AVG,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CPU_DELAY_AVG),
+    COLUMN_PROCACCT_CORE_MEM,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_CORE_MEM),
+    COLUMN_PROCACCT_VIRT_MEM,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_VIRT_MEM),
+    COLUMN_PROCACCT_HIGH_WATER_RSS,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_HIGH_WATER_RSS),
+    COLUMN_PROCACCT_NVCSW,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_NVCSW),
+    COLUMN_PROCACCT_NIVCSW,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_NIVCSW),
+    COLUMN_PROCACCT_SWAPIN_COUNT,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_COUNT),
+    COLUMN_PROCACCT_SWAPIN_DELAY_TOTAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_TOTAL),
+    COLUMN_PROCACCT_SWAPIN_DELAY_AVG,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_SWAPIN_DELAY_AVG),
+    COLUMN_PROCACCT_BLKIO_COUNT,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_COUNT),
+    COLUMN_PROCACCT_BLKIO_DELAY_TOTAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_TOTAL),
+    COLUMN_PROCACCT_BLKIO_DELAY_AVG,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_BLKIO_DELAY_AVG),
+    COLUMN_PROCACCT_IO_STORAGE_READ,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_READ),
+    COLUMN_PROCACCT_IO_STORAGE_WRITE,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_STORAGE_WRITE),
+    COLUMN_PROCACCT_IO_READ_CHAR,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_CHAR),
+    COLUMN_PROCACCT_IO_WRITE_CHAR,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_CHAR),
+    COLUMN_PROCACCT_IO_READ_SYSCALLS,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_READ_SYSCALLS),
+    COLUMN_PROCACCT_IO_WRITE_SYSCALLS,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_IO_WRITE_SYSCALLS),
+    COLUMN_PROCACCT_FREEPAGE_COUNT,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_COUNT),
+    COLUMN_PROCACCT_FREEPAGE_DELAY_TOTAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_TOTAL),
+    COLUMN_PROCACCT_FREEPAGE_DELAY_AVG,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_FREEPAGE_DELAY_AVG),
+    COLUMN_PROCACCT_TRASHING_COUNT,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_COUNT),
+    COLUMN_PROCACCT_TRASHING_DELAY_TOTAL,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_TOTAL),
+    COLUMN_PROCACCT_TRASHING_DELAY_AVG,
+    tkm_procacct_entry_get_data (entry, PACCT_DATA_TRASHING_DELAY_AVG), -1);
 }
 
 static void
@@ -1657,13 +1653,13 @@ reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
 
       tkm_procacct_entry_set_index (entry, i);
 
-      // The procacct entry come when ready so we should group the entries with
-      // some delay in mind. For now we use a 3 seconds delay since
-      // slowLaneInterval is normally much higher (eg 10s)
+      /* The procacct entry come when ready so we should group the entries with */
+      /* some delay in mind. For now we use a 3 seconds delay since */
+      /* slowLaneInterval is normally much higher (eg 10s) */
       if (tkm_procacct_entry_get_timestamp (entry, DATA_TIME_SOURCE_MONOTONIC)
           <= tkm_procacct_entry_get_timestamp (firstEntry,
                                                DATA_TIME_SOURCE_MONOTONIC)
-                 + 3)
+          + 3)
         {
           procacct_list_store_append_entry (view->procacct_store, entry,
                                             &iter);
@@ -1682,7 +1678,7 @@ static void
 timestamp_format_procview (double val, char *buf, size_t sz)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   g_assert (buf);
 
@@ -1690,20 +1686,20 @@ timestamp_format_procview (double val, char *buf, size_t sz)
     {
     case DATA_TIME_SOURCE_SYSTEM:
     case DATA_TIME_SOURCE_RECEIVE:
-      {
-        g_autoptr (GDateTime) dtime
-            = g_date_time_new_from_unix_utc ((guint)val);
-        g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
-        snprintf (buf, sz, "%s", text);
-        break;
-      }
+    {
+      g_autoptr (GDateTime) dtime
+        = g_date_time_new_from_unix_utc ((guint)val);
+      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      snprintf (buf, sz, "%s", text);
+      break;
+    }
 
     case DATA_TIME_SOURCE_MONOTONIC:
-      {
-        g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
-        snprintf (buf, sz, "%s", text);
-        break;
-      }
+    {
+      g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
+      snprintf (buf, sz, "%s", text);
+      break;
+    }
     }
 }
 
@@ -1726,9 +1722,9 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                     int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   TkmvProcessesView *self = (TkmvProcessesView *)data;
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *proc_info_data = tkm_context_get_procinfo_entries (context);
@@ -1763,14 +1759,14 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
     }
 
   selected_count = gtk_tree_selection_count_selected_rows (
-      self->procinfo_treeview_select);
+    self->procinfo_treeview_select);
   gtk_tree_selection_selected_foreach (self->procinfo_treeview_select,
                                        procinfo_selection_foreach_get_pid,
                                        &selected_pids);
 
   if (proc_info_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(proc_info_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (proc_info_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (proc_info_data->len > 0)
@@ -1780,7 +1776,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data))
@@ -1797,13 +1793,13 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d1->pairs[i].x = timestamp;
                   d1->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_CPU_PERCENT);
+                    entry, PINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -1813,7 +1809,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data))
@@ -1830,13 +1826,13 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d2->pairs[i].x = timestamp;
                   d2->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_CPU_PERCENT);
+                    entry, PINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -1846,7 +1842,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data))
@@ -1863,13 +1859,13 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d3->pairs[i].x = timestamp;
                   d3->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_CPU_PERCENT);
+                    entry, PINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -1879,7 +1875,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data))
@@ -1896,13 +1892,13 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d4->pairs[i].x = timestamp;
                   d4->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_CPU_PERCENT);
+                    entry, PINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -1912,7 +1908,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data))
@@ -1929,13 +1925,13 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d5->pairs[i].x = timestamp;
                   d5->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_CPU_PERCENT);
+                    entry, PINFO_DATA_CPU_PERCENT);
                 }
             }
         }
@@ -1950,7 +1946,7 @@ procinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   if (active_session != NULL)
     {
       plotcfg.extrema_ymax
-          = (100 * tkm_session_entry_get_device_cpus (active_session));
+        = (100 * tkm_session_entry_get_device_cpus (active_session));
     }
   else
     {
@@ -2042,9 +2038,9 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                     int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   TkmvProcessesView *self = (TkmvProcessesView *)data;
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *proc_info_data = tkm_context_get_procinfo_entries (context);
@@ -2079,14 +2075,14 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
     }
 
   selected_count = gtk_tree_selection_count_selected_rows (
-      self->procinfo_treeview_select);
+    self->procinfo_treeview_select);
   gtk_tree_selection_selected_foreach (self->procinfo_treeview_select,
                                        procinfo_selection_foreach_get_pid,
                                        &selected_pids);
 
   if (proc_info_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(proc_info_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (proc_info_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (proc_info_data->len > 0)
@@ -2096,7 +2092,7 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 0)->data))
@@ -2113,13 +2109,13 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d1->pairs[i].x = timestamp;
                   d1->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_VMRSS);
+                    entry, PINFO_DATA_VMRSS);
                 }
             }
 
@@ -2129,7 +2125,7 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 1)->data))
@@ -2146,13 +2142,13 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d2->pairs[i].x = timestamp;
                   d2->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_VMRSS);
+                    entry, PINFO_DATA_VMRSS);
                 }
             }
 
@@ -2162,7 +2158,7 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 2)->data))
@@ -2179,13 +2175,13 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d3->pairs[i].x = timestamp;
                   d3->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_VMRSS);
+                    entry, PINFO_DATA_VMRSS);
                 }
             }
 
@@ -2195,7 +2191,7 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 3)->data))
@@ -2212,13 +2208,13 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d4->pairs[i].x = timestamp;
                   d4->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_VMRSS);
+                    entry, PINFO_DATA_VMRSS);
                 }
             }
 
@@ -2228,7 +2224,7 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < proc_info_data->len; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, i);
+                    = g_ptr_array_index (proc_info_data, i);
 
                   if (tkm_procinfo_entry_get_data (entry, PINFO_DATA_PID)
                       == GPOINTER_TO_INT (g_list_nth (selected_pids, 4)->data))
@@ -2245,13 +2241,13 @@ procinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmProcInfoEntry *entry
-                      = g_ptr_array_index (proc_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (proc_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_procinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d5->pairs[i].x = timestamp;
                   d5->pairs[i].y = tkm_procinfo_entry_get_data (
-                          entry, PINFO_DATA_VMRSS);
+                    entry, PINFO_DATA_VMRSS);
                 }
             }
         }
@@ -2349,9 +2345,9 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                    int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   TkmvProcessesView *self = (TkmvProcessesView *)data;
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *ctx_info_data = tkm_context_get_ctxinfo_entries (context);
@@ -2386,14 +2382,14 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
     }
 
   selected_count
-      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+    = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
   gtk_tree_selection_selected_foreach (self->ctxinfo_treeview_select,
                                        ctxinfo_selection_foreach_get_id,
                                        &selected_ids);
 
   if (ctx_info_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(ctx_info_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (ctx_info_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (ctx_info_data->len > 0)
@@ -2403,7 +2399,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 0)->data)
@@ -2421,13 +2417,13 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d1->pairs[i].x = timestamp;
                   d1->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_CPU_PERCENT);
+                    entry, CTXINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -2437,7 +2433,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 1)->data)
@@ -2455,13 +2451,13 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d2->pairs[i].x = timestamp;
                   d2->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_CPU_PERCENT);
+                    entry, CTXINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -2471,7 +2467,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 2)->data)
@@ -2489,13 +2485,13 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d3->pairs[i].x = timestamp;
                   d3->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_CPU_PERCENT);
+                    entry, CTXINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -2505,7 +2501,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 3)->data)
@@ -2523,13 +2519,13 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d4->pairs[i].x = timestamp;
                   d4->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_CPU_PERCENT);
+                    entry, CTXINFO_DATA_CPU_PERCENT);
                 }
             }
 
@@ -2539,7 +2535,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 4)->data)
@@ -2557,13 +2553,13 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d5->pairs[i].x = timestamp;
                   d5->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_CPU_PERCENT);
+                    entry, CTXINFO_DATA_CPU_PERCENT);
                 }
             }
         }
@@ -2578,7 +2574,7 @@ ctxinfo_cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
   if (active_session != NULL)
     {
       plotcfg.extrema_ymax
-          = (100 * tkm_session_entry_get_device_cpus (active_session));
+        = (100 * tkm_session_entry_get_device_cpus (active_session));
     }
   else
     {
@@ -2670,9 +2666,9 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
                                    int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   TkmvProcessesView *self = (TkmvProcessesView *)data;
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *ctx_info_data = tkm_context_get_ctxinfo_entries (context);
@@ -2707,14 +2703,14 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
     }
 
   selected_count
-      = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
+    = gtk_tree_selection_count_selected_rows (self->ctxinfo_treeview_select);
   gtk_tree_selection_selected_foreach (self->ctxinfo_treeview_select,
                                        ctxinfo_selection_foreach_get_id,
                                        &selected_ids);
 
   if (ctx_info_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(ctx_info_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (ctx_info_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (ctx_info_data->len > 0)
@@ -2724,7 +2720,7 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 0)->data)
@@ -2742,13 +2738,13 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d1->pairs[i].x = timestamp;
                   d1->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_VMRSS);
+                    entry, CTXINFO_DATA_VMRSS);
                 }
             }
 
@@ -2758,7 +2754,7 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 1)->data)
@@ -2776,13 +2772,13 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d2->pairs[i].x = timestamp;
                   d2->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_VMRSS);
+                    entry, CTXINFO_DATA_VMRSS);
                 }
             }
 
@@ -2792,7 +2788,7 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 2)->data)
@@ -2810,13 +2806,13 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d3->pairs[i].x = timestamp;
                   d3->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_VMRSS);
+                    entry, CTXINFO_DATA_VMRSS);
                 }
             }
 
@@ -2826,7 +2822,7 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 3)->data)
@@ -2844,13 +2840,13 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d4->pairs[i].x = timestamp;
                   d4->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_VMRSS);
+                    entry, CTXINFO_DATA_VMRSS);
                 }
             }
 
@@ -2860,7 +2856,7 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < ctx_info_data->len; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, i);
+                    = g_ptr_array_index (ctx_info_data, i);
 
                   if (g_strcmp0 (tkm_ctxinfo_entry_get_id (entry),
                                  (gchar *)g_list_nth (selected_ids, 4)->data)
@@ -2878,13 +2874,13 @@ ctxinfo_mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr,
               for (guint i = 0; i < entry_count; i++)
                 {
                   TkmCtxInfoEntry *entry
-                      = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
+                    = g_ptr_array_index (ctx_info_data, entry_index_set[i]);
                   gulong timestamp = tkm_ctxinfo_entry_get_timestamp (
-                      entry, tkmv_settings_get_time_source (settings));
+                    entry, tkmv_settings_get_time_source (settings));
 
                   d5->pairs[i].x = timestamp;
                   d5->pairs[i].y = tkm_ctxinfo_entry_get_data (
-                          entry, CTXINFO_DATA_VMRSS);
+                    entry, CTXINFO_DATA_VMRSS);
                 }
             }
         }
@@ -2982,7 +2978,7 @@ procinfo_cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                          int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -2996,7 +2992,7 @@ procinfo_mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                          int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -3010,7 +3006,7 @@ ctxinfo_cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                         int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -3024,7 +3020,7 @@ ctxinfo_mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                         int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -3044,7 +3040,7 @@ tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
 
   /* select first entry in proc and context tables */
   selected_count = gtk_tree_selection_count_selected_rows (
-      view->procinfo_treeview_select);
+    view->procinfo_treeview_select);
   if (selected_count == 0)
     {
       GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
@@ -3052,7 +3048,7 @@ tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
     }
 
   selected_count
-      = gtk_tree_selection_count_selected_rows (view->ctxinfo_treeview_select);
+    = gtk_tree_selection_count_selected_rows (view->ctxinfo_treeview_select);
   if (selected_count == 0)
     {
       GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);

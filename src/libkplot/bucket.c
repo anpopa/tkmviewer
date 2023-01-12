@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2014, 2015 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -26,56 +26,57 @@
 #include "extern.h"
 
 struct kdata *
-kdata_bucket_alloc(size_t rmin, size_t rmax)
+kdata_bucket_alloc (size_t rmin, size_t rmax)
 {
-	struct kdata	*d;
-	size_t		 i;
+  struct kdata    *d;
+  size_t i;
 
-	if (NULL == (d = calloc(1, sizeof(struct kdata))))
-		return(NULL);
+  if (NULL == (d = calloc (1, sizeof(struct kdata))))
+    return(NULL);
 
-	d->refs = 1;
-	d->pairsz = rmax - rmin;
-	d->pairs = calloc(d->pairsz, sizeof(struct kpair));
-	if (NULL == d->pairs) {
-		free(d);
-		return(NULL);
-	}
+  d->refs = 1;
+  d->pairsz = rmax - rmin;
+  d->pairs = calloc (d->pairsz, sizeof(struct kpair));
+  if (NULL == d->pairs)
+    {
+      free (d);
+      return(NULL);
+    }
 
-	for (i = 0; i < d->pairsz; i++) 
-		d->pairs[i].x = rmin + i;
+  for (i = 0; i < d->pairsz; i++)
+    d->pairs[i].x = rmin + i;
 
-	d->type = KDATA_BUCKET;
-	d->d.bucket.rmin = rmin;
-	d->d.bucket.rmax = rmax;
-	return(d);
+  d->type = KDATA_BUCKET;
+  d->d.bucket.rmin = rmin;
+  d->d.bucket.rmax = rmax;
+  return(d);
 }
 
 static int
-kdata_bucket_checkrange(const struct kdata *d, size_t v)
+kdata_bucket_checkrange (const struct kdata *d, size_t v)
 {
-
-	return(KDATA_BUCKET == d->type && 
-		v >= d->d.bucket.rmin && v < d->d.bucket.rmax);
+  return(KDATA_BUCKET == d->type &&
+         v >= d->d.bucket.rmin && v < d->d.bucket.rmax);
 }
 
 int
-kdata_bucket_set(struct kdata *d, size_t v, double x, double y)
+kdata_bucket_set (struct kdata *d, size_t v, double x, double y)
 {
+  if (!kdata_bucket_checkrange (d, v))
+    return(0);
 
-	if ( ! kdata_bucket_checkrange(d, v))
-		return(0);
-	return(kdata_set(d, v - d->d.bucket.rmin, x, y));
+  return(kdata_set (d, v - d->d.bucket.rmin, x, y));
 }
 
 int
-kdata_bucket_add(struct kdata *d, size_t v, double val)
+kdata_bucket_add (struct kdata *d, size_t v, double val)
 {
-	double 	 x, y;
+  double x, y;
 
-	if ( ! kdata_bucket_checkrange(d, v))
-		return(0);
-	x = d->pairs[v - d->d.bucket.rmin].x;
-	y = d->pairs[v - d->d.bucket.rmin].y + val;
-	return(kdata_set(d, v - d->d.bucket.rmin, x, y));
+  if (!kdata_bucket_checkrange (d, v))
+    return(0);
+
+  x = d->pairs[v - d->d.bucket.rmin].x;
+  y = d->pairs[v - d->d.bucket.rmin].y + val;
+  return(kdata_set (d, v - d->d.bucket.rmin, x, y));
 }

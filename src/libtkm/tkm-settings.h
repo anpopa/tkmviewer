@@ -30,8 +30,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _TkmSettings
-{
+typedef struct _TkmSettings {
   DataTimeSource time_source;
   DataTimeInterval time_interval;
 

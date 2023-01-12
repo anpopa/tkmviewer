@@ -24,21 +24,19 @@
 #include "tkm-cpustat-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum CpuStat query type
  */
-typedef enum _CpuStatQueryType
-{
+typedef enum _CpuStatQueryType {
   CPUSTAT_GET_ENTRIES,
 } CpuStatQueryType;
 
 /**
  * @enum CpuStat query data object
  */
-typedef struct _CpuStatQueryData
-{
+typedef struct _CpuStatQueryData {
   CpuStatQueryType type;
   gpointer response;
 } CpuStatQueryData;
@@ -118,8 +116,10 @@ tkm_cpustat_entry_get_timestamp (TkmCpuStatEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -137,12 +137,15 @@ tkm_cpustat_entry_set_timestamp (TkmCpuStatEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -212,55 +215,55 @@ cpustat_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case CPUSTAT_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmCpuStatEntry) entry = tkm_cpustat_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmCpuStatEntry) entry = tkm_cpustat_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatName") == 0)
-              tkm_cpustat_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_cpustat_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatAll") == 0)
-              tkm_cpustat_entry_set_all (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatSys") == 0)
-              tkm_cpustat_entry_set_sys (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatUsr") == 0)
-              tkm_cpustat_entry_set_usr (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUStatIow") == 0)
-              tkm_cpustat_entry_set_iow (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUStatName") == 0)
+            tkm_cpustat_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_cpustat_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUStatAll") == 0)
+            tkm_cpustat_entry_set_all (
+              entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUStatSys") == 0)
+            tkm_cpustat_entry_set_sys (
+              entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUStatUsr") == 0)
+            tkm_cpustat_entry_set_usr (
+              entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUStatIow") == 0)
+            tkm_cpustat_entry_set_iow (
+              entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_cpustat_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_cpustat_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -288,7 +291,7 @@ tkm_cpustat_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   CpuStatQueryData data
-      = { .type = CPUSTAT_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = CPUSTAT_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, cpustat_entry_free);
 

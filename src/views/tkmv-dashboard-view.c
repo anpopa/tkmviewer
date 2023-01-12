@@ -55,8 +55,7 @@ static void psi_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                             int width, int height,
                                             gpointer data);
 
-struct _TkmvDashboardView
-{
+struct _TkmvDashboardView {
   GtkBox parent_instance;
 
   /* Template widgets */
@@ -88,8 +87,8 @@ tkmv_dashboard_view_class_init (TkmvDashboardViewClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (
-      widget_class,
-      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-dashboard-view.ui");
+    widget_class,
+    "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-dashboard-view.ui");
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
                                         history_events_drawing_area);
   gtk_widget_class_bind_template_child (widget_class, TkmvDashboardView,
@@ -148,7 +147,7 @@ static void
 timestamp_format (double val, char *buf, size_t sz)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   g_assert (buf);
 
@@ -156,20 +155,20 @@ timestamp_format (double val, char *buf, size_t sz)
     {
     case DATA_TIME_SOURCE_SYSTEM:
     case DATA_TIME_SOURCE_RECEIVE:
-      {
-        g_autoptr (GDateTime) dtime
-            = g_date_time_new_from_unix_utc ((guint)val);
-        g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
-        snprintf (buf, sz, "%s", text);
-        break;
-      }
+    {
+      g_autoptr (GDateTime) dtime
+        = g_date_time_new_from_unix_utc ((guint)val);
+      g_autofree gchar *text = g_date_time_format (dtime, "%H:%M:%S");
+      snprintf (buf, sz, "%s", text);
+      break;
+    }
 
     case DATA_TIME_SOURCE_MONOTONIC:
-      {
-        g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
-        snprintf (buf, sz, "%s", text);
-        break;
-      }
+    {
+      g_autofree gchar *text = g_strdup_printf ("%u", (guint)val);
+      snprintf (buf, sz, "%s", text);
+      break;
+    }
     }
 }
 
@@ -199,9 +198,9 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                               int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *events_data = tkm_context_get_procevent_entries (context);
   TkmSessionEntry *active_session = NULL;
@@ -234,7 +233,7 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (events_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(events_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (events_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (events_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
@@ -247,7 +246,8 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           entry_index_set[entry_count++] = 0;
           for (guint i = 1; i < events_data->len; i++)
             {
-              TkmProcEventEntry *prev_entry = g_ptr_array_index (events_data, entry_index_set[entry_count-1]);
+              TkmProcEventEntry *prev_entry =
+                g_ptr_array_index (events_data, entry_index_set[entry_count - 1]);
               TkmProcEventEntry *entry = g_ptr_array_index (events_data, i);
               gboolean should_add = false;
 
@@ -257,22 +257,22 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                   should_add = true;
                 }
               else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXECS)
-                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXECS))
+                       != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXECS))
                 {
                   should_add = true;
                 }
               else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXITS)
-                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXITS))
+                       != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_EXITS))
                 {
                   should_add = true;
                 }
               else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_UIDS)
-                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_UIDS))
+                       != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_UIDS))
                 {
                   should_add = true;
                 }
               else if (tkm_procevent_entry_get_data (entry, PEVENT_DATA_GIDS)
-                      != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_GIDS))
+                       != tkm_procevent_entry_get_data (prev_entry, PEVENT_DATA_GIDS))
                 {
                   should_add = true;
                 }
@@ -299,21 +299,21 @@ events_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           TkmProcEventEntry *entry = g_ptr_array_index (events_data, entry_index_set[i]);
 
           d1->pairs[i].x = tkm_procevent_entry_get_timestamp (
-              entry, tkmv_settings_get_time_source (settings));
+            entry, tkmv_settings_get_time_source (settings));
           d1->pairs[i].y
-              = tkm_procevent_entry_get_data (entry, PEVENT_DATA_FORKS);
+            = tkm_procevent_entry_get_data (entry, PEVENT_DATA_FORKS);
           d2->pairs[i].x = d1->pairs[i].x;
           d2->pairs[i].y
-              = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXECS);
+            = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXECS);
           d3->pairs[i].x = d1->pairs[i].x;
           d3->pairs[i].y
-              = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXITS);
+            = tkm_procevent_entry_get_data (entry, PEVENT_DATA_EXITS);
           d4->pairs[i].x = d1->pairs[i].x;
           d4->pairs[i].y
-              = tkm_procevent_entry_get_data (entry, PEVENT_DATA_UIDS);
+            = tkm_procevent_entry_get_data (entry, PEVENT_DATA_UIDS);
           d5->pairs[i].x = d1->pairs[i].x;
           d5->pairs[i].y
-              = tkm_procevent_entry_get_data (entry, PEVENT_DATA_GIDS);
+            = tkm_procevent_entry_get_data (entry, PEVENT_DATA_GIDS);
         }
     }
 
@@ -406,9 +406,9 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                            int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
   TkmSessionEntry *active_session = NULL;
@@ -426,7 +426,6 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (sessions != NULL)
     {
-
       for (guint i = 0; i < sessions->len; i++)
         {
           if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
@@ -441,7 +440,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (cpu_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(cpu_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (cpu_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (cpu_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
@@ -465,7 +464,8 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
               if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
                 {
-                  TkmCpuStatEntry *prev_entry = g_ptr_array_index (cpu_data, entry_index_set[entry_count-1]);
+                  TkmCpuStatEntry *prev_entry =
+                    g_ptr_array_index (cpu_data, entry_index_set[entry_count - 1]);
                   gboolean should_add = false;
 
                   if (tkm_cpustat_entry_get_all (entry)
@@ -474,17 +474,17 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                       should_add = true;
                     }
                   else if (tkm_cpustat_entry_get_usr (entry)
-                          != tkm_cpustat_entry_get_usr (prev_entry))
+                           != tkm_cpustat_entry_get_usr (prev_entry))
                     {
                       should_add = true;
                     }
                   else if (tkm_cpustat_entry_get_sys (entry)
-                          != tkm_cpustat_entry_get_sys (prev_entry))
+                           != tkm_cpustat_entry_get_sys (prev_entry))
                     {
                       should_add = true;
                     }
                   else if (tkm_cpustat_entry_get_iow (entry)
-                          != tkm_cpustat_entry_get_iow (prev_entry))
+                           != tkm_cpustat_entry_get_iow (prev_entry))
                     {
                       should_add = true;
                     }
@@ -513,7 +513,7 @@ cpu_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           if (g_strcmp0 (tkm_cpustat_entry_get_name (entry), "cpu") == 0)
             {
               d1->pairs[i].x = tkm_cpustat_entry_get_timestamp (
-                  entry, tkmv_settings_get_time_source (settings));
+                entry, tkmv_settings_get_time_source (settings));
               d1->pairs[i].y = tkm_cpustat_entry_get_all (entry);
               d2->pairs[i].x = d1->pairs[i].x;
               d2->pairs[i].y = tkm_cpustat_entry_get_usr (entry);
@@ -601,9 +601,9 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                            int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *mem_data = tkm_context_get_meminfo_entries (context);
   TkmSessionEntry *active_session = NULL;
@@ -622,7 +622,6 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (sessions != NULL)
     {
-
       for (guint i = 0; i < sessions->len; i++)
         {
           if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
@@ -637,7 +636,7 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (mem_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(mem_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (mem_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (mem_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
@@ -650,7 +649,8 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           entry_index_set[entry_count++] = 0;
           for (guint i = 1; i < mem_data->len; i++)
             {
-              TkmMemInfoEntry *prev_entry = g_ptr_array_index (mem_data, entry_index_set[entry_count-1]);
+              TkmMemInfoEntry *prev_entry =
+                g_ptr_array_index (mem_data, entry_index_set[entry_count - 1]);
               TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, i);
               gboolean should_add = false;
 
@@ -660,22 +660,22 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                   should_add = true;
                 }
               else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE)
-                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_FREE))
+                       != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_FREE))
                 {
                   should_add = true;
                 }
               else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL)
-                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_AVAIL))
+                       != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_MEM_AVAIL))
                 {
                   should_add = true;
                 }
               else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL)
-                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_TOTAL))
+                       != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_TOTAL))
                 {
                   should_add = true;
                 }
               else if (tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE)
-                      != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_FREE))
+                       != tkm_meminfo_entry_get_data (prev_entry, MINFO_DATA_SWAP_FREE))
                 {
                   should_add = true;
                 }
@@ -702,21 +702,21 @@ mem_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           TkmMemInfoEntry *entry = g_ptr_array_index (mem_data, entry_index_set[i]);
 
           d1->pairs[i].x = tkm_meminfo_entry_get_timestamp (
-              entry, tkmv_settings_get_time_source (settings));
+            entry, tkmv_settings_get_time_source (settings));
           d1->pairs[i].y
-              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL);
+            = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL);
           d2->pairs[i].x = d1->pairs[i].x;
           d2->pairs[i].y
-              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE);
+            = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE);
           d3->pairs[i].x = d1->pairs[i].x;
           d3->pairs[i].y
-              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL);
+            = tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL);
           d4->pairs[i].x = d1->pairs[i].x;
           d4->pairs[i].y
-              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL);
+            = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL);
           d5->pairs[i].x = d1->pairs[i].x;
           d5->pairs[i].y
-              = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE);
+            = tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE);
         }
     }
 
@@ -810,9 +810,9 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                            int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   GPtrArray *psi_data = tkm_context_get_pressure_entries (context);
   TkmSessionEntry *active_session = NULL;
@@ -832,7 +832,6 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (sessions != NULL)
     {
-
       for (guint i = 0; i < sessions->len; i++)
         {
           if (tkm_session_entry_get_active (g_ptr_array_index (sessions, i)))
@@ -847,7 +846,7 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
 
   if (psi_data != NULL)
     {
-      g_autofree guint *entry_index_set = calloc(psi_data->len, sizeof(guint));
+      g_autofree guint *entry_index_set = calloc (psi_data->len, sizeof(guint));
       guint entry_count = 0;
 
       if (psi_data->len < KPOINTS_OPTIMIZATION_START_LIMIT)
@@ -860,7 +859,8 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           entry_index_set[entry_count++] = 0;
           for (guint i = 1; i < psi_data->len; i++)
             {
-              TkmPressureEntry *prev_entry = g_ptr_array_index (psi_data, entry_index_set[entry_count-1]);
+              TkmPressureEntry *prev_entry =
+                g_ptr_array_index (psi_data, entry_index_set[entry_count - 1]);
               TkmPressureEntry *entry = g_ptr_array_index (psi_data, i);
               gboolean should_add = false;
 
@@ -870,27 +870,27 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
                   should_add = true;
                 }
               else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_CPU_SOME_AVG60)
-                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_CPU_SOME_AVG60))
+                       != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_CPU_SOME_AVG60))
                 {
                   should_add = true;
                 }
               else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_MEM_SOME_AVG10)
-                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG10))
+                       != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG10))
                 {
                   should_add = true;
                 }
               else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_MEM_SOME_AVG60)
-                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG60))
+                       != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_MEM_SOME_AVG60))
                 {
                   should_add = true;
                 }
               else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_IO_SOME_AVG10)
-                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG10))
+                       != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG10))
                 {
                   should_add = true;
                 }
               else if (tkm_pressure_entry_get_data_avg (entry, PSI_DATA_IO_SOME_AVG60)
-                      != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG60))
+                       != tkm_pressure_entry_get_data_avg (prev_entry, PSI_DATA_IO_SOME_AVG60))
                 {
                   should_add = true;
                 }
@@ -918,24 +918,24 @@ psi_history_draw_function (GtkDrawingArea *area, cairo_t *cr, int width,
           TkmPressureEntry *entry = g_ptr_array_index (psi_data, entry_index_set[i]);
 
           d1->pairs[i].x = tkm_pressure_entry_get_timestamp (
-              entry, tkmv_settings_get_time_source (settings));
+            entry, tkmv_settings_get_time_source (settings));
           d1->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_CPU_SOME_AVG10);
+            entry, PSI_DATA_CPU_SOME_AVG10);
           d2->pairs[i].x = d1->pairs[i].x;
           d2->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_CPU_SOME_AVG60);
+            entry, PSI_DATA_CPU_SOME_AVG60);
           d3->pairs[i].x = d1->pairs[i].x;
           d3->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_MEM_SOME_AVG10);
+            entry, PSI_DATA_MEM_SOME_AVG10);
           d4->pairs[i].x = d1->pairs[i].x;
           d4->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_MEM_SOME_AVG60);
+            entry, PSI_DATA_MEM_SOME_AVG60);
           d5->pairs[i].x = d1->pairs[i].x;
           d5->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_IO_SOME_AVG10);
+            entry, PSI_DATA_IO_SOME_AVG10);
           d6->pairs[i].x = d1->pairs[i].x;
           d6->pairs[i].y = tkm_pressure_entry_get_data_avg (
-              entry, PSI_DATA_IO_SOME_AVG60);
+            entry, PSI_DATA_IO_SOME_AVG60);
         }
     }
 
@@ -1043,7 +1043,7 @@ static void
 update_instant_cpu_frame (TkmvDashboardView *view)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   TkmSessionEntry *active_session = NULL;
   GPtrArray *cpu_data = tkm_context_get_cpustat_entries (context);
@@ -1073,24 +1073,24 @@ update_instant_cpu_frame (TkmvDashboardView *view)
   entry = g_ptr_array_index (cpu_data, 0);
 
   gtk_level_bar_set_value (
-      view->cpu_all_level_bar,
-      (double)tkm_cpustat_entry_get_all (entry));
+    view->cpu_all_level_bar,
+    (double)tkm_cpustat_entry_get_all (entry));
   gtk_level_bar_set_value (
-      view->cpu_usr_level_bar,
-      (double)tkm_cpustat_entry_get_usr (entry));
+    view->cpu_usr_level_bar,
+    (double)tkm_cpustat_entry_get_usr (entry));
   gtk_level_bar_set_value (
-      view->cpu_sys_level_bar,
-      (double)tkm_cpustat_entry_get_sys (entry));
+    view->cpu_sys_level_bar,
+    (double)tkm_cpustat_entry_get_sys (entry));
 
-  snprintf (buf, sizeof (buf), "All - %u %%",
+  snprintf (buf, sizeof(buf), "All - %u %%",
             tkm_cpustat_entry_get_all (entry));
   gtk_label_set_text (view->cpu_all_level_label, buf);
 
-  snprintf (buf, sizeof (buf), "Usr - %3u %%",
+  snprintf (buf, sizeof(buf), "Usr - %3u %%",
             tkm_cpustat_entry_get_usr (entry));
   gtk_label_set_text (view->cpu_usr_level_label, buf);
 
-  snprintf (buf, sizeof (buf), "Sys - %3u %%",
+  snprintf (buf, sizeof(buf), "Sys - %3u %%",
             tkm_cpustat_entry_get_sys (entry));
   gtk_label_set_text (view->cpu_sys_level_label, buf);
 
@@ -1101,7 +1101,7 @@ static void
 update_instant_mem_frame (TkmvDashboardView *view)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
   GPtrArray *sessions = tkm_context_get_session_entries (context);
   TkmSessionEntry *active_session = NULL;
   GPtrArray *mem_data = tkm_context_get_meminfo_entries (context);
@@ -1132,17 +1132,17 @@ update_instant_mem_frame (TkmvDashboardView *view)
 
   gtk_level_bar_set_value (view->mem_level_bar,
                            100
-                               - (double)tkm_meminfo_entry_get_data (
-                                   entry, MINFO_DATA_MEM_PERCENT));
+                           - (double)tkm_meminfo_entry_get_data (
+                             entry, MINFO_DATA_MEM_PERCENT));
   gtk_level_bar_set_value (
-      view->swap_level_bar,
-      (double)tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT));
+    view->swap_level_bar,
+    (double)tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT));
 
-  snprintf (buf, sizeof (buf), "Memory - %u %%",
+  snprintf (buf, sizeof(buf), "Memory - %u %%",
             100 - tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_PERCENT));
   gtk_label_set_text (view->mem_level_label, buf);
 
-  snprintf (buf, sizeof (buf), "Swap - %u %%",
+  snprintf (buf, sizeof(buf), "Swap - %u %%",
             tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT));
   gtk_label_set_text (view->swap_level_label, buf);
 
@@ -1154,7 +1154,7 @@ cpu_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
                                 int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -1168,7 +1168,7 @@ mem_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
                                 int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -1182,7 +1182,7 @@ psi_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr, int width,
                                 int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {
@@ -1196,7 +1196,7 @@ events_history_draw_function_safe (GtkDrawingArea *area, cairo_t *cr,
                                    int width, int height, gpointer data)
 {
   TkmContext *context
-      = tkmv_application_get_context (tkmv_application_instance ());
+    = tkmv_application_get_context (tkmv_application_instance ());
 
   if (tkm_context_data_try_lock (context))
     {

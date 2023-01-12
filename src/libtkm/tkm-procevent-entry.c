@@ -24,21 +24,19 @@
 #include "tkm-procevent-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum ProcEvent query type
  */
-typedef enum _ProcEventQueryType
-{
+typedef enum _ProcEventQueryType {
   PROCEVENT_GET_ENTRIES,
 } ProcEventQueryType;
 
 /**
  * @enum ProcEvent query data object
  */
-typedef struct _ProcEventQueryData
-{
+typedef struct _ProcEventQueryData {
   ProcEventQueryType type;
   gpointer response;
 } ProcEventQueryData;
@@ -98,8 +96,10 @@ tkm_procevent_entry_get_timestamp (TkmProcEventEntry *entry,
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -117,12 +117,15 @@ tkm_procevent_entry_set_timestamp (TkmProcEventEntry *entry,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -197,49 +200,49 @@ procevent_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case PROCEVENT_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmProcEventEntry) entry = tkm_procevent_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmProcEventEntry) entry = tkm_procevent_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_procevent_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_procevent_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_procevent_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ForkCount") == 0)
-              tkm_procevent_entry_set_data (
-                  entry, PEVENT_DATA_FORKS,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ExecCount") == 0)
-              tkm_procevent_entry_set_data (
-                  entry, PEVENT_DATA_EXECS,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ExitCount") == 0)
-              tkm_procevent_entry_set_data (
-                  entry, PEVENT_DATA_EXITS,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "UIdCount") == 0)
-              tkm_procevent_entry_set_data (
-                  entry, PEVENT_DATA_UIDS,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "GIdCount") == 0)
-              tkm_procevent_entry_set_data (
-                  entry, PEVENT_DATA_GIDS,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_procevent_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_procevent_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_procevent_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ForkCount") == 0)
+            tkm_procevent_entry_set_data (
+              entry, PEVENT_DATA_FORKS,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ExecCount") == 0)
+            tkm_procevent_entry_set_data (
+              entry, PEVENT_DATA_EXECS,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ExitCount") == 0)
+            tkm_procevent_entry_set_data (
+              entry, PEVENT_DATA_EXITS,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "UIdCount") == 0)
+            tkm_procevent_entry_set_data (
+              entry, PEVENT_DATA_UIDS,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "GIdCount") == 0)
+            tkm_procevent_entry_set_data (
+              entry, PEVENT_DATA_GIDS,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_procevent_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_procevent_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -267,7 +270,7 @@ tkm_procevent_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   ProcEventQueryData data
-      = { .type = PROCEVENT_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = PROCEVENT_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, procevent_entry_free);
 

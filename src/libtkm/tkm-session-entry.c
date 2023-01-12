@@ -26,8 +26,7 @@
 /**
  * @enum Session query type
  */
-typedef enum _SessionQueryType
-{
+typedef enum _SessionQueryType {
   SESSION_GET_ENTRIES,
   SESSION_GET_TIME_INTERVALS,
   SESSION_GET_DEVICE_DATA,
@@ -36,8 +35,7 @@ typedef enum _SessionQueryType
 /**
  * @enum Session query data object
  */
-typedef struct _SessionQueryData
-{
+typedef struct _SessionQueryData {
   SessionQueryType type;
   gpointer response;
 } SessionQueryData;
@@ -164,8 +162,10 @@ tkm_session_entry_get_first_timestamp (TkmSessionEntry *entry,
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->first_system_ts;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->first_monotonic_ts;
+
     default:
       break;
     }
@@ -183,12 +183,15 @@ tkm_session_entry_set_first_timestamp (TkmSessionEntry *entry,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->first_system_ts = ts;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->first_monotonic_ts = ts;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->first_receive_ts = ts;
       break;
+
     default:
       break;
     }
@@ -203,8 +206,10 @@ tkm_session_entry_get_last_timestamp (TkmSessionEntry *entry,
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->last_system_ts;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->last_monotonic_ts;
+
     default:
       break;
     }
@@ -222,12 +227,15 @@ tkm_session_entry_set_last_timestamp (TkmSessionEntry *entry,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->last_system_ts = ts;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->last_monotonic_ts = ts;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->last_receive_ts = ts;
       break;
+
     default:
       break;
     }
@@ -255,72 +263,72 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case SESSION_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "Name") == 0)
-              tkm_session_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "Hash") == 0)
-              tkm_session_entry_set_hash (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "CoreCount") == 0)
-              tkm_session_entry_set_device_cpus (
-                  entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "Name") == 0)
+            tkm_session_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "Hash") == 0)
+            tkm_session_entry_set_hash (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "CoreCount") == 0)
+            tkm_session_entry_set_device_cpus (
+              entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
+      break;
+    }
 
     case SESSION_GET_TIME_INTERVALS:
-      {
-        TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
+    {
+      TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "MinSysTime") == 0)
-              tkm_session_entry_set_first_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MinMonTime") == 0)
-              tkm_session_entry_set_first_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MinRecTime") == 0)
-              tkm_session_entry_set_first_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MaxSysTime") == 0)
-              tkm_session_entry_set_last_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MaxMonTime") == 0)
-              tkm_session_entry_set_last_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MaxRecTime") == 0)
-              tkm_session_entry_set_last_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "MinSysTime") == 0)
+            tkm_session_entry_set_first_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MinMonTime") == 0)
+            tkm_session_entry_set_first_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MinRecTime") == 0)
+            tkm_session_entry_set_first_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MaxSysTime") == 0)
+            tkm_session_entry_set_last_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MaxMonTime") == 0)
+            tkm_session_entry_set_last_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MaxRecTime") == 0)
+            tkm_session_entry_set_last_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        break;
-      }
+      break;
+    }
 
     case SESSION_GET_DEVICE_DATA:
-      {
-        TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
+    {
+      TkmSessionEntry *entry = (TkmSessionEntry *)querydata->response;
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "Name") == 0)
-              tkm_session_entry_set_device_name (entry, argv[i]);
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "Name") == 0)
+            tkm_session_entry_set_device_name (entry, argv[i]);
+        }
 
-        break;
-      }
+      break;
+    }
 
     default:
       break;
@@ -346,28 +354,28 @@ update_time_intervals (gpointer _entry, gpointer _db)
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
   SessionQueryData data
-      = { .type = SESSION_GET_TIME_INTERVALS, .response = entry };
+    = { .type = SESSION_GET_TIME_INTERVALS, .response = entry };
 
   g_assert (db);
 
   sql = g_strdup_printf (
-      "SELECT "
-      "MIN(SystemTime) AS 'MinSysTime',"
-      "MIN(MonotonicTime) AS 'MinMonTime',"
-      "MIN(ReceiveTime) AS 'MinRecTime',"
-      "MAX(SystemTime) AS 'MaxSysTime',"
-      "MAX(MonotonicTime) AS 'MaxMonTime',"
-      "MAX(ReceiveTime) AS 'MaxRecTime' "
-      "FROM '%s' "
-      "WHERE SessionId IS (SELECT Id FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
-      TKM_CPUSTAT_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
-      tkm_session_entry_get_hash (entry));
+    "SELECT "
+    "MIN(SystemTime) AS 'MinSysTime',"
+    "MIN(MonotonicTime) AS 'MinMonTime',"
+    "MIN(ReceiveTime) AS 'MinRecTime',"
+    "MAX(SystemTime) AS 'MaxSysTime',"
+    "MAX(MonotonicTime) AS 'MaxMonTime',"
+    "MAX(ReceiveTime) AS 'MaxRecTime' "
+    "FROM '%s' "
+    "WHERE SessionId IS (SELECT Id FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
+    TKM_CPUSTAT_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
+    tkm_session_entry_get_hash (entry));
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {
       g_warning (
-          "Fail to update time intervals for session '%s'. SQL error %s",
-          tkm_session_entry_get_name (entry), query_error);
+        "Fail to update time intervals for session '%s'. SQL error %s",
+        tkm_session_entry_get_name (entry), query_error);
       sqlite3_free (query_error);
     }
 }
@@ -380,16 +388,16 @@ update_device_data (gpointer _entry, gpointer _db)
   g_autofree gchar *sql = NULL;
   gchar *query_error = NULL;
   SessionQueryData data
-      = { .type = SESSION_GET_DEVICE_DATA, .response = entry };
+    = { .type = SESSION_GET_DEVICE_DATA, .response = entry };
 
   g_assert (db);
 
   sql = g_strdup_printf (
-      "SELECT Name "
-      "FROM '%s' "
-      "WHERE Id IS (SELECT Device FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
-      TKM_DEVICES_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
-      tkm_session_entry_get_hash (entry));
+    "SELECT Name "
+    "FROM '%s' "
+    "WHERE Id IS (SELECT Device FROM '%s' WHERE Hash IS '%s' LIMIT 1);",
+    TKM_DEVICES_TABLE_NAME, TKM_SESSIONS_TABLE_NAME,
+    tkm_session_entry_get_hash (entry));
   if (sqlite3_exec (db, sql, session_sqlite_callback, &data, &query_error)
       != SQLITE_OK)
     {
@@ -406,7 +414,7 @@ tkm_session_entry_get_all_entries (sqlite3 *db, GError **error)
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   SessionQueryData data
-      = { .type = SESSION_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = SESSION_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, session_entry_free);
 

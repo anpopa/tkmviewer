@@ -24,21 +24,19 @@
 #include "tkm-buddyinfo-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum BuddyInfo query type
  */
-typedef enum _BuddyInfoQueryType
-{
+typedef enum _BuddyInfoQueryType {
   BUDDYINFO_GET_ENTRIES,
 } BuddyInfoQueryType;
 
 /**
  * @enum BuddyInfo query data object
  */
-typedef struct _BuddyInfoQueryData
-{
+typedef struct _BuddyInfoQueryData {
   BuddyInfoQueryType type;
   gpointer response;
 } BuddyInfoQueryData;
@@ -123,8 +121,10 @@ tkm_buddyinfo_entry_get_timestamp (TkmBuddyInfoEntry *entry,
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -142,12 +142,15 @@ tkm_buddyinfo_entry_set_timestamp (TkmBuddyInfoEntry *entry,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -197,35 +200,35 @@ buddyinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case BUDDYINFO_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmBuddyInfoEntry) entry = tkm_buddyinfo_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmBuddyInfoEntry) entry = tkm_buddyinfo_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_buddyinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_buddyinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_buddyinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "Name") == 0)
-              tkm_buddyinfo_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "Zone") == 0)
-              tkm_buddyinfo_entry_set_zone (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "Data") == 0)
-              tkm_buddyinfo_entry_set_data (entry, argv[i]);
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_buddyinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_buddyinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_buddyinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "Name") == 0)
+            tkm_buddyinfo_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "Zone") == 0)
+            tkm_buddyinfo_entry_set_zone (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "Data") == 0)
+            tkm_buddyinfo_entry_set_data (entry, argv[i]);
+        }
 
-        g_ptr_array_add (*entries, tkm_buddyinfo_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_buddyinfo_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -253,7 +256,7 @@ tkm_buddyinfo_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   BuddyInfoQueryData data
-      = { .type = BUDDYINFO_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = BUDDYINFO_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, buddyinfo_entry_free);
 

@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2015 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -26,59 +26,62 @@
 #include "extern.h"
 
 struct kdata *
-kdata_buffer_alloc(size_t hint)
+kdata_buffer_alloc (size_t hint)
 {
-	struct kdata	*d;
+  struct kdata    *d;
 
-	if (NULL == (d = calloc(1, sizeof(struct kdata))))
-		return(NULL);
+  if (NULL == (d = calloc (1, sizeof(struct kdata))))
+    return(NULL);
 
-	d->pairsz = hint;
-	d->pairs = calloc(d->pairsz, sizeof(struct kpair));
-	if (NULL == d->pairs) {
-		free(d);
-		return(NULL);
-	}
+  d->pairsz = hint;
+  d->pairs = calloc (d->pairsz, sizeof(struct kpair));
+  if (NULL == d->pairs)
+    {
+      free (d);
+      return(NULL);
+    }
 
-	d->refs = 1;
-	d->type = KDATA_BUFFER;
-	return(d);
+  d->refs = 1;
+  d->type = KDATA_BUFFER;
+  return(d);
 }
 
 int
-kdata_buffer_copy(struct kdata *dst, const struct kdata *src)
+kdata_buffer_copy (struct kdata *dst, const struct kdata *src)
 {
-	void	*p;
-	size_t	 i;
-	int	 rc = 1;
+  void    *p;
+  size_t i;
+  int rc = 1;
 
-	if (KDATA_BUFFER != dst->type)
-		return(0);
+  if (KDATA_BUFFER != dst->type)
+    return(0);
 
-	/* 
-	 * FIXME: use a pairbufsz-type of construct.
-	 * We're not tied to any particular buffer size, so this should
-	 * grow and shrink efficiently.
-	 * Obviously, the current method is not efficient.
-	 */
-	if (src->pairsz > dst->pairsz) {
-		dst->pairsz = src->pairsz;
-		p = reallocarray(dst->pairs, 
-			dst->pairsz, sizeof(struct kpair));
-		if (NULL == p)
-			return(0);
-		dst->pairs = p;
-	}
-	dst->pairsz = src->pairsz;
+  /*
+   * FIXME: use a pairbufsz-type of construct.
+   * We're not tied to any particular buffer size, so this should
+   * grow and shrink efficiently.
+   * Obviously, the current method is not efficient.
+   */
+  if (src->pairsz > dst->pairsz)
+    {
+      dst->pairsz = src->pairsz;
+      p = reallocarray (dst->pairs,
+                        dst->pairsz, sizeof(struct kpair));
+      if (NULL == p)
+        return(0);
 
-	if (dst->depsz) 
-		for (i = 0; 0 != rc && i < dst->pairsz; i++)
-			rc = kdata_set(dst, i, 
-				src->pairs[i].x, 
-				src->pairs[i].y);
-	else
-		memcpy(dst->pairs, src->pairs, 
-			dst->pairsz * sizeof(struct kpair));
+      dst->pairs = p;
+    }
+  dst->pairsz = src->pairsz;
 
-	return(rc);
+  if (dst->depsz)
+    for (i = 0; 0 != rc && i < dst->pairsz; i++)
+      rc = kdata_set (dst, i,
+                      src->pairs[i].x,
+                      src->pairs[i].y);
+  else
+    memcpy (dst->pairs, src->pairs,
+            dst->pairsz * sizeof(struct kpair));
+
+  return(rc);
 }

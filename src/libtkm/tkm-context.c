@@ -48,11 +48,11 @@ tkm_context_new (TkmSettings *settings)
   ctx->mainloop = g_main_loop_new (ctx->maincontext, FALSE);
   ctx->taskpool = tkm_taskpool_new (sysconf (_SC_NPROCESSORS_ONLN), ctx);
   ctx->entrypool
-      = tkm_entrypool_new (ctx->maincontext, ctx->taskpool, settings);
+    = tkm_entrypool_new (ctx->maincontext, ctx->taskpool, settings);
   ctx->settings = tkm_settings_ref (settings);
 
   ctx->mainthread
-      = g_thread_new ("TkmContextThread", context_event_loop_thread, ctx);
+    = g_thread_new ("TkmContextThread", context_event_loop_thread, ctx);
 
   return ctx;
 }

@@ -34,8 +34,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _EntryPoolEventType
-{
+typedef enum _EntryPoolEventType {
   EPOOL_EVENT_OPEN_DATABASE_FILE,
   EPOOL_EVENT_LOAD_SESSIONS,
   EPOOL_EVENT_LOAD_DATA
@@ -44,14 +43,12 @@ typedef enum _EntryPoolEventType
 typedef gboolean (*TkmEntryPoolCallback) (gpointer _entrypool,
                                           gpointer _event);
 
-typedef struct _TkmEntryPoolEvent
-{
+typedef struct _TkmEntryPoolEvent {
   EntryPoolEventType type;
   TkmAction *action;
 } TkmEntryPoolEvent;
 
-typedef struct _TkmEntryPool
-{
+typedef struct _TkmEntryPool {
   GSource source;
   GAsyncQueue *queue;
 

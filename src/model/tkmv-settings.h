@@ -28,8 +28,7 @@ G_BEGIN_DECLS
 
 #define RECENT_FILES_MAX 5
 
-typedef struct _TkmvSettings
-{
+typedef struct _TkmvSettings {
   GSettings *gsettings;
   TkmSettings *tkm_settings;
 

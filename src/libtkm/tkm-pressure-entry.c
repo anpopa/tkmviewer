@@ -24,21 +24,19 @@
 #include "tkm-pressure-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum Pressure query type
  */
-typedef enum _PressureQueryType
-{
+typedef enum _PressureQueryType {
   PRESSURE_GET_ENTRIES,
 } PressureQueryType;
 
 /**
  * @enum Pressure query data object
  */
-typedef struct _PressureQueryData
-{
+typedef struct _PressureQueryData {
   PressureQueryType type;
   gpointer response;
 } PressureQueryData;
@@ -97,8 +95,10 @@ tkm_pressure_entry_get_timestamp (TkmPressureEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -116,12 +116,15 @@ tkm_pressure_entry_set_timestamp (TkmPressureEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -355,125 +358,125 @@ pressure_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case PRESSURE_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmPressureEntry) entry = tkm_pressure_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmPressureEntry) entry = tkm_pressure_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_pressure_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_pressure_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_pressure_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUSomeAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_SOME_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUSomeAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_SOME_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUSomeAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_SOME_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUSomeTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_CPU_SOME_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CPUFullAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_FULL_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUFullAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_FULL_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUFullAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_CPU_FULL_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "CPUFullTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_CPU_FULL_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MEMSomeAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_SOME_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMSomeAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_SOME_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMSomeAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_SOME_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMSomeTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_MEM_SOME_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MEMFullAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_FULL_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMFullAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_FULL_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMFullAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_MEM_FULL_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "MEMFullTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_MEM_FULL_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOSomeAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_SOME_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOSomeAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_SOME_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOSomeAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_SOME_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOSomeTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_IO_SOME_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "IOFullAvg10") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_FULL_AVG10,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOFullAvg60") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_FULL_AVG60,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOFullAvg300") == 0)
-              tkm_pressure_entry_set_data_avg (
-                  entry, PSI_DATA_IO_FULL_AVG300,
-                  (gfloat)g_ascii_strtod (argv[i], NULL));
-            else if (g_strcmp0 (colname[i], "IOFullTotal") == 0)
-              tkm_pressure_entry_set_data_total (
-                  entry, PSI_DATA_IO_FULL_TOTAL,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_pressure_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_pressure_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_pressure_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUSomeAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_SOME_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUSomeAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_SOME_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUSomeAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_SOME_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUSomeTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_CPU_SOME_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CPUFullAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_FULL_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUFullAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_FULL_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUFullAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_CPU_FULL_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "CPUFullTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_CPU_FULL_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MEMSomeAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_SOME_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMSomeAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_SOME_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMSomeAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_SOME_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMSomeTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_MEM_SOME_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MEMFullAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_FULL_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMFullAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_FULL_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMFullAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_MEM_FULL_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "MEMFullTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_MEM_FULL_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOSomeAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_SOME_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOSomeAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_SOME_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOSomeAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_SOME_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOSomeTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_IO_SOME_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "IOFullAvg10") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_FULL_AVG10,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOFullAvg60") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_FULL_AVG60,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOFullAvg300") == 0)
+            tkm_pressure_entry_set_data_avg (
+              entry, PSI_DATA_IO_FULL_AVG300,
+              (gfloat)g_ascii_strtod (argv[i], NULL));
+          else if (g_strcmp0 (colname[i], "IOFullTotal") == 0)
+            tkm_pressure_entry_set_data_total (
+              entry, PSI_DATA_IO_FULL_TOTAL,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_pressure_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_pressure_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -501,7 +504,7 @@ tkm_pressure_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   PressureQueryData data
-      = { .type = PRESSURE_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = PRESSURE_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, pressure_entry_free);
 

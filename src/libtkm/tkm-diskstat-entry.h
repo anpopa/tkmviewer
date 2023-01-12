@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmDiskStatDataType
-{
+typedef enum _TkmDiskStatDataType {
   DISKSTAT_DATA_MAJOR,
   DISKSTAT_DATA_MINOR,
   DISKSTAT_DATA_READS_COMPLETED,
@@ -46,8 +45,7 @@ typedef enum _TkmDiskStatDataType
   DISKSTAT_DATA_IO_WEIGHTED_MS,
 } TkmDiskStatDataType;
 
-typedef struct _TkmDiskStatEntry
-{
+typedef struct _TkmDiskStatEntry {
   guint idx;
   gchar *name;
 
@@ -90,8 +88,8 @@ void tkm_diskstat_entry_set_data (TkmDiskStatEntry *entry,
                                   TkmDiskStatDataType type, glong data);
 
 GPtrArray *tkm_diskstat_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmDiskStatEntry, tkm_diskstat_entry_unref);
 

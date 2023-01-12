@@ -24,21 +24,19 @@
 #include "tkm-wireless-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum Wireless query type
  */
-typedef enum _WirelessQueryType
-{
+typedef enum _WirelessQueryType {
   WIRELESS_GET_ENTRIES,
 } WirelessQueryType;
 
 /**
  * @enum Wireless query data object
  */
-typedef struct _WirelessQueryData
-{
+typedef struct _WirelessQueryData {
   WirelessQueryType type;
   gpointer response;
 } WirelessQueryData;
@@ -120,8 +118,10 @@ tkm_wireless_entry_get_timestamp (TkmWirelessEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -139,12 +139,15 @@ tkm_wireless_entry_set_timestamp (TkmWirelessEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -177,20 +180,28 @@ tkm_wireless_entry_get_data (TkmWirelessEntry *entry, TkmWirelessDataType type)
     {
     case WLAN_DATA_QUALITY_LINK:
       return entry->quality_link;
+
     case WLAN_DATA_QUALITY_LEVEL:
       return entry->quality_level;
+
     case WLAN_DATA_QUALITY_NOISE:
       return entry->quality_noise;
+
     case WLAN_DATA_DISCARDED_NWID:
       return entry->discarded_nwid;
+
     case WLAN_DATA_DISCARDED_CRYPT:
       return entry->discarded_crypt;
+
     case WLAN_DATA_DISCARDED_FRAG:
       return entry->discarded_frag;
+
     case WLAN_DATA_DISCARDED_MISC:
       return entry->discarded_misc;
+
     case WLAN_DATA_MISSED_BEACON:
       return entry->missed_beacon;
+
     default:
       break;
     }
@@ -209,27 +220,35 @@ tkm_wireless_entry_set_data (TkmWirelessEntry *entry, TkmWirelessDataType type,
     case WLAN_DATA_QUALITY_LINK:
       entry->quality_link = data;
       break;
+
     case WLAN_DATA_QUALITY_LEVEL:
       entry->quality_level = data;
       break;
+
     case WLAN_DATA_QUALITY_NOISE:
       entry->quality_noise = data;
       break;
+
     case WLAN_DATA_DISCARDED_NWID:
       entry->discarded_nwid = data;
       break;
+
     case WLAN_DATA_DISCARDED_CRYPT:
       entry->discarded_crypt = data;
       break;
+
     case WLAN_DATA_DISCARDED_FRAG:
       entry->discarded_frag = data;
       break;
+
     case WLAN_DATA_DISCARDED_MISC:
       entry->discarded_misc = data;
       break;
+
     case WLAN_DATA_MISSED_BEACON:
       entry->missed_beacon = data;
       break;
+
     default:
       break;
     }
@@ -243,65 +262,65 @@ wireless_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case WIRELESS_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmWirelessEntry) entry = tkm_wireless_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmWirelessEntry) entry = tkm_wireless_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_wireless_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_wireless_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_wireless_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "Name") == 0)
-              tkm_wireless_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "Status") == 0)
-              tkm_wireless_entry_set_status (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "QualityLink") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_QUALITY_LINK,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "QualityLevel") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_QUALITY_LEVEL,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "QualityNoise") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_QUALITY_NOISE,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "DiscardedNWId") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_DISCARDED_NWID,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "DiscardedCrypt") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_DISCARDED_CRYPT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "DiscardedFrag") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_DISCARDED_FRAG,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "DiscardedMisc") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_DISCARDED_MISC,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MissedBeacon") == 0)
-              tkm_wireless_entry_set_data (
-                  entry, WLAN_DATA_MISSED_BEACON,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_wireless_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_wireless_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_wireless_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "Name") == 0)
+            tkm_wireless_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "Status") == 0)
+            tkm_wireless_entry_set_status (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "QualityLink") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_QUALITY_LINK,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "QualityLevel") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_QUALITY_LEVEL,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "QualityNoise") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_QUALITY_NOISE,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "DiscardedNWId") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_DISCARDED_NWID,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "DiscardedCrypt") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_DISCARDED_CRYPT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "DiscardedFrag") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_DISCARDED_FRAG,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "DiscardedMisc") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_DISCARDED_MISC,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MissedBeacon") == 0)
+            tkm_wireless_entry_set_data (
+              entry, WLAN_DATA_MISSED_BEACON,
+              g_ascii_strtoll (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_wireless_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_wireless_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -329,7 +348,7 @@ tkm_wireless_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   WirelessQueryData data
-      = { .type = WIRELESS_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = WIRELESS_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, wireless_entry_free);
 

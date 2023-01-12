@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2014 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -25,34 +25,36 @@
 #include "extern.h"
 
 void
-kplotctx_grid_init(struct kplotctx *ctx)
+kplotctx_grid_init (struct kplotctx *ctx)
 {
-	double		 offs, v;
-	size_t		 i;
+  double offs, v;
+  size_t i;
 
-	kplotctx_line_init(ctx, &ctx->cfg.gridline);
+  kplotctx_line_init (ctx, &ctx->cfg.gridline);
 
-	if (GRID_X & ctx->cfg.grid)
-		for (i = 0; i < ctx->cfg.xtics; i++) {
-			offs = 1 == ctx->cfg.xtics ? 0.5 : 
-				i / (double)(ctx->cfg.xtics - 1);
-			v = kplotctx_line_fix(ctx, 
-				ctx->cfg.gridline.sz,
-				ctx->offs.x + offs * ctx->dims.x);
-			cairo_move_to(ctx->cr, v, ctx->offs.y);
-			cairo_rel_line_to(ctx->cr, 0.0, ctx->dims.y);
-		}
+  if (GRID_X & ctx->cfg.grid)
+    for (i = 0; i < ctx->cfg.xtics; i++)
+      {
+        offs = 1 == ctx->cfg.xtics ? 0.5 :
+               i / (double)(ctx->cfg.xtics - 1);
+        v = kplotctx_line_fix (ctx,
+                               ctx->cfg.gridline.sz,
+                               ctx->offs.x + offs * ctx->dims.x);
+        cairo_move_to (ctx->cr, v, ctx->offs.y);
+        cairo_rel_line_to (ctx->cr, 0.0, ctx->dims.y);
+      }
 
-	if (GRID_Y & ctx->cfg.grid)
-		for (i = 0; i < ctx->cfg.ytics; i++) {
-			offs = 1 == ctx->cfg.ytics ? 0.5 : 
-				i / (double)(ctx->cfg.ytics - 1);
-			v = kplotctx_line_fix(ctx, 
-				ctx->cfg.gridline.sz,
-				ctx->offs.y + offs * ctx->dims.y);
-			cairo_move_to(ctx->cr, ctx->offs.x, v);
-			cairo_rel_line_to(ctx->cr, ctx->dims.x, 0.0);
-		}
+  if (GRID_Y & ctx->cfg.grid)
+    for (i = 0; i < ctx->cfg.ytics; i++)
+      {
+        offs = 1 == ctx->cfg.ytics ? 0.5 :
+               i / (double)(ctx->cfg.ytics - 1);
+        v = kplotctx_line_fix (ctx,
+                               ctx->cfg.gridline.sz,
+                               ctx->offs.y + offs * ctx->dims.y);
+        cairo_move_to (ctx->cr, ctx->offs.x, v);
+        cairo_rel_line_to (ctx->cr, ctx->dims.x, 0.0);
+      }
 
-	cairo_stroke(ctx->cr);
+  cairo_stroke (ctx->cr);
 }

@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmProcAcctDataType
-{
+typedef enum _TkmProcAcctDataType {
   PACCT_DATA_PID,
   PACCT_DATA_PPID,
   PACCT_DATA_UID,
@@ -70,8 +69,7 @@ typedef enum _TkmProcAcctDataType
   PACCT_DATA_TRASHING_DELAY_AVG,
 } TkmProcAcctDataType;
 
-typedef struct _TkmProcAcctEntry
-{
+typedef struct _TkmProcAcctEntry {
   guint idx;
   gchar *name;
 
@@ -138,8 +136,8 @@ void tkm_procacct_entry_set_data (TkmProcAcctEntry *entry,
                                   TkmProcAcctDataType type, glong data);
 
 GPtrArray *tkm_procacct_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmProcAcctEntry, tkm_procacct_entry_unref);
 

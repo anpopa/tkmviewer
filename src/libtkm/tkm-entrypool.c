@@ -120,7 +120,7 @@ entrypool_source_prepare (GSource *source, gint *timeout)
 
   TKM_UNUSED (timeout);
 
-  return (g_async_queue_length (entrypool->queue) > 0);
+  return(g_async_queue_length (entrypool->queue) > 0);
 }
 
 static gboolean
@@ -243,6 +243,7 @@ static void
 do_load_sessions (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
 {
   TkmActionStatusCallback callback = tkm_action_get_callback (event->action);
+
   g_autoptr (GError) error = NULL;
 
   g_assert (entrypool);
@@ -257,7 +258,7 @@ do_load_sessions (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
     }
 
   entrypool->session_entries
-      = tkm_session_entry_get_all_entries (entrypool->input_database, &error);
+    = tkm_session_entry_get_all_entries (entrypool->input_database, &error);
 
   tkm_entrypool_data_unlock (entrypool);
 
@@ -305,13 +306,13 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
   for (guint i = 0; i < entrypool->session_entries->len; i++)
     {
       if (tkm_session_entry_get_active (
-              g_ptr_array_index (entrypool->session_entries, i)))
+            g_ptr_array_index (entrypool->session_entries, i)))
         {
           active_session = g_ptr_array_index (entrypool->session_entries, i);
         }
     }
   last_timestamp = tkm_session_entry_get_last_timestamp (
-      active_session, tkm_settings_get_data_time_source (entrypool->settings));
+    active_session, tkm_settings_get_data_time_source (entrypool->settings));
 
   switch (tkm_settings_get_data_time_interval (entrypool->settings))
     {
@@ -320,80 +321,85 @@ do_load_data (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
                           ? (start_timestamp + 10)
                           : last_timestamp;
       break;
+
     case DATA_TIME_INTERVAL_1M:
       end_timestamp = (start_timestamp + 60) < last_timestamp
                           ? (start_timestamp + 60)
                           : last_timestamp;
       break;
+
     case DATA_TIME_INTERVAL_10M:
       end_timestamp = (start_timestamp + 600) < last_timestamp
                           ? (start_timestamp + 600)
                           : last_timestamp;
       break;
+
     case DATA_TIME_INTERVAL_1H:
       end_timestamp = (start_timestamp + 3600) < last_timestamp
                           ? (start_timestamp + 3600)
                           : last_timestamp;
       break;
+
     case DATA_TIME_INTERVAL_24H:
       end_timestamp = (start_timestamp + 86400) < last_timestamp
                           ? (start_timestamp + 86400)
                           : last_timestamp;
       break;
+
     default:
       end_timestamp = last_timestamp;
       break;
     }
 
   entrypool->cpustat_entries = tkm_cpustat_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->meminfo_entries = tkm_meminfo_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->procevent_entries = tkm_procevent_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->pressure_entries = tkm_pressure_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->buddyinfo_entries = tkm_buddyinfo_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->wireless_entries = tkm_wireless_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->diskstat_entries = tkm_diskstat_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->procinfo_entries = tkm_procinfo_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->ctxinfo_entries = tkm_ctxinfo_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   entrypool->procacct_entries = tkm_procacct_entry_get_all_entries (
-      entrypool->input_database, session_hash,
-      tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
-      end_timestamp, NULL);
+    entrypool->input_database, session_hash,
+    tkm_settings_get_data_time_source (entrypool->settings), start_timestamp,
+    end_timestamp, NULL);
 
   tkm_entrypool_data_unlock (entrypool);
 
@@ -432,7 +438,7 @@ do_open_database_file (TkmEntryPool *entrypool, TkmEntryPoolEvent *event)
   close_database (entrypool);
 
   entrypool->input_file
-      = g_strdup ((const gchar *)(g_list_first (args)->data));
+    = g_strdup ((const gchar *)(g_list_first (args)->data));
   if (sqlite3_open_v2 (entrypool->input_file, &entrypool->input_database,
                        SQLITE_OPEN_READONLY, NULL))
     {
@@ -470,7 +476,7 @@ tkm_entrypool_new (GMainContext *context, TkmTaskPool *taskpool,
                    TkmSettings *settings)
 {
   TkmEntryPool *entrypool = (TkmEntryPool *)g_source_new (
-      &entrypool_source_funcs, sizeof (TkmEntryPool));
+    &entrypool_source_funcs, sizeof(TkmEntryPool));
 
   g_assert (entrypool);
 

@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmPressureDataType
-{
+typedef enum _TkmPressureDataType {
   PSI_DATA_CPU_SOME_AVG10,
   PSI_DATA_CPU_SOME_AVG60,
   PSI_DATA_CPU_SOME_AVG300,
@@ -59,8 +58,7 @@ typedef enum _TkmPressureDataType
   PSI_DATA_IO_FULL_TOTAL,
 } TkmPressureDataType;
 
-typedef struct _TkmPressureEntry
-{
+typedef struct _TkmPressureEntry {
   guint idx;
 
   gulong system_time;
@@ -118,8 +116,8 @@ void tkm_pressure_entry_set_data_avg (TkmPressureEntry *entry,
                                       TkmPressureDataType type, gfloat val);
 
 GPtrArray *tkm_pressure_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmPressureEntry, tkm_pressure_entry_unref);
 

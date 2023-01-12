@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmMemInfoDataType
-{
+typedef enum _TkmMemInfoDataType {
   MINFO_DATA_MEM_TOTAL,
   MINFO_DATA_MEM_FREE,
   MINFO_DATA_MEM_AVAIL,
@@ -46,8 +45,7 @@ typedef enum _TkmMemInfoDataType
   MINFO_DATA_CMA_FREE,
 } TkmMemInfoDataType;
 
-typedef struct _TkmMemInfoEntry
-{
+typedef struct _TkmMemInfoEntry {
   guint idx;
 
   gulong system_time;

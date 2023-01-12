@@ -24,7 +24,7 @@ static void
 load_recent_files (TkmvSettings *tkms)
 {
   g_autofree gchar *setstr_base
-      = g_settings_get_string (tkms->gsettings, "recent-files");
+    = g_settings_get_string (tkms->gsettings, "recent-files");
   g_autofree guchar *setstr = NULL;
   gsize file_count = 0;
   gsize len;
@@ -41,7 +41,7 @@ load_recent_files (TkmvSettings *tkms)
           for (gint j = 0; fields[j]; j++)
             {
               g_autoptr (TkmvSettingsRecentFile) file
-                  = tkmv_settings_recent_file_new (fields[0], fields[1]);
+                = tkmv_settings_recent_file_new (fields[0], fields[1]);
 
               if (tkmv_settings_recent_file_valid (file))
                 {
@@ -58,7 +58,7 @@ load_recent_files (TkmvSettings *tkms)
   if ((len) > 0 && (file_count == 0))
     {
       g_warning (
-          "Recent files string is invalid. Reset recent files encoded string");
+        "Recent files string is invalid. Reset recent files encoded string");
       g_settings_set_string (tkms->gsettings, "recent-files", "");
     }
 }
@@ -74,8 +74,8 @@ add_files_to_encoding (gpointer _rf, gpointer _str)
   g_assert (str);
 
   filestr
-      = g_strdup_printf ("%s$KVP$%s", tkmv_settings_recent_file_get_name (rf),
-                         tkmv_settings_recent_file_get_path (rf));
+    = g_strdup_printf ("%s$KVP$%s", tkmv_settings_recent_file_get_name (rf),
+                       tkmv_settings_recent_file_get_path (rf));
 
   if (strlen (str) > 0)
     {
@@ -224,7 +224,7 @@ tkmv_settings_add_recent_file (TkmvSettings *tkms, TkmvSettingsRecentFile *rf)
 
   tkmv_settings_recent_file_set_index (rf, tkms->recent_files_count);
   tkms->recent_files
-      = g_list_append (tkms->recent_files, tkmv_settings_recent_file_ref (rf));
+    = g_list_append (tkms->recent_files, tkmv_settings_recent_file_ref (rf));
   tkms->recent_files_count++;
 }
 
@@ -247,13 +247,13 @@ tkmv_settings_load_general_settings (TkmvSettings *tkms)
 {
   g_assert (tkms);
   tkmv_settings_set_time_source (
-      tkms, (DataTimeSource)g_settings_get_uint (tkms->gsettings,
-                                                 "default-time-source"));
+    tkms, (DataTimeSource)g_settings_get_uint (tkms->gsettings,
+                                               "default-time-source"));
   tkmv_settings_set_time_interval (
-      tkms, (DataTimeInterval)g_settings_get_uint (tkms->gsettings,
-                                                   "default-time-interval"));
+    tkms, (DataTimeInterval)g_settings_get_uint (tkms->gsettings,
+                                                 "default-time-interval"));
   tkms->auto_timeline_refresh
-      = g_settings_get_boolean (tkms->gsettings, "auto-timeline-refresh");
+    = g_settings_get_boolean (tkms->gsettings, "auto-timeline-refresh");
 }
 
 void

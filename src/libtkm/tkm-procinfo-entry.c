@@ -24,21 +24,19 @@
 #include "tkm-procinfo-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum ProcInfo query type
  */
-typedef enum _ProcInfoQueryType
-{
+typedef enum _ProcInfoQueryType {
   PROCINFO_GET_ENTRIES,
 } ProcInfoQueryType;
 
 /**
  * @enum ProcInfo query data object
  */
-typedef struct _ProcInfoQueryData
-{
+typedef struct _ProcInfoQueryData {
   ProcInfoQueryType type;
   gpointer response;
 } ProcInfoQueryData;
@@ -120,8 +118,10 @@ tkm_procinfo_entry_get_timestamp (TkmProcInfoEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -139,12 +139,15 @@ tkm_procinfo_entry_set_timestamp (TkmProcInfoEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -236,51 +239,51 @@ procinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case PROCINFO_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmProcInfoEntry) entry = tkm_procinfo_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmProcInfoEntry) entry = tkm_procinfo_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_procinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_procinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_procinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "Comm") == 0)
-              tkm_procinfo_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "ContextName") == 0)
-              tkm_procinfo_entry_set_context (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "PID") == 0)
-              tkm_procinfo_entry_set_data (
-                  entry, PINFO_DATA_PID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "PPID") == 0)
-              tkm_procinfo_entry_set_data (
-                  entry, PINFO_DATA_PPID, g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuTime") == 0)
-              tkm_procinfo_entry_set_data (
-                  entry, PINFO_DATA_CPU_TIME,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "CpuPercent") == 0)
-              tkm_procinfo_entry_set_data (
-                  entry, PINFO_DATA_CPU_PERCENT,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "VmRSS") == 0)
-              tkm_procinfo_entry_set_data (
-                  entry, PINFO_DATA_VMRSS,
-                  g_ascii_strtoll (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_procinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_procinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_procinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "Comm") == 0)
+            tkm_procinfo_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "ContextName") == 0)
+            tkm_procinfo_entry_set_context (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "PID") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_PID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "PPID") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_PPID, g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuTime") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_CPU_TIME,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "CpuPercent") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_CPU_PERCENT,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "VmRSS") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_VMRSS,
+              g_ascii_strtoll (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_procinfo_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_procinfo_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -308,7 +311,7 @@ tkm_procinfo_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   ProcInfoQueryData data
-      = { .type = PROCINFO_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = PROCINFO_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, procinfo_entry_free);
 

@@ -31,15 +31,13 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TaskStatusType
-{
+typedef enum _TaskStatusType {
   TASK_STATUS_PROGRESS,
   TASK_STATUS_FAILED,
   TASK_STATUS_COMPLETE,
 } TaskStatusType;
 
-typedef struct _TkmTask
-{
+typedef struct _TkmTask {
   gboolean run_status;
   GMutex mutex;
   GCond cond;

@@ -46,15 +46,13 @@ G_BEGIN_DECLS
 #define TKM_PROCACCT_TABLE_NAME "tkmProcAcct"
 #define TKM_CTXINFO_TABLE_NAME "tkmContextInfo"
 
-typedef enum _DataTimeSource
-{
+typedef enum _DataTimeSource {
   DATA_TIME_SOURCE_SYSTEM,
   DATA_TIME_SOURCE_MONOTONIC,
   DATA_TIME_SOURCE_RECEIVE
 } DataTimeSource;
 
-typedef enum _DataTimeInterval
-{
+typedef enum _DataTimeInterval {
   DATA_TIME_INTERVAL_10S,
   DATA_TIME_INTERVAL_1M,
   DATA_TIME_INTERVAL_10M,
@@ -63,8 +61,7 @@ typedef enum _DataTimeInterval
   DATA_TIME_INTERVAL_NOLIMIT
 } DataTimeInterval;
 
-typedef enum _TkmStatus
-{
+typedef enum _TkmStatus {
   TKM_STATUS_ERROR = -1,
   TKM_STATUS_OK
 } TkmStatus;

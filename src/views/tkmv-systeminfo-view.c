@@ -24,8 +24,7 @@
 #include "tkm-wireless-entry.h"
 #include "tkmv-types.h"
 
-enum
-{
+enum {
   COLUMN_CPUINFO_NAME,
   COLUMN_CPUINFO_ALL,
   COLUMN_CPUINFO_SYS,
@@ -34,8 +33,7 @@ enum
   CPUINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_MEMINFO_NAME,
   COLUMN_MEMINFO_MEM_TOTAL,
   COLUMN_MEMINFO_MEM_FREE,
@@ -51,16 +49,14 @@ enum
   MEMINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_BUDDYINFO_NAME,
   COLUMN_BUDDYINFO_ZONE,
   COLUMN_BUDDYINFO_DATA,
   BUDDYINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_WLANINFO_NAME,
   COLUMN_WLANINFO_STATUS,
   COLUMN_WLANINFO_QUALITY_LINK,
@@ -74,8 +70,7 @@ enum
   WLANINFO_NUM_COLUMNS
 };
 
-enum
-{
+enum {
   COLUMN_DISKINFO_NAME,
   COLUMN_DISKINFO_MAJOR,
   COLUMN_DISKINFO_MINOR,
@@ -135,8 +130,7 @@ static void diskinfo_list_store_append_entry (GtkListStore *list_store,
 static void reload_diskinfo_entries (TkmvSysteminfoView *view,
                                      TkmContext *context);
 
-struct _TkmvSysteminfoView
-{
+struct _TkmvSysteminfoView {
   GtkBox parent_instance;
 
   GtkListStore *cpuinfo_store;
@@ -171,8 +165,8 @@ tkmv_systeminfo_view_class_init (TkmvSysteminfoViewClass *klass)
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
   gtk_widget_class_set_template_from_resource (
-      widget_class,
-      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-systeminfo-view.ui");
+    widget_class,
+    "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-systeminfo-view.ui");
 
   gtk_widget_class_bind_template_child (widget_class, TkmvSysteminfoView,
                                         cpuinfo_scrolled_window);
@@ -228,7 +222,7 @@ cpuinfo_add_columns (TkmvSysteminfoView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_CPUINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_CPUINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -283,7 +277,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_MEMINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_MEMINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -292,7 +286,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column memtotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "MemTotal", renderer, "text", COLUMN_MEMINFO_MEM_TOTAL, NULL);
+    "MemTotal", renderer, "text", COLUMN_MEMINFO_MEM_TOTAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -300,7 +294,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column memfree */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "MemFree", renderer, "text", COLUMN_MEMINFO_MEM_FREE, NULL);
+    "MemFree", renderer, "text", COLUMN_MEMINFO_MEM_FREE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -308,7 +302,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column memavail */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "MemAvail", renderer, "text", COLUMN_MEMINFO_MEM_AVAIL, NULL);
+    "MemAvail", renderer, "text", COLUMN_MEMINFO_MEM_AVAIL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -316,7 +310,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column swaptotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapTotal", renderer, "text", COLUMN_MEMINFO_SWAP_TOTAL, NULL);
+    "SwapTotal", renderer, "text", COLUMN_MEMINFO_SWAP_TOTAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -324,7 +318,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column swapfree */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapFree", renderer, "text", COLUMN_MEMINFO_SWAP_FREE, NULL);
+    "SwapFree", renderer, "text", COLUMN_MEMINFO_SWAP_FREE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -332,7 +326,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column swapcached */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapCached", renderer, "text", COLUMN_MEMINFO_SWAP_CACHED, NULL);
+    "SwapCached", renderer, "text", COLUMN_MEMINFO_SWAP_CACHED, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -340,7 +334,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column swappercent */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "SwapPercent", renderer, "text", COLUMN_MEMINFO_SWAP_PERCENT, NULL);
+    "SwapPercent", renderer, "text", COLUMN_MEMINFO_SWAP_PERCENT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -348,7 +342,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column cmatotal */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CMATotal", renderer, "text", COLUMN_MEMINFO_CMA_TOTAL, NULL);
+    "CMATotal", renderer, "text", COLUMN_MEMINFO_CMA_TOTAL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -356,7 +350,7 @@ meminfo_add_columns (TkmvSysteminfoView *self)
   /* column cmafree */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "CMAFree", renderer, "text", COLUMN_MEMINFO_CMA_FREE, NULL);
+    "CMAFree", renderer, "text", COLUMN_MEMINFO_CMA_FREE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->meminfo_treeview, column);
@@ -378,7 +372,7 @@ buddyinfo_add_columns (TkmvSysteminfoView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_BUDDYINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_BUDDYINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -387,7 +381,7 @@ buddyinfo_add_columns (TkmvSysteminfoView *self)
   /* column zone */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Zone", renderer, "text", COLUMN_BUDDYINFO_ZONE, NULL);
+    "Zone", renderer, "text", COLUMN_BUDDYINFO_ZONE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->buddyinfo_treeview, column);
@@ -395,7 +389,7 @@ buddyinfo_add_columns (TkmvSysteminfoView *self)
   /* column data */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Data", renderer, "text", COLUMN_BUDDYINFO_DATA, NULL);
+    "Data", renderer, "text", COLUMN_BUDDYINFO_DATA, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->buddyinfo_treeview, column);
@@ -417,7 +411,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_WLANINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_WLANINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -426,7 +420,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column status */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Status", renderer, "text", COLUMN_WLANINFO_STATUS, NULL);
+    "Status", renderer, "text", COLUMN_WLANINFO_STATUS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -434,7 +428,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column qualitylink */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QALink", renderer, "text", COLUMN_WLANINFO_QUALITY_LINK, NULL);
+    "QALink", renderer, "text", COLUMN_WLANINFO_QUALITY_LINK, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -442,7 +436,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column qualitylevel */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QALevel", renderer, "text", COLUMN_WLANINFO_QUALITY_LEVEL, NULL);
+    "QALevel", renderer, "text", COLUMN_WLANINFO_QUALITY_LEVEL, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -450,7 +444,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column qualitynoise */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "QANoise", renderer, "text", COLUMN_WLANINFO_QUALITY_NOISE, NULL);
+    "QANoise", renderer, "text", COLUMN_WLANINFO_QUALITY_NOISE, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -458,7 +452,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardednwid */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscNWID", renderer, "text", COLUMN_WLANINFO_DISCARDED_NWID, NULL);
+    "DiscNWID", renderer, "text", COLUMN_WLANINFO_DISCARDED_NWID, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -466,7 +460,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedcrypt */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscCrypt", renderer, "text", COLUMN_WLANINFO_DISCARDED_CRYPT, NULL);
+    "DiscCrypt", renderer, "text", COLUMN_WLANINFO_DISCARDED_CRYPT, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -474,7 +468,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedfrag */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscFrag", renderer, "text", COLUMN_WLANINFO_DISCARDED_FRAG, NULL);
+    "DiscFrag", renderer, "text", COLUMN_WLANINFO_DISCARDED_FRAG, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -482,7 +476,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column discardedmisc */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "DiscMisc", renderer, "text", COLUMN_WLANINFO_DISCARDED_MISC, NULL);
+    "DiscMisc", renderer, "text", COLUMN_WLANINFO_DISCARDED_MISC, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -490,7 +484,7 @@ wlaninfo_add_columns (TkmvSysteminfoView *self)
   /* column missedbracon */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "MissedBeacon", renderer, "text", COLUMN_WLANINFO_MISSED_BEACON, NULL);
+    "MissedBeacon", renderer, "text", COLUMN_WLANINFO_MISSED_BEACON, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_append_column (self->wlaninfo_treeview, column);
@@ -512,7 +506,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column name */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Name", renderer, "text", COLUMN_DISKINFO_NAME, NULL);
+    "Name", renderer, "text", COLUMN_DISKINFO_NAME, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_expand (GTK_TREE_VIEW_COLUMN (column), TRUE);
@@ -523,7 +517,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column major */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Major", renderer, "text", COLUMN_DISKINFO_MAJOR, NULL);
+    "Major", renderer, "text", COLUMN_DISKINFO_MAJOR, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -533,7 +527,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column minor */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "Minor", renderer, "text", COLUMN_DISKINFO_MINOR, NULL);
+    "Minor", renderer, "text", COLUMN_DISKINFO_MINOR, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -543,8 +537,8 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column readscompleted */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "ReadsCompleted", renderer, "text", COLUMN_DISKINFO_READS_COMPLETED,
-      NULL);
+    "ReadsCompleted", renderer, "text", COLUMN_DISKINFO_READS_COMPLETED,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -554,7 +548,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column readsmerged */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "ReadsMerged", renderer, "text", COLUMN_DISKINFO_READS_MERGED, NULL);
+    "ReadsMerged", renderer, "text", COLUMN_DISKINFO_READS_MERGED, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -564,7 +558,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column readsspentms */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "ReadsSpentMS", renderer, "text", COLUMN_DISKINFO_READS_SPENT_MS, NULL);
+    "ReadsSpentMS", renderer, "text", COLUMN_DISKINFO_READS_SPENT_MS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -574,8 +568,8 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column writescompleted */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "WritesCompleted", renderer, "text", COLUMN_DISKINFO_WRITES_COMPLETED,
-      NULL);
+    "WritesCompleted", renderer, "text", COLUMN_DISKINFO_WRITES_COMPLETED,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -585,7 +579,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column writesmerged */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "WritesMerged", renderer, "text", COLUMN_DISKINFO_WRITES_MERGED, NULL);
+    "WritesMerged", renderer, "text", COLUMN_DISKINFO_WRITES_MERGED, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -595,8 +589,8 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column writesspentms */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "WritesSpentMS", renderer, "text", COLUMN_DISKINFO_WRITES_SPENT_MS,
-      NULL);
+    "WritesSpentMS", renderer, "text", COLUMN_DISKINFO_WRITES_SPENT_MS,
+    NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -606,7 +600,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column ioinprogress */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOInProgress", renderer, "text", COLUMN_DISKINFO_IO_INPROGRESS, NULL);
+    "IOInProgress", renderer, "text", COLUMN_DISKINFO_IO_INPROGRESS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -616,7 +610,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column iospentms */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOSpentMS", renderer, "text", COLUMN_DISKINFO_IO_SPENT_MS, NULL);
+    "IOSpentMS", renderer, "text", COLUMN_DISKINFO_IO_SPENT_MS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -626,7 +620,7 @@ diskinfo_add_columns (TkmvSysteminfoView *self)
   /* column ioweightedms */
   renderer = gtk_cell_renderer_text_new ();
   column = gtk_tree_view_column_new_with_attributes (
-      "IOWeightedMS", renderer, "text", COLUMN_DISKINFO_IO_WEIGHTED_MS, NULL);
+    "IOWeightedMS", renderer, "text", COLUMN_DISKINFO_IO_WEIGHTED_MS, NULL);
   gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
                                    GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   gtk_tree_view_column_set_sort_column_id (GTK_TREE_VIEW_COLUMN (column),
@@ -651,188 +645,196 @@ diskinfo_sort_iter_compare_func (GtkTreeModel *model, GtkTreeIter *a,
   switch (sortcol)
     {
     case COLUMN_DISKINFO_NAME:
-      {
-        char *name1, *name2;
+    {
+      char *name1, *name2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_NAME, &name1, -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_NAME, &name2, -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_NAME, &name1, -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_NAME, &name2, -1);
 
-        if (name1 == NULL || name2 == NULL)
-          {
-            if (name1 == NULL && name2 == NULL)
-              break; /* both equal => ret = 0 */
+      if (name1 == NULL || name2 == NULL)
+        {
+          if (name1 == NULL && name2 == NULL)
+            break;   /* both equal => ret = 0 */
 
-            ret = (name1 == NULL) ? -1 : 1;
-          }
-        else
-          {
-            ret = g_utf8_collate (name1, name2);
-          }
+          ret = (name1 == NULL) ? -1 : 1;
+        }
+      else
+        {
+          ret = g_utf8_collate (name1, name2);
+        }
 
-        g_free (name1);
-        g_free (name2);
-      }
-      break;
+      g_free (name1);
+      g_free (name2);
+    }
+    break;
 
     case COLUMN_DISKINFO_MAJOR:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_MAJOR, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_MAJOR, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_MAJOR, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_MAJOR, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_DISKINFO_MINOR:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_MINOR, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_MINOR, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_MINOR, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_MINOR, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     case COLUMN_DISKINFO_IO_SPENT_MS:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_SPENT_MS, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_SPENT_MS, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_SPENT_MS, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_SPENT_MS, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_READS_MERGED:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_MERGED, &val1, -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_MERGED, &val2, -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_MERGED, &val1, -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_MERGED, &val2, -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_WRITES_MERGED:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_MERGED, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_MERGED, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_MERGED, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_MERGED, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_IO_INPROGRESS:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_INPROGRESS, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_INPROGRESS, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_INPROGRESS, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_INPROGRESS, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_IO_WEIGHTED_MS:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_WEIGHTED_MS, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_WEIGHTED_MS, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_IO_WEIGHTED_MS, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_IO_WEIGHTED_MS, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_READS_SPENT_MS:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_SPENT_MS, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_SPENT_MS, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_SPENT_MS, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_SPENT_MS, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_WRITES_SPENT_MS:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_SPENT_MS, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_SPENT_MS, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_SPENT_MS, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_SPENT_MS, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_READS_COMPLETED:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_COMPLETED, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_COMPLETED, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_READS_COMPLETED, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_READS_COMPLETED, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
+
     case COLUMN_DISKINFO_WRITES_COMPLETED:
-      {
-        glong val1, val2;
+    {
+      glong val1, val2;
 
-        gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_COMPLETED, &val1,
-                            -1);
-        gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_COMPLETED, &val2,
-                            -1);
+      gtk_tree_model_get (model, a, COLUMN_DISKINFO_WRITES_COMPLETED, &val1,
+                          -1);
+      gtk_tree_model_get (model, b, COLUMN_DISKINFO_WRITES_COMPLETED, &val2,
+                          -1);
 
-        if (val1 != val2)
-          {
-            ret = (val1 > val2) ? 1 : -1;
-          }
-      }
-      break;
+      if (val1 != val2)
+        {
+          ret = (val1 > val2) ? 1 : -1;
+        }
+    }
+    break;
 
     default:
       g_return_val_if_reached (0);
@@ -846,15 +848,15 @@ create_tables (TkmvSysteminfoView *self)
 {
   /* create cpuinfo store */
   self->cpuinfo_store
-      = gtk_list_store_new (CPUINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT,
-                            G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+    = gtk_list_store_new (CPUINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_UINT,
+                          G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
   gtk_tree_view_set_model (self->cpuinfo_treeview,
                            GTK_TREE_MODEL (self->cpuinfo_store));
   cpuinfo_add_columns (self);
 
   /* register selection handler */
   self->cpuinfo_treeview_select
-      = gtk_tree_view_get_selection (self->cpuinfo_treeview);
+    = gtk_tree_view_get_selection (self->cpuinfo_treeview);
   gtk_tree_selection_set_mode (self->cpuinfo_treeview_select,
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->cpuinfo_treeview_select), "changed",
@@ -862,16 +864,16 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create meminfo store */
   self->meminfo_store = gtk_list_store_new (
-      MEMINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_ULONG, G_TYPE_ULONG,
-      G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG,
-      G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG);
+    MEMINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_ULONG, G_TYPE_ULONG,
+    G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG,
+    G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG, G_TYPE_ULONG);
   gtk_tree_view_set_model (self->meminfo_treeview,
                            GTK_TREE_MODEL (self->meminfo_store));
   meminfo_add_columns (self);
 
   /* register selection handler */
   self->meminfo_treeview_select
-      = gtk_tree_view_get_selection (self->meminfo_treeview);
+    = gtk_tree_view_get_selection (self->meminfo_treeview);
   gtk_tree_selection_set_mode (self->meminfo_treeview_select,
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->meminfo_treeview_select), "changed",
@@ -879,14 +881,14 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create buddyinfo store */
   self->buddyinfo_store = gtk_list_store_new (
-      BUDDYINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    BUDDYINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
   gtk_tree_view_set_model (self->buddyinfo_treeview,
                            GTK_TREE_MODEL (self->buddyinfo_store));
   buddyinfo_add_columns (self);
 
   /* register selection handler */
   self->buddyinfo_treeview_select
-      = gtk_tree_view_get_selection (self->buddyinfo_treeview);
+    = gtk_tree_view_get_selection (self->buddyinfo_treeview);
   gtk_tree_selection_set_mode (self->buddyinfo_treeview_select,
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->buddyinfo_treeview_select), "changed",
@@ -894,16 +896,16 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create wlaninfo store */
   self->wlaninfo_store
-      = gtk_list_store_new (WLANINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
-                            G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
-                            G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+    = gtk_list_store_new (WLANINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_STRING,
+                          G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT,
+                          G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
   gtk_tree_view_set_model (self->wlaninfo_treeview,
                            GTK_TREE_MODEL (self->wlaninfo_store));
   wlaninfo_add_columns (self);
 
   /* register selection handler */
   self->wlaninfo_treeview_select
-      = gtk_tree_view_get_selection (self->wlaninfo_treeview);
+    = gtk_tree_view_get_selection (self->wlaninfo_treeview);
   gtk_tree_selection_set_mode (self->wlaninfo_treeview_select,
                                GTK_SELECTION_SINGLE);
   g_signal_connect (G_OBJECT (self->wlaninfo_treeview_select), "changed",
@@ -911,66 +913,66 @@ create_tables (TkmvSysteminfoView *self)
 
   /* create diskinfo store */
   self->diskinfo_store = gtk_list_store_new (
-      DISKINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
-      G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
+    DISKINFO_NUM_COLUMNS, G_TYPE_STRING, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG,
+    G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG, G_TYPE_LONG);
   gtk_tree_view_set_model (self->diskinfo_treeview,
                            GTK_TREE_MODEL (self->diskinfo_store));
   diskinfo_add_columns (self);
 
   /* register selection handler */
   self->diskinfo_treeview_select
-      = gtk_tree_view_get_selection (self->diskinfo_treeview);
+    = gtk_tree_view_get_selection (self->diskinfo_treeview);
   gtk_tree_selection_set_mode (self->diskinfo_treeview_select,
                                GTK_SELECTION_SINGLE);
 
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_NAME,
-      diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_NAME),
-      NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_NAME,
+    diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_NAME),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_MINOR,
-      diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_MINOR),
-      NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_MINOR,
+    diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_MINOR),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_MAJOR,
-      diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_MAJOR),
-      NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_MAJOR,
+    diskinfo_sort_iter_compare_func, GINT_TO_POINTER (COLUMN_DISKINFO_MAJOR),
+    NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_IO_SPENT_MS,
-      diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_IO_SPENT_MS), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_IO_SPENT_MS,
+    diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_IO_SPENT_MS), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_READS_MERGED,
-      diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_READS_MERGED), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_READS_MERGED,
+    diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_READS_MERGED), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_WRITES_MERGED,
-      diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_MERGED), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_WRITES_MERGED,
+    diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_MERGED), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_IO_INPROGRESS,
-      diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_IO_INPROGRESS), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_IO_INPROGRESS,
+    diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_IO_INPROGRESS), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_READS_SPENT_MS,
-      diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_READS_SPENT_MS), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store), COLUMN_DISKINFO_READS_SPENT_MS,
+    diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_READS_SPENT_MS), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store),
-      COLUMN_DISKINFO_READS_COMPLETED, diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_READS_COMPLETED), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store),
+    COLUMN_DISKINFO_READS_COMPLETED, diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_READS_COMPLETED), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store),
-      COLUMN_DISKINFO_WRITES_SPENT_MS, diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_SPENT_MS), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store),
+    COLUMN_DISKINFO_WRITES_SPENT_MS, diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_SPENT_MS), NULL);
   gtk_tree_sortable_set_sort_func (
-      GTK_TREE_SORTABLE (self->diskinfo_store),
-      COLUMN_DISKINFO_WRITES_COMPLETED, diskinfo_sort_iter_compare_func,
-      GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_COMPLETED), NULL);
+    GTK_TREE_SORTABLE (self->diskinfo_store),
+    COLUMN_DISKINFO_WRITES_COMPLETED, diskinfo_sort_iter_compare_func,
+    GINT_TO_POINTER (COLUMN_DISKINFO_WRITES_COMPLETED), NULL);
   gtk_tree_sortable_set_sort_column_id (
-      GTK_TREE_SORTABLE (self->diskinfo_store),
-      COLUMN_DISKINFO_WRITES_COMPLETED, GTK_SORT_DESCENDING);
+    GTK_TREE_SORTABLE (self->diskinfo_store),
+    COLUMN_DISKINFO_WRITES_COMPLETED, GTK_SORT_DESCENDING);
 
   g_signal_connect (G_OBJECT (self->diskinfo_treeview_select), "changed",
                     G_CALLBACK (diskinfo_selection_changed), self);
@@ -1006,6 +1008,7 @@ reload_cpuinfo_entries (TkmvSysteminfoView *view, TkmContext *context)
 
   /* our first entry is "cpu" with overall values */
   TkmCpuStatEntry *statEntry = g_ptr_array_index (entries, 0);
+
   tkm_cpustat_entry_set_index (statEntry, 0);
   cpuinfo_list_store_append_entry (view->cpuinfo_store, statEntry, &iter);
 
@@ -1036,28 +1039,28 @@ meminfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_MEMINFO_NAME, "main", COLUMN_MEMINFO_MEM_TOTAL,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL),
-      COLUMN_MEMINFO_MEM_FREE,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE),
-      COLUMN_MEMINFO_MEM_AVAIL,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL),
-      COLUMN_MEMINFO_MEM_CACHED,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_CACHED),
-      COLUMN_MEMINFO_MEM_PERCENT,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_PERCENT),
-      COLUMN_MEMINFO_SWAP_TOTAL,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL),
-      COLUMN_MEMINFO_SWAP_FREE,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE),
-      COLUMN_MEMINFO_SWAP_CACHED,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_CACHED),
-      COLUMN_MEMINFO_SWAP_PERCENT,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT),
-      COLUMN_MEMINFO_CMA_TOTAL,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_CMA_TOTAL),
-      COLUMN_MEMINFO_CMA_FREE,
-      tkm_meminfo_entry_get_data (entry, MINFO_DATA_CMA_FREE), -1);
+    list_store, iter, COLUMN_MEMINFO_NAME, "main", COLUMN_MEMINFO_MEM_TOTAL,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_TOTAL),
+    COLUMN_MEMINFO_MEM_FREE,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_FREE),
+    COLUMN_MEMINFO_MEM_AVAIL,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_AVAIL),
+    COLUMN_MEMINFO_MEM_CACHED,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_CACHED),
+    COLUMN_MEMINFO_MEM_PERCENT,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_MEM_PERCENT),
+    COLUMN_MEMINFO_SWAP_TOTAL,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_TOTAL),
+    COLUMN_MEMINFO_SWAP_FREE,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_FREE),
+    COLUMN_MEMINFO_SWAP_CACHED,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_CACHED),
+    COLUMN_MEMINFO_SWAP_PERCENT,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_SWAP_PERCENT),
+    COLUMN_MEMINFO_CMA_TOTAL,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_CMA_TOTAL),
+    COLUMN_MEMINFO_CMA_FREE,
+    tkm_meminfo_entry_get_data (entry, MINFO_DATA_CMA_FREE), -1);
 }
 
 static void
@@ -1076,6 +1079,7 @@ reload_meminfo_entries (TkmvSysteminfoView *view, TkmContext *context)
   gtk_list_store_clear (view->meminfo_store);
 
   TkmMemInfoEntry *entry = g_ptr_array_index (entries, 0);
+
   tkm_meminfo_entry_set_index (entry, 0);
   meminfo_list_store_append_entry (view->meminfo_store, entry, &iter);
 
@@ -1089,10 +1093,10 @@ buddyinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_BUDDYINFO_NAME,
-      tkm_buddyinfo_entry_get_name (entry), COLUMN_BUDDYINFO_ZONE,
-      tkm_buddyinfo_entry_get_zone (entry), COLUMN_BUDDYINFO_DATA,
-      tkm_buddyinfo_entry_get_data (entry), -1);
+    list_store, iter, COLUMN_BUDDYINFO_NAME,
+    tkm_buddyinfo_entry_get_name (entry), COLUMN_BUDDYINFO_ZONE,
+    tkm_buddyinfo_entry_get_zone (entry), COLUMN_BUDDYINFO_DATA,
+    tkm_buddyinfo_entry_get_data (entry), -1);
 }
 
 static void
@@ -1112,6 +1116,7 @@ reload_buddyinfo_entries (TkmvSysteminfoView *view, TkmContext *context)
 
   /* get first entry */
   TkmBuddyInfoEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_buddyinfo_entry_set_index (firstEntry, 0);
   buddyinfo_list_store_append_entry (view->buddyinfo_store, firstEntry, &iter);
 
@@ -1143,24 +1148,24 @@ wlaninfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_WLANINFO_NAME,
-      tkm_wireless_entry_get_name (entry), COLUMN_WLANINFO_STATUS,
-      tkm_wireless_entry_get_status (entry), COLUMN_WLANINFO_QUALITY_LINK,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LINK),
-      COLUMN_WLANINFO_QUALITY_LEVEL,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LEVEL),
-      COLUMN_WLANINFO_QUALITY_NOISE,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_NOISE),
-      COLUMN_WLANINFO_DISCARDED_NWID,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_NWID),
-      COLUMN_WLANINFO_DISCARDED_CRYPT,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_CRYPT),
-      COLUMN_WLANINFO_DISCARDED_FRAG,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_FRAG),
-      COLUMN_WLANINFO_DISCARDED_MISC,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_MISC),
-      COLUMN_WLANINFO_MISSED_BEACON,
-      tkm_wireless_entry_get_data (entry, WLAN_DATA_MISSED_BEACON), -1);
+    list_store, iter, COLUMN_WLANINFO_NAME,
+    tkm_wireless_entry_get_name (entry), COLUMN_WLANINFO_STATUS,
+    tkm_wireless_entry_get_status (entry), COLUMN_WLANINFO_QUALITY_LINK,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LINK),
+    COLUMN_WLANINFO_QUALITY_LEVEL,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_LEVEL),
+    COLUMN_WLANINFO_QUALITY_NOISE,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_QUALITY_NOISE),
+    COLUMN_WLANINFO_DISCARDED_NWID,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_NWID),
+    COLUMN_WLANINFO_DISCARDED_CRYPT,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_CRYPT),
+    COLUMN_WLANINFO_DISCARDED_FRAG,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_FRAG),
+    COLUMN_WLANINFO_DISCARDED_MISC,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_DISCARDED_MISC),
+    COLUMN_WLANINFO_MISSED_BEACON,
+    tkm_wireless_entry_get_data (entry, WLAN_DATA_MISSED_BEACON), -1);
 }
 
 static void
@@ -1180,6 +1185,7 @@ reload_wlaninfo_entries (TkmvSysteminfoView *view, TkmContext *context)
 
   /* get first entry */
   TkmWirelessEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_wireless_entry_set_index (firstEntry, 0);
   wlaninfo_list_store_append_entry (view->wlaninfo_store, firstEntry, &iter);
 
@@ -1211,29 +1217,29 @@ diskinfo_list_store_append_entry (GtkListStore *list_store,
 {
   gtk_list_store_append (list_store, iter);
   gtk_list_store_set (
-      list_store, iter, COLUMN_DISKINFO_NAME,
-      tkm_diskstat_entry_get_name (entry), COLUMN_DISKINFO_MAJOR,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MAJOR),
-      COLUMN_DISKINFO_MINOR,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MINOR),
-      COLUMN_DISKINFO_READS_COMPLETED,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_COMPLETED),
-      COLUMN_DISKINFO_READS_MERGED,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_MERGED),
-      COLUMN_DISKINFO_READS_SPENT_MS,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_SPENT_MS),
-      COLUMN_DISKINFO_WRITES_COMPLETED,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_COMPLETED),
-      COLUMN_DISKINFO_WRITES_MERGED,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_MERGED),
-      COLUMN_DISKINFO_WRITES_SPENT_MS,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_SPENT_MS),
-      COLUMN_DISKINFO_IO_INPROGRESS,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_INPROGRESS),
-      COLUMN_DISKINFO_IO_SPENT_MS,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_SPENT_MS),
-      COLUMN_DISKINFO_IO_WEIGHTED_MS,
-      tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_WEIGHTED_MS), -1);
+    list_store, iter, COLUMN_DISKINFO_NAME,
+    tkm_diskstat_entry_get_name (entry), COLUMN_DISKINFO_MAJOR,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MAJOR),
+    COLUMN_DISKINFO_MINOR,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_MINOR),
+    COLUMN_DISKINFO_READS_COMPLETED,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_COMPLETED),
+    COLUMN_DISKINFO_READS_MERGED,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_MERGED),
+    COLUMN_DISKINFO_READS_SPENT_MS,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_READS_SPENT_MS),
+    COLUMN_DISKINFO_WRITES_COMPLETED,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_COMPLETED),
+    COLUMN_DISKINFO_WRITES_MERGED,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_MERGED),
+    COLUMN_DISKINFO_WRITES_SPENT_MS,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_WRITES_SPENT_MS),
+    COLUMN_DISKINFO_IO_INPROGRESS,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_INPROGRESS),
+    COLUMN_DISKINFO_IO_SPENT_MS,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_SPENT_MS),
+    COLUMN_DISKINFO_IO_WEIGHTED_MS,
+    tkm_diskstat_entry_get_data (entry, DISKSTAT_DATA_IO_WEIGHTED_MS), -1);
 }
 
 static void
@@ -1253,6 +1259,7 @@ reload_diskinfo_entries (TkmvSysteminfoView *view, TkmContext *context)
 
   /* get first entry */
   TkmDiskStatEntry *firstEntry = g_ptr_array_index (entries, 0);
+
   tkm_diskstat_entry_set_index (firstEntry, 0);
   diskinfo_list_store_append_entry (view->diskinfo_store, firstEntry, &iter);
 

@@ -31,15 +31,13 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmCtxInfoDataType
-{
+typedef enum _TkmCtxInfoDataType {
   CTXINFO_DATA_CPU_TIME,
   CTXINFO_DATA_CPU_PERCENT,
   CTXINFO_DATA_VMRSS,
 } TkmCtxInfoDataType;
 
-typedef struct _TkmCtxInfoEntry
-{
+typedef struct _TkmCtxInfoEntry {
   guint idx;
   gchar *name;
 

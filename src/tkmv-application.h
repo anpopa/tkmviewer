@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE (TkmvApplication, tkmv_application, TKMV, APPLICATION,
                       AdwApplication)
 
-TkmvApplication *tkmv_application_new (gchar *application_id,
+TkmvApplication *tkmv_application_new (gchar * application_id,
                                        GApplicationFlags flags);
 TkmvApplication *tkmv_application_instance (void);
 TkmvWindow *tkmv_application_get_main_window (TkmvApplication *app);

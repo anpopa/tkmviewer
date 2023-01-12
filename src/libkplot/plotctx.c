@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2014 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -27,70 +27,69 @@
 #include "extern.h"
 
 static void
-kplotctx_ccfg_init(struct kplotctx *ctx, struct kplotccfg *cfg)
+kplotctx_ccfg_init (struct kplotctx *ctx, struct kplotccfg *cfg)
 {
+  switch (cfg->type)
+    {
+    case (KPLOTCTYPE_PALETTE):
+      cairo_set_source_rgba (ctx->cr,
+                             ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[0],
+                             ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[1],
+                             ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[2],
+                             ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[3]);
+      break;
 
-	switch (cfg->type) {
-	case (KPLOTCTYPE_PALETTE):
-		cairo_set_source_rgba(ctx->cr, 
-			ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[0],
-			ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[1],
-			ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[2],
-			ctx->cfg.clrs[cfg->palette % ctx->cfg.clrsz].rgba[3]);
-		break;
-	case (KPLOTCTYPE_PATTERN):
-		cairo_set_source(ctx->cr, cfg->pattern);
-		break;
-	case (KPLOTCTYPE_RGBA):
-		cairo_set_source_rgba(ctx->cr, cfg->rgba[0],
-			cfg->rgba[1], cfg->rgba[2], cfg->rgba[3]);
-		break;
-	default:
-		abort();
-	}
+    case (KPLOTCTYPE_PATTERN):
+      cairo_set_source (ctx->cr, cfg->pattern);
+      break;
+
+    case (KPLOTCTYPE_RGBA):
+      cairo_set_source_rgba (ctx->cr, cfg->rgba[0],
+                             cfg->rgba[1], cfg->rgba[2], cfg->rgba[3]);
+      break;
+
+    default:
+      abort ();
+    }
 }
 
 void
-kplotctx_ticln_init(struct kplotctx *ctx, struct kplotticln *line)
+kplotctx_ticln_init (struct kplotctx *ctx, struct kplotticln *line)
 {
-
-	kplotctx_ccfg_init(ctx, &line->clr);
-	cairo_set_line_width(ctx->cr, line->sz);
-	cairo_set_dash(ctx->cr, line->dashes, 
-		line->dashesz, line->dashoff);
+  kplotctx_ccfg_init (ctx, &line->clr);
+  cairo_set_line_width (ctx->cr, line->sz);
+  cairo_set_dash (ctx->cr, line->dashes,
+                  line->dashesz, line->dashoff);
 }
 
 void
-kplotctx_font_init(struct kplotctx *ctx, struct kplotfont *font)
+kplotctx_font_init (struct kplotctx *ctx, struct kplotfont *font)
 {
-
-	kplotctx_ccfg_init(ctx, &font->clr);
-	cairo_select_font_face
-		(ctx->cr, font->family,
-		 font->slant,
-		 font->weight);
-	cairo_set_font_size(ctx->cr, font->sz);
+  kplotctx_ccfg_init (ctx, &font->clr);
+  cairo_select_font_face
+    (ctx->cr, font->family,
+    font->slant,
+    font->weight);
+  cairo_set_font_size (ctx->cr, font->sz);
 }
 
 void
-kplotctx_point_init(struct kplotctx *ctx, struct kplotpoint *pnt)
+kplotctx_point_init (struct kplotctx *ctx, struct kplotpoint *pnt)
 {
-
-	kplotctx_ccfg_init(ctx, &pnt->clr);
-	cairo_set_line_width(ctx->cr, pnt->sz);
-	cairo_set_dash(ctx->cr, pnt->dashes, 
-		pnt->dashesz, pnt->dashoff);
+  kplotctx_ccfg_init (ctx, &pnt->clr);
+  cairo_set_line_width (ctx->cr, pnt->sz);
+  cairo_set_dash (ctx->cr, pnt->dashes,
+                  pnt->dashesz, pnt->dashoff);
 }
 
 void
-kplotctx_line_init(struct kplotctx *ctx, struct kplotline *line)
+kplotctx_line_init (struct kplotctx *ctx, struct kplotline *line)
 {
-
-	kplotctx_ccfg_init(ctx, &line->clr);
-	cairo_set_line_width(ctx->cr, line->sz);
-	cairo_set_dash(ctx->cr, line->dashes, 
-		line->dashesz, line->dashoff);
-	cairo_set_line_join(ctx->cr, line->join);
+  kplotctx_ccfg_init (ctx, &line->clr);
+  cairo_set_line_width (ctx->cr, line->sz);
+  cairo_set_dash (ctx->cr, line->dashes,
+                  line->dashesz, line->dashoff);
+  cairo_set_line_join (ctx->cr, line->join);
 }
 
 /*
@@ -99,13 +98,14 @@ kplotctx_line_init(struct kplotctx *ctx, struct kplotline *line)
  * This is a foible of Cairo and drawing with doubles.
  */
 double
-kplotctx_line_fix(const struct kplotctx *ctx, double sz, double pos)
+kplotctx_line_fix (const struct kplotctx *ctx, double sz, double pos)
 {
-	double	 v;
+  double v;
 
-	(void)ctx;
-	if (0 == (int)sz % 2)
-		return(pos);
-	v = pos - floor(pos);
-	return(v < DBL_EPSILON ? pos + 0.5 : pos - v + 0.5);
+  (void)ctx;
+  if (0 == (int)sz % 2)
+    return(pos);
+
+  v = pos - floor (pos);
+  return(v < DBL_EPSILON ? pos + 0.5 : pos - v + 0.5);
 }

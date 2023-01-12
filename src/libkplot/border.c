@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2014 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -27,41 +27,45 @@
 #include "extern.h"
 
 void
-kplotctx_border_init(struct kplotctx *ctx)
+kplotctx_border_init (struct kplotctx *ctx)
 {
-	double		 v;
+  double v;
 
-	kplotctx_line_init(ctx, &ctx->cfg.borderline);
+  kplotctx_line_init (ctx, &ctx->cfg.borderline);
 
-	if (BORDER_LEFT & ctx->cfg.border) {
-		v = kplotctx_line_fix(ctx, 
-			ctx->cfg.borderline.sz, ctx->offs.x);
-		cairo_move_to(ctx->cr, v, ctx->offs.y);
-		cairo_rel_line_to(ctx->cr, 0.0, ctx->dims.y);
-	}
+  if (BORDER_LEFT & ctx->cfg.border)
+    {
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.borderline.sz, ctx->offs.x);
+      cairo_move_to (ctx->cr, v, ctx->offs.y);
+      cairo_rel_line_to (ctx->cr, 0.0, ctx->dims.y);
+    }
 
-	if (BORDER_RIGHT & ctx->cfg.border) {
-		v = kplotctx_line_fix(ctx, 
-			ctx->cfg.borderline.sz, 
-			ctx->offs.x + ctx->dims.x);
-		cairo_move_to(ctx->cr, v, ctx->offs.y);
-		cairo_rel_line_to(ctx->cr, 0.0, ctx->dims.y);
-	}
+  if (BORDER_RIGHT & ctx->cfg.border)
+    {
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.borderline.sz,
+                             ctx->offs.x + ctx->dims.x);
+      cairo_move_to (ctx->cr, v, ctx->offs.y);
+      cairo_rel_line_to (ctx->cr, 0.0, ctx->dims.y);
+    }
 
-	if (BORDER_TOP & ctx->cfg.border) {
-		v = kplotctx_line_fix(ctx, 
-			ctx->cfg.borderline.sz, ctx->offs.y);
-		cairo_move_to(ctx->cr, ctx->offs.x, v);
-		cairo_rel_line_to(ctx->cr, ctx->dims.x, 0.0);
-	}
+  if (BORDER_TOP & ctx->cfg.border)
+    {
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.borderline.sz, ctx->offs.y);
+      cairo_move_to (ctx->cr, ctx->offs.x, v);
+      cairo_rel_line_to (ctx->cr, ctx->dims.x, 0.0);
+    }
 
-	if (BORDER_BOTTOM & ctx->cfg.border) {
-		v = kplotctx_line_fix(ctx, 
-			ctx->cfg.borderline.sz, 
-			ctx->offs.y + ctx->dims.y);
-		cairo_move_to(ctx->cr, ctx->offs.x, v);
-		cairo_rel_line_to(ctx->cr, ctx->dims.x, 0.0);
-	}
+  if (BORDER_BOTTOM & ctx->cfg.border)
+    {
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.borderline.sz,
+                             ctx->offs.y + ctx->dims.y);
+      cairo_move_to (ctx->cr, ctx->offs.x, v);
+      cairo_rel_line_to (ctx->cr, ctx->dims.x, 0.0);
+    }
 
-	cairo_stroke(ctx->cr);
+  cairo_stroke (ctx->cr);
 }

@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _TkmBuddyInfoEntry
-{
+typedef struct _TkmBuddyInfoEntry {
   guint idx;
   gchar *name;
 
@@ -69,8 +68,8 @@ void tkm_buddyinfo_entry_set_data (TkmBuddyInfoEntry *entry,
                                    const gchar *data);
 
 GPtrArray *tkm_buddyinfo_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmBuddyInfoEntry, tkm_buddyinfo_entry_unref);
 

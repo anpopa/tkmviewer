@@ -30,8 +30,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _TkmTaskPool
-{
+typedef struct _TkmTaskPool {
   GThreadPool *pool;
   guint max_threads;
   gpointer context;

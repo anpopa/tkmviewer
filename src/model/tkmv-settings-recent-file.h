@@ -22,16 +22,14 @@
 
 G_BEGIN_DECLS
 
-typedef struct _RecentFileLookup
-{
+typedef struct _RecentFileLookup {
   const gchar *name;
   const gchar *path;
   gboolean found;
   guint index;
 } RecentFileLookup;
 
-typedef struct _TkmvSettingsRecentFile
-{
+typedef struct _TkmvSettingsRecentFile {
   gchar *name;
   gchar *path;
   guint idx;

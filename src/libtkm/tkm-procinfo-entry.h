@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmProcInfoDataType
-{
+typedef enum _TkmProcInfoDataType {
   PINFO_DATA_PID,
   PINFO_DATA_PPID,
   PINFO_DATA_CPU_TIME,
@@ -40,8 +39,7 @@ typedef enum _TkmProcInfoDataType
   PINFO_DATA_VMRSS,
 } TkmProcInfoDataType;
 
-typedef struct _TkmProcInfoEntry
-{
+typedef struct _TkmProcInfoEntry {
   guint idx;
   gchar *name;
 
@@ -83,8 +81,8 @@ void tkm_procinfo_entry_set_data (TkmProcInfoEntry *entry,
                                   TkmProcInfoDataType type, glong data);
 
 GPtrArray *tkm_procinfo_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmProcInfoEntry, tkm_procinfo_entry_unref);
 

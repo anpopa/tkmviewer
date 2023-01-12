@@ -24,8 +24,7 @@
 
 static TkmvApplication *tkmv_application_singleton = NULL;
 
-struct _TkmvApplication
-{
+struct _TkmvApplication {
   GtkApplication parent_instance;
 
   /* Application settings */
@@ -41,7 +40,7 @@ struct _TkmvApplication
 G_DEFINE_TYPE (TkmvApplication, tkmv_application, ADW_TYPE_APPLICATION)
 
 TkmvApplication *
-tkmv_application_new (gchar *application_id, GApplicationFlags flags)
+tkmv_application_new (gchar * application_id, GApplicationFlags flags)
 {
   return g_object_new (TKMV_TYPE_APPLICATION, "application-id", application_id,
                        "flags", flags, NULL);
@@ -78,10 +77,10 @@ tkmv_application_activate (GApplication *app)
 
   /* Get the current window or create one if necessary. */
   self->main_window = TKMV_WINDOW (
-      gtk_application_get_active_window (GTK_APPLICATION (app)));
+    gtk_application_get_active_window (GTK_APPLICATION (app)));
   if (self->main_window == NULL)
     self->main_window
-        = g_object_new (TKMV_TYPE_WINDOW, "application", app, NULL);
+      = g_object_new (TKMV_TYPE_WINDOW, "application", app, NULL);
 
   /* Ask the window manager/compositor to present the window. */
   gtk_window_present (GTK_WINDOW (self->main_window));
@@ -109,7 +108,7 @@ static void
 tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
                              gpointer user_data)
 {
-  static const char *developers[] = {"Alin Popa", NULL};
+  static const char *developers[] = { "Alin Popa", NULL };
   TkmvApplication *self = TKMV_APPLICATION (user_data);
   GtkWindow *window = NULL;
 
@@ -245,7 +244,7 @@ tkmv_application_init (TkmvApplication *self)
 {
   self->settings = tkmv_settings_new ();
   self->tkm_context
-      = tkm_context_new (tkmv_settings_get_tkm_settings (self->settings));
+    = tkm_context_new (tkmv_settings_get_tkm_settings (self->settings));
 
   g_autoptr (GSimpleAction) quit_action = g_simple_action_new ("quit", NULL);
   g_signal_connect_swapped (quit_action, "activate",
@@ -258,21 +257,21 @@ tkmv_application_init (TkmvApplication *self)
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (about_action));
 
   GSimpleAction *open_recent_file_1
-      = g_simple_action_new ("open_recent_file_1", NULL);
+    = g_simple_action_new ("open_recent_file_1", NULL);
 
   g_signal_connect (open_recent_file_1, "activate",
                     G_CALLBACK (action_open_recent_file_1), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_1));
 
   GSimpleAction *open_recent_file_2
-      = g_simple_action_new ("open_recent_file_2", NULL);
+    = g_simple_action_new ("open_recent_file_2", NULL);
 
   g_signal_connect (open_recent_file_2, "activate",
                     G_CALLBACK (action_open_recent_file_2), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_recent_file_2));
 
   GSimpleAction *open_recent_file_3
-      = g_simple_action_new ("open_recent_file_3", NULL);
+    = g_simple_action_new ("open_recent_file_3", NULL);
 
   g_signal_connect (open_recent_file_3, "activate",
                     G_CALLBACK (action_open_recent_file_3), self);
@@ -285,22 +284,22 @@ tkmv_application_init (TkmvApplication *self)
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (reload_action));
 
   GSimpleAction *preferences_action
-      = g_simple_action_new ("preferences", NULL);
+    = g_simple_action_new ("preferences", NULL);
   g_signal_connect (preferences_action, "activate",
                     G_CALLBACK (tkmv_application_show_preferences), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (preferences_action));
 
   gtk_application_set_accels_for_action (GTK_APPLICATION (self), "app.quit",
                                          (const char *[]){
-                                             "<primary>q",
-                                             NULL,
-                                         });
+    "<primary>q",
+    NULL,
+  });
   gtk_application_set_accels_for_action (GTK_APPLICATION (self),
                                          "app.reload_action",
                                          (const char *[]){
-                                             "r",
-                                             NULL,
-                                         });
+    "r",
+    NULL,
+  });
   /* Set our singletone instance */
   tkmv_application_singleton = self;
 }
@@ -378,22 +377,22 @@ async_action_load_sessions_status (ActionStatusType status_type,
       break;
 
     case ACTION_STATUS_COMPLETE:
-      {
-        GPtrArray *sessions
-            = tkm_context_get_session_entries (self->tkm_context);
-        TkmSessionEntry *session
-            = (TkmSessionEntry *)g_ptr_array_index (sessions, 0);
+    {
+      GPtrArray *sessions
+        = tkm_context_get_session_entries (self->tkm_context);
+      TkmSessionEntry *session
+        = (TkmSessionEntry *)g_ptr_array_index (sessions, 0);
 
-        /* mark first section active as default after loading */
-        tkm_session_entry_set_active (session, TRUE);
+      /* mark first section active as default after loading */
+      tkm_session_entry_set_active (session, TRUE);
 
-        tkmv_application_load_data (
-            self, tkm_session_entry_get_hash (session),
-            tkm_session_entry_get_first_timestamp (
-                session, tkmv_settings_get_time_source (self->settings)));
-        g_info ("Sessions loaded");
-        break;
-      }
+      tkmv_application_load_data (
+        self, tkm_session_entry_get_hash (session),
+        tkm_session_entry_get_first_timestamp (
+          session, tkmv_settings_get_time_source (self->settings)));
+      g_info ("Sessions loaded");
+      break;
+    }
 
     default:
       break;
@@ -428,11 +427,11 @@ async_action_load_data_status (ActionStatusType status_type, TkmAction *action)
       break;
 
     case ACTION_STATUS_COMPLETE:
-      {
-        tkmv_window_update_views_content (self->main_window);
-        g_message ("Data loaded");
-        break;
-      }
+    {
+      tkmv_window_update_views_content (self->main_window);
+      g_message ("Data loaded");
+      break;
+    }
 
     default:
       break;
@@ -455,7 +454,7 @@ tkmv_application_load_data (TkmvApplication *app, const gchar *session_hash,
 
   action->args = g_list_append (action->args, g_strdup (session_hash));
   action->args
-      = g_list_append (action->args, g_strdup_printf ("%u", start_time));
+    = g_list_append (action->args, g_strdup_printf ("%u", start_time));
 
   tkmv_window_progress_spinner_start (app->main_window);
   tkm_context_execute_action (app->tkm_context, action);

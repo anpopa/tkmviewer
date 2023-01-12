@@ -22,8 +22,7 @@
 #include "tkmv-application.h"
 #include "tkmv-settings.h"
 
-struct _TkmvPreferencesWindow
-{
+struct _TkmvPreferencesWindow {
   AdwPreferencesWindow parent_instance;
 
   /* General */
@@ -39,7 +38,7 @@ static void
 tkmv_preferences_window_finalize (GObject *object)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   tkmv_settings_save (settings);
 
@@ -55,8 +54,8 @@ tkmv_preferences_window_class_init (TkmvPreferencesWindowClass *klass)
   object_class->finalize = tkmv_preferences_window_finalize;
 
   gtk_widget_class_set_template_from_resource (
-      widget_class,
-      "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-preferences-window.ui");
+    widget_class,
+    "/ro/fxdata/taskmonitor/viewer/gtk/tkmv-preferences-window.ui");
   gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
                                         source_combo_row);
   gtk_widget_class_bind_template_child (widget_class, TkmvPreferencesWindow,
@@ -69,7 +68,7 @@ static void
 tkmv_preferences_window_load_settings (TkmvPreferencesWindow *self)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   g_assert (self);
 
@@ -78,8 +77,8 @@ tkmv_preferences_window_load_settings (TkmvPreferencesWindow *self)
   adw_combo_row_set_selected (self->source_combo_row,
                               (guint)tkmv_settings_get_time_source (settings));
   adw_combo_row_set_selected (
-      self->interval_combo_row,
-      (guint)tkmv_settings_get_time_interval (settings));
+    self->interval_combo_row,
+    (guint)tkmv_settings_get_time_interval (settings));
   gtk_switch_set_state (self->refresh_action_switch,
                         tkmv_settings_get_auto_timeline_refresh (settings));
 }
@@ -89,13 +88,13 @@ source_combo_row_selected (AdwComboRow *self, GParamSpec *pspec,
                            gpointer user_data)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   TKMV_UNUSED (pspec);
   TKMV_UNUSED (user_data);
 
   tkmv_settings_set_time_source (
-      settings, (DataTimeSource)adw_combo_row_get_selected (self));
+    settings, (DataTimeSource)adw_combo_row_get_selected (self));
   tkmv_settings_store_general_settings (settings);
 }
 
@@ -104,13 +103,13 @@ interval_combo_row_selected (AdwComboRow *self, GParamSpec *pspec,
                              gpointer user_data)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   TKMV_UNUSED (pspec);
   TKMV_UNUSED (user_data);
 
   tkmv_settings_set_time_interval (
-      settings, (DataTimeInterval)adw_combo_row_get_selected (self));
+    settings, (DataTimeInterval)adw_combo_row_get_selected (self));
   tkmv_settings_store_general_settings (settings);
 }
 
@@ -118,7 +117,7 @@ gboolean
 refresh_action_state_set (GtkSwitch *self, gboolean state, gpointer user_data)
 {
   TkmvSettings *settings
-      = tkmv_application_get_settings (tkmv_application_instance ());
+    = tkmv_application_get_settings (tkmv_application_instance ());
 
   TKMV_UNUSED (self);
   TKMV_UNUSED (user_data);

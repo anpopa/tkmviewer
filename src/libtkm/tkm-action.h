@@ -30,23 +30,20 @@
 
 G_BEGIN_DECLS
 
-typedef enum _ActionType
-{
+typedef enum _ActionType {
   ACTION_OPEN_DATABASE_FILE,
   ACTION_LOAD_SESSIONS,
   ACTION_LOAD_DATA,
   ACTION_TERMINATE
 } ActionType;
 
-typedef enum _ActionStatusType
-{
+typedef enum _ActionStatusType {
   ACTION_STATUS_PROGRESS,
   ACTION_STATUS_FAILED,
   ACTION_STATUS_COMPLETE,
 } ActionStatusType;
 
-typedef struct _TkmAction
-{
+typedef struct _TkmAction {
   ActionType type;
   GList *args;
   gpointer user_data;

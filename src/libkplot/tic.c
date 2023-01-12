@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2014 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -25,72 +25,82 @@
 #include "extern.h"
 
 void
-kplotctx_tic_init(struct kplotctx *ctx)
+kplotctx_tic_init (struct kplotctx *ctx)
 {
-	double		 offs, v;
-	size_t		 i;
+  double offs, v;
+  size_t i;
 
-	kplotctx_ticln_init(ctx, &ctx->cfg.ticline);
+  kplotctx_ticln_init (ctx, &ctx->cfg.ticline);
 
-	for (i = 0; i < ctx->cfg.xtics; i++) {
-		offs = 1 == ctx->cfg.xtics ? 0.5 : 
-			i / (double)(ctx->cfg.xtics - 1);
-		v = kplotctx_line_fix(ctx, 
-			ctx->cfg.ticline.sz,
-			ctx->offs.x + offs * ctx->dims.x);
-		if (TIC_BOTTOM_IN & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, v, 
-				ctx->offs.y + ctx->dims.y);
-			cairo_rel_line_to(ctx->cr, 
-				0.0, -ctx->cfg.ticline.len);
-		}
-		if (TIC_BOTTOM_OUT & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, v, 
-				ctx->offs.y + ctx->dims.y);
-			cairo_rel_line_to(ctx->cr, 
-				0.0, ctx->cfg.ticline.len);
-		}
-		if (TIC_TOP_IN & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, v, ctx->offs.y);
-			cairo_rel_line_to(ctx->cr, 
-				0.0, ctx->cfg.ticline.len);
-		}
-		if (TIC_TOP_OUT & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, v, ctx->offs.y);
-			cairo_rel_line_to(ctx->cr, 
-				0.0, -ctx->cfg.ticline.len);
-		}
-	}
+  for (i = 0; i < ctx->cfg.xtics; i++)
+    {
+      offs = 1 == ctx->cfg.xtics ? 0.5 :
+             i / (double)(ctx->cfg.xtics - 1);
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.ticline.sz,
+                             ctx->offs.x + offs * ctx->dims.x);
+      if (TIC_BOTTOM_IN & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, v,
+                         ctx->offs.y + ctx->dims.y);
+          cairo_rel_line_to (ctx->cr,
+                             0.0, -ctx->cfg.ticline.len);
+        }
+      if (TIC_BOTTOM_OUT & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, v,
+                         ctx->offs.y + ctx->dims.y);
+          cairo_rel_line_to (ctx->cr,
+                             0.0, ctx->cfg.ticline.len);
+        }
+      if (TIC_TOP_IN & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, v, ctx->offs.y);
+          cairo_rel_line_to (ctx->cr,
+                             0.0, ctx->cfg.ticline.len);
+        }
+      if (TIC_TOP_OUT & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, v, ctx->offs.y);
+          cairo_rel_line_to (ctx->cr,
+                             0.0, -ctx->cfg.ticline.len);
+        }
+    }
 
-	for (i = 0; i < ctx->cfg.ytics; i++) {
-		offs = 1 == ctx->cfg.ytics ? 0.5 : 
-			i / (double)(ctx->cfg.ytics - 1);
-		v = kplotctx_line_fix(ctx,
-			ctx->cfg.ticline.sz,
-			ctx->offs.y + offs * ctx->dims.y);
-		if (TIC_LEFT_IN & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, ctx->offs.x, v);
-			cairo_rel_line_to(ctx->cr, 
-				ctx->cfg.ticline.len, 0.0);
-		}
-		if (TIC_LEFT_OUT & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, ctx->offs.x, v);
-			cairo_rel_line_to(ctx->cr, 
-				-ctx->cfg.ticline.len, 0.0);
-		}
-		if (TIC_RIGHT_IN & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, 
-				ctx->offs.x + ctx->dims.x, v);
-			cairo_rel_line_to(ctx->cr, 
-				-ctx->cfg.ticline.len, 0.0);
-		}
-		if (TIC_RIGHT_OUT & ctx->cfg.tic) {
-			cairo_move_to(ctx->cr, 
-				ctx->offs.x + ctx->dims.x, v);
-			cairo_rel_line_to(ctx->cr, 
-				ctx->cfg.ticline.len, 0.0);
-		}
-	}
+  for (i = 0; i < ctx->cfg.ytics; i++)
+    {
+      offs = 1 == ctx->cfg.ytics ? 0.5 :
+             i / (double)(ctx->cfg.ytics - 1);
+      v = kplotctx_line_fix (ctx,
+                             ctx->cfg.ticline.sz,
+                             ctx->offs.y + offs * ctx->dims.y);
+      if (TIC_LEFT_IN & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, ctx->offs.x, v);
+          cairo_rel_line_to (ctx->cr,
+                             ctx->cfg.ticline.len, 0.0);
+        }
+      if (TIC_LEFT_OUT & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr, ctx->offs.x, v);
+          cairo_rel_line_to (ctx->cr,
+                             -ctx->cfg.ticline.len, 0.0);
+        }
+      if (TIC_RIGHT_IN & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr,
+                         ctx->offs.x + ctx->dims.x, v);
+          cairo_rel_line_to (ctx->cr,
+                             -ctx->cfg.ticline.len, 0.0);
+        }
+      if (TIC_RIGHT_OUT & ctx->cfg.tic)
+        {
+          cairo_move_to (ctx->cr,
+                         ctx->offs.x + ctx->dims.x, v);
+          cairo_rel_line_to (ctx->cr,
+                             ctx->cfg.ticline.len, 0.0);
+        }
+    }
 
-	cairo_stroke(ctx->cr);
+  cairo_stroke (ctx->cr);
 }

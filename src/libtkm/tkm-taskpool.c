@@ -44,8 +44,8 @@ thread_worker (gpointer task, gpointer context)
     {
       TkmTaskStatusCallback callback = (TkmTaskStatusCallback)t->status_cb;
       callback (
-          ((run_status == TRUE) ? TASK_STATUS_COMPLETE : TASK_STATUS_FAILED),
-          t);
+        ((run_status == TRUE) ? TASK_STATUS_COMPLETE : TASK_STATUS_FAILED),
+        t);
     }
 
   g_mutex_lock (&t->mutex);

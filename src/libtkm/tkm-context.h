@@ -32,8 +32,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct _TkmContext
-{
+typedef struct _TkmContext {
   TkmEntryPool *entrypool;
   TkmTaskPool *taskpool;
   TkmSettings *settings;

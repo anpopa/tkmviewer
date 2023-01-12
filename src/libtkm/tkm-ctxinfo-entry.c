@@ -24,21 +24,19 @@
 #include "tkm-ctxinfo-entry.h"
 
 static const gchar *timeSourceColumn[]
-    = { "SystemTime", "MonotonicTime", "ReceiveTime" };
+  = { "SystemTime", "MonotonicTime", "ReceiveTime" };
 
 /**
  * @enum CtxInfo query type
  */
-typedef enum _CtxInfoQueryType
-{
+typedef enum _CtxInfoQueryType {
   CTXINFO_GET_ENTRIES,
 } CtxInfoQueryType;
 
 /**
  * @enum CtxInfo query data object
  */
-typedef struct _CtxInfoQueryData
-{
+typedef struct _CtxInfoQueryData {
   CtxInfoQueryType type;
   gpointer response;
 } CtxInfoQueryData;
@@ -120,8 +118,10 @@ tkm_ctxinfo_entry_get_timestamp (TkmCtxInfoEntry *entry, DataTimeSource type)
     {
     case DATA_TIME_SOURCE_SYSTEM:
       return entry->system_time;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       return entry->monotonic_time;
+
     default:
       break;
     }
@@ -139,12 +139,15 @@ tkm_ctxinfo_entry_set_timestamp (TkmCtxInfoEntry *entry, DataTimeSource type,
     case DATA_TIME_SOURCE_SYSTEM:
       entry->system_time = val;
       break;
+
     case DATA_TIME_SOURCE_MONOTONIC:
       entry->monotonic_time = val;
       break;
+
     case DATA_TIME_SOURCE_RECEIVE:
       entry->receive_time = val;
       break;
+
     default:
       break;
     }
@@ -222,46 +225,46 @@ ctxinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
   switch (querydata->type)
     {
     case CTXINFO_GET_ENTRIES:
-      {
-        GPtrArray **entries = (GPtrArray **)querydata->response;
-        g_autoptr (TkmCtxInfoEntry) entry = tkm_ctxinfo_entry_new ();
+    {
+      GPtrArray **entries = (GPtrArray **)querydata->response;
+      g_autoptr (TkmCtxInfoEntry) entry = tkm_ctxinfo_entry_new ();
 
-        for (gint i = 0; i < argc; i++)
-          {
-            if (g_strcmp0 (colname[i], "SystemTime") == 0)
-              tkm_ctxinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_SYSTEM,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
-              tkm_ctxinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_MONOTONIC,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
-              tkm_ctxinfo_entry_set_timestamp (
-                  entry, DATA_TIME_SOURCE_RECEIVE,
-                  (guint)g_ascii_strtoull (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "ContextId") == 0)
-              {
-                g_autofree gchar *id = g_strdup_printf (
-                    "%lx", g_ascii_strtoull (argv[i], NULL, 10));
-                tkm_ctxinfo_entry_set_id (entry, id);
-              }
-            else if (g_strcmp0 (colname[i], "ContextName") == 0)
-              tkm_ctxinfo_entry_set_name (entry, argv[i]);
-            else if (g_strcmp0 (colname[i], "TotalCpuTime") == 0)
-              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_TIME,
-                                          g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "TotalCpuPercent") == 0)
-              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_PERCENT,
-                                          g_ascii_strtoll (argv[i], NULL, 10));
-            else if (g_strcmp0 (colname[i], "TotalVmRSS") == 0)
-              tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_VMRSS,
-                                          g_ascii_strtoll (argv[i], NULL, 10));
-          }
+      for (gint i = 0; i < argc; i++)
+        {
+          if (g_strcmp0 (colname[i], "SystemTime") == 0)
+            tkm_ctxinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_SYSTEM,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MonotonicTime") == 0)
+            tkm_ctxinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_MONOTONIC,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ReceiveTime") == 0)
+            tkm_ctxinfo_entry_set_timestamp (
+              entry, DATA_TIME_SOURCE_RECEIVE,
+              (guint)g_ascii_strtoull (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "ContextId") == 0)
+            {
+              g_autofree gchar *id = g_strdup_printf (
+                "%lx", g_ascii_strtoull (argv[i], NULL, 10));
+              tkm_ctxinfo_entry_set_id (entry, id);
+            }
+          else if (g_strcmp0 (colname[i], "ContextName") == 0)
+            tkm_ctxinfo_entry_set_name (entry, argv[i]);
+          else if (g_strcmp0 (colname[i], "TotalCpuTime") == 0)
+            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_TIME,
+                                        g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "TotalCpuPercent") == 0)
+            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_PERCENT,
+                                        g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "TotalVmRSS") == 0)
+            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_VMRSS,
+                                        g_ascii_strtoll (argv[i], NULL, 10));
+        }
 
-        g_ptr_array_add (*entries, tkm_ctxinfo_entry_ref (entry));
-        break;
-      }
+      g_ptr_array_add (*entries, tkm_ctxinfo_entry_ref (entry));
+      break;
+    }
 
     default:
       break;
@@ -289,7 +292,7 @@ tkm_ctxinfo_entry_get_all_entries (sqlite3 *db, const char *session_hash,
   gchar *query_error = NULL;
   GPtrArray *entries = g_ptr_array_new ();
   CtxInfoQueryData data
-      = { .type = CTXINFO_GET_ENTRIES, .response = (gpointer)&entries };
+    = { .type = CTXINFO_GET_ENTRIES, .response = (gpointer) & entries };
 
   g_ptr_array_set_free_func (entries, ctxinfo_entry_free);
 

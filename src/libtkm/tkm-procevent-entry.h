@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmProcEventDataType
-{
+typedef enum _TkmProcEventDataType {
   PEVENT_DATA_FORKS,
   PEVENT_DATA_EXECS,
   PEVENT_DATA_EXITS,
@@ -40,8 +39,7 @@ typedef enum _TkmProcEventDataType
   PEVENT_DATA_GIDS,
 } TkmProcEventDataType;
 
-typedef struct _TkmProcEventEntry
-{
+typedef struct _TkmProcEventEntry {
   guint idx;
 
   gulong system_time;
@@ -75,8 +73,8 @@ void tkm_procevent_entry_set_data (TkmProcEventEntry *entry,
                                    TkmProcEventDataType type, guint val);
 
 GPtrArray *tkm_procevent_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmProcEventEntry, tkm_procevent_entry_unref);
 

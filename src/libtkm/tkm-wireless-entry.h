@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum _TkmWirelessDataType
-{
+typedef enum _TkmWirelessDataType {
   WLAN_DATA_QUALITY_LINK,
   WLAN_DATA_QUALITY_LEVEL,
   WLAN_DATA_QUALITY_NOISE,
@@ -43,8 +42,7 @@ typedef enum _TkmWirelessDataType
   WLAN_DATA_MISSED_BEACON
 } TkmWirelessDataType;
 
-typedef struct _TkmWirelessEntry
-{
+typedef struct _TkmWirelessEntry {
   guint idx;
   gchar *name;
 
@@ -88,8 +86,8 @@ void tkm_wireless_entry_set_data (TkmWirelessEntry *entry,
                                   TkmWirelessDataType type, glong data);
 
 GPtrArray *tkm_wireless_entry_get_all_entries (
-    sqlite3 *db, const char *session_hash, DataTimeSource time_source,
-    gulong start_time, gulong end_time, GError **error);
+  sqlite3 *db, const char *session_hash, DataTimeSource time_source,
+  gulong start_time, gulong end_time, GError **error);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (TkmWirelessEntry, tkm_wireless_entry_unref);
 

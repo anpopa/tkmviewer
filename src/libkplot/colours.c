@@ -1,4 +1,4 @@
-/*	$Id$ */
+/*      $Id$ */
 /*
  * Copyright (c) 2015 Kristaps Dzonsons <kristaps@bsd.lv>
  *
@@ -25,20 +25,22 @@
 #include "extern.h"
 
 void
-kplotccfg_init_palette(struct kplotccfg *c, size_t palette)
+kplotccfg_init_palette (struct kplotccfg *c, size_t palette)
 {
+  switch (c->type)
+    {
+    case (KPLOTCTYPE_DEFAULT):
+      c->type = KPLOTCTYPE_PALETTE;
+      c->palette = palette;
+      break;
 
-	switch (c->type) {
-	case (KPLOTCTYPE_DEFAULT):
-		c->type = KPLOTCTYPE_PALETTE;
-		c->palette = palette;
-		break;
-	case (KPLOTCTYPE_PATTERN):
-		assert(NULL != c->pattern);
-		cairo_pattern_reference(c->pattern);
-		break;
-	default:
-		break;
-	}
+    case (KPLOTCTYPE_PATTERN):
+      assert (NULL != c->pattern);
+      cairo_pattern_reference (c->pattern);
+      break;
+
+    default:
+      break;
+    }
 }
 
