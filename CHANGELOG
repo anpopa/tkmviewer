@@ -1,5 +1,8 @@
-* Fri Dec 30 2022 Alin Popa <alin.popa@fxdata.ro> - 1.0.3
-- Use ADW about dialog
+* Fri Jan 14 2023 Alin Popa <alin.popa@fxdata.ro> - 1.0.3
+- Unify current dashboard values in one frame
+- Add CPU plot view to dashboard
+- Use Adwaita About dialog
+- Optimize memory usage for kplots
 
 * Fri Aug 17 2022 Alin Popa <alin.popa@fxdata.ro> - 1.0.2
 - Sync format with taskmonitor v1.5.2

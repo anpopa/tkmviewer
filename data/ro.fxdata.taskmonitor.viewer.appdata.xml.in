@@ -44,6 +44,17 @@
     <control>touch</control>
   </recommends>
   <releases>
+    <release version="1.0.3" date="2023-01-14">
+      <description>
+        <p>New functionality and UI improvements</p>
+        <ul>
+          <li>Unify current dashboard values in one frame</li>
+          <li>Add CPU plot view to dashboard</li>
+          <li>Use Adwaita about dialog</li>
+          <li>Optimize memory usage for kplots</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.2" date="2022-08-24">
       <description>
         <p>Taskmonitor v1.5.2 compatibility</p>
