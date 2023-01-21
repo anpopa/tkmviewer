@@ -22,6 +22,14 @@ by using this command:
 
 <a href="https://flathub.org/apps/details/ro.fxdata.taskmonitor.viewer"><img src="https://flathub.org/assets/badges/flathub-badge-en.png" width="200"/></a>
 
+Snap builds
+--------------
+TkmViewer is available on Snap Store    
+
+	snap install tkmviewer
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/tkmviewer)
+
+
 Getting in touch
 ----------------
 If you have questions about TkmViewer, you can contact me by email: alin.popa@fxdata.ro.
