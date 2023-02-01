@@ -301,6 +301,8 @@ tkmv_processes_view_widgets_init (TkmvProcessesView *self)
   gtk_drawing_area_set_draw_func (self->ctxinfo_history_mem_drawing_area,
                                   ctxinfo_mem_history_draw_function_safe, self,
                                   NULL);
+  /* ProcAcct tab is optional */
+  gtk_widget_set_visible (GTK_WIDGET (self->procacct_scrolled_window), FALSE);
 }
 
 static void
@@ -1633,10 +1635,18 @@ reload_procacct_entries (TkmvProcessesView *view, TkmContext *context)
   GtkTreeIter iter;
 
   if (entries == NULL)
-    return;
+    {
+      gtk_widget_set_visible (GTK_WIDGET (view->procacct_scrolled_window), FALSE);
+      return;
+    }
 
   if (entries->len == 0)
-    return;
+    {
+      gtk_widget_set_visible (GTK_WIDGET (view->procacct_scrolled_window), FALSE);
+      return;
+    }
+
+  gtk_widget_set_visible (GTK_WIDGET (view->procacct_scrolled_window), TRUE);
 
   gtk_tree_view_set_model (GTK_TREE_VIEW (view->procacct_treeview), NULL);
   gtk_list_store_clear (view->procacct_store);
@@ -3055,3 +3065,4 @@ tkmv_processes_reload_entries (TkmvProcessesView *view, TkmContext *context)
       gtk_tree_selection_select_path (view->ctxinfo_treeview_select, path);
     }
 }
+
