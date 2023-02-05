@@ -60,6 +60,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">cpu.all</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>"
                             </attributes>
                             <layout>
@@ -94,6 +95,7 @@
                             <property name="margin-end">5</property>
                             <property name="halign">end</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <property name="label" translatable="yes">  0 %</property>
@@ -112,6 +114,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">cpu.usr</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -145,6 +148,7 @@
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">  0 %</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -162,6 +166,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">cpu.sys</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -195,6 +200,7 @@
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">  0 %</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -212,6 +218,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">cpu.iow</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -245,6 +252,7 @@
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">  0 %</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -261,6 +269,7 @@
                             <property name="margin-end">5</property>
                             <property name="label" translatable="yes">mem.ram</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -294,6 +303,7 @@
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">  0 %</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -311,6 +321,7 @@
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">mem.swp</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
@@ -346,6 +357,7 @@
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">  0 %</property>
                             <attributes>
+                              <attribute name="scale" value="0.85"/>
                               <attribute name="foreground" value="#606060606060"/>
                             </attributes>
                             <layout>
