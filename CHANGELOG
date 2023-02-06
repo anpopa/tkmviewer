@@ -1,3 +1,7 @@
+* Mon Feb 6 2023 Alin Popa <alin.popa@fxdata.ro> - 1.0.4
+- UI improvements on Current values panel
+- Don't show Accounting data if empty data set
+
 * Fri Jan 14 2023 Alin Popa <alin.popa@fxdata.ro> - 1.0.3
 - Unify current dashboard values in one frame
 - Add CPU plot view to dashboard

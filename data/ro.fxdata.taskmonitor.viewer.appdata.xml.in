@@ -4,7 +4,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>TkmViewer</name>
-  <summary>Visualize TaskMonitor SQLite3 output data</summary>
+  <summary>Visualize TaskMonitor data</summary>
   <description>
     <p>
       TkmViewer provides a good way to visualize output data from TaskMonitor.
@@ -44,6 +44,15 @@
     <control>touch</control>
   </recommends>
   <releases>
+    <release version="1.0.4" date="2023-02-06">
+      <description>
+        <p>UI improvements</p>
+        <ul>
+          <li>UI improvements on Current values panel</li>
+          <li>Don't show Accounting data if empty data set</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.3" date="2023-01-14">
       <description>
         <p>New functionality and UI improvements</p>
