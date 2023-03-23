@@ -266,9 +266,16 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
     {
       GPtrArray **entries = (GPtrArray **)querydata->response;
       g_autoptr (TkmSessionEntry) entry = tkm_session_entry_new ();
+      gboolean valid = TRUE;
 
-      for (gint i = 0; i < argc; i++)
+      for (gint i = 0; i < argc && valid; i++)
         {
+          if (argv[i] == NULL)
+            {
+              valid = FALSE;
+              continue;
+            }
+
           if (g_strcmp0 (colname[i], "Name") == 0)
             tkm_session_entry_set_name (entry, argv[i]);
           else if (g_strcmp0 (colname[i], "Hash") == 0)
@@ -278,7 +285,9 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
               entry, (guint)g_ascii_strtoull (argv[i], NULL, 10));
         }
 
-      g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
+      if (valid)
+        g_ptr_array_add (*entries, tkm_session_entry_ref (entry));
+
       break;
     }
 
@@ -288,6 +297,9 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
 
       for (gint i = 0; i < argc; i++)
         {
+          if (argv[i] == NULL)
+            continue;
+
           if (g_strcmp0 (colname[i], "MinSysTime") == 0)
             tkm_session_entry_set_first_timestamp (
               entry, DATA_TIME_SOURCE_SYSTEM,
@@ -323,6 +335,9 @@ session_sqlite_callback (void *data, int argc, char **argv, char **colname)
 
       for (gint i = 0; i < argc; i++)
         {
+          if (argv[i] == NULL)
+            continue;
+
           if (g_strcmp0 (colname[i], "Name") == 0)
             tkm_session_entry_set_device_name (entry, argv[i]);
         }
