@@ -34,7 +34,8 @@ G_BEGIN_DECLS
 typedef enum _TkmCtxInfoDataType {
   CTXINFO_DATA_CPU_TIME,
   CTXINFO_DATA_CPU_PERCENT,
-  CTXINFO_DATA_VMRSS,
+  CTXINFO_DATA_MEM_RSS,
+  CTXINFO_DATA_MEM_PSS,
 } TkmCtxInfoDataType;
 
 typedef struct _TkmCtxInfoEntry {
@@ -48,7 +49,8 @@ typedef struct _TkmCtxInfoEntry {
   gchar *id;
   glong cpu_time;
   glong cpu_percent;
-  glong vm_rss;
+  glong mem_rss;
+  glong mem_pss;
 
   grefcount rc;
 } TkmCtxInfoEntry;

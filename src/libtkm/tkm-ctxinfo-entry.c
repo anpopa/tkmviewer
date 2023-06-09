@@ -183,8 +183,11 @@ tkm_ctxinfo_entry_get_data (TkmCtxInfoEntry *entry, TkmCtxInfoDataType type)
     case CTXINFO_DATA_CPU_PERCENT:
       return entry->cpu_percent;
 
-    case CTXINFO_DATA_VMRSS:
-      return entry->vm_rss;
+    case CTXINFO_DATA_MEM_RSS:
+      return entry->mem_rss;
+
+    case CTXINFO_DATA_MEM_PSS:
+      return entry->mem_pss;
 
     default:
       break;
@@ -208,8 +211,12 @@ tkm_ctxinfo_entry_set_data (TkmCtxInfoEntry *entry, TkmCtxInfoDataType type,
       entry->cpu_percent = val;
       break;
 
-    case CTXINFO_DATA_VMRSS:
-      entry->vm_rss = val;
+    case CTXINFO_DATA_MEM_RSS:
+      entry->mem_rss = val;
+      break;
+
+    case CTXINFO_DATA_MEM_PSS:
+      entry->mem_pss = val;
       break;
 
     default:
@@ -264,8 +271,11 @@ ctxinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
           else if (g_strcmp0 (colname[i], "TotalCpuPercent") == 0)
             tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_CPU_PERCENT,
                                         g_ascii_strtoll (argv[i], NULL, 10));
-          else if (g_strcmp0 (colname[i], "TotalVmRSS") == 0)
-            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_VMRSS,
+          else if (g_strcmp0 (colname[i], "TotalMemRSS") == 0)
+            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_MEM_RSS,
+                                        g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "TotalMemPSS") == 0)
+            tkm_ctxinfo_entry_set_data (entry, CTXINFO_DATA_MEM_PSS,
                                         g_ascii_strtoll (argv[i], NULL, 10));
         }
 

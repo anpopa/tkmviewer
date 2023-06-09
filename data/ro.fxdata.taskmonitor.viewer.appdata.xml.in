@@ -44,6 +44,14 @@
     <control>touch</control>
   </recommends>
   <releases>
+    <release version="1.1.0" date="2023-06-09">
+      <description>
+        <p>Compatibility with taskmonitor v1.6.0</p>
+        <ul>
+          <li>Support new taskmonitor 1.6.0 rss and pss process statistics</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.5" date="2023-03-23">
       <description>
         <p>Bugfix release</p>

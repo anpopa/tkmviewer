@@ -130,7 +130,7 @@
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">
-                    <property name="label" translatable="yes">Memory History</property>
+                    <property name="label" translatable="yes">RSS History</property>
                   </object>
                 </child>
                 <child>
@@ -341,7 +341,7 @@
                 <property name="label-xalign">0.03</property>
                 <child type="label">
                   <object class="GtkLabel">
-                    <property name="label" translatable="yes">Memory History</property>
+                    <property name="label" translatable="yes">RSS History</property>
                   </object>
                 </child>
                 <child>

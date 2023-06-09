@@ -42,7 +42,7 @@ TkmViewer follows the GNOME project [Code of Conduct](./code-of-conduct.md)
 Copyright and licensing
 -----------------------
 
-Copyright 2022  Alin Popa <alin.popa@fxdata.ro>
+Copyright 2023  Alin Popa <alin.popa@fxdata.ro>
 
 TkmViewer is released under the terms of the GNU General Public License, either
 version 3.0 or, at your option, any later version.

@@ -189,8 +189,11 @@ tkm_procinfo_entry_get_data (TkmProcInfoEntry *entry, TkmProcInfoDataType type)
     case PINFO_DATA_CPU_PERCENT:
       return entry->cpu_percent;
 
-    case PINFO_DATA_VMRSS:
-      return entry->vm_rss;
+    case PINFO_DATA_MEM_RSS:
+      return entry->mem_rss;
+
+    case PINFO_DATA_MEM_PSS:
+      return entry->mem_pss;
 
     default:
       break;
@@ -222,8 +225,12 @@ tkm_procinfo_entry_set_data (TkmProcInfoEntry *entry, TkmProcInfoDataType type,
       entry->cpu_percent = val;
       break;
 
-    case PINFO_DATA_VMRSS:
-      entry->vm_rss = val;
+    case PINFO_DATA_MEM_RSS:
+      entry->mem_rss = val;
+      break;
+
+    case PINFO_DATA_MEM_PSS:
+      entry->mem_pss = val;
       break;
 
     default:
@@ -282,9 +289,13 @@ procinfo_sqlite_callback (void *data, int argc, char **argv, char **colname)
             tkm_procinfo_entry_set_data (
               entry, PINFO_DATA_CPU_PERCENT,
               g_ascii_strtoll (argv[i], NULL, 10));
-          else if (g_strcmp0 (colname[i], "VmRSS") == 0)
+          else if (g_strcmp0 (colname[i], "MemRSS") == 0)
             tkm_procinfo_entry_set_data (
-              entry, PINFO_DATA_VMRSS,
+              entry, PINFO_DATA_MEM_RSS,
+              g_ascii_strtoll (argv[i], NULL, 10));
+          else if (g_strcmp0 (colname[i], "MemPSS") == 0)
+            tkm_procinfo_entry_set_data (
+              entry, PINFO_DATA_MEM_PSS,
               g_ascii_strtoll (argv[i], NULL, 10));
         }
 

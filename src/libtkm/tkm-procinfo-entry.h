@@ -36,7 +36,8 @@ typedef enum _TkmProcInfoDataType {
   PINFO_DATA_PPID,
   PINFO_DATA_CPU_TIME,
   PINFO_DATA_CPU_PERCENT,
-  PINFO_DATA_VMRSS,
+  PINFO_DATA_MEM_RSS,
+  PINFO_DATA_MEM_PSS,
 } TkmProcInfoDataType;
 
 typedef struct _TkmProcInfoEntry {
@@ -52,7 +53,8 @@ typedef struct _TkmProcInfoEntry {
   gchar *context;
   glong cpu_time;
   glong cpu_percent;
-  glong vm_rss;
+  glong mem_rss;
+  glong mem_pss;
 
   grefcount rc;
 } TkmProcInfoEntry;

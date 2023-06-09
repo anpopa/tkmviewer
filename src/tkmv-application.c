@@ -124,7 +124,7 @@ tkmv_application_show_about (GSimpleAction *action, GVariant *parameter,
                          "website", "https://gitlab.com/taskmonitor/tkmviewer",
                          "developer-name", "Alin Popa",
                          "license-type", GTK_LICENSE_GPL_3_0,
-                         "version", "1.0.5",
+                         "version", "1.1.0",
                          "developers", developers,
                          "copyright", "© 2023 Alin Popa",
                          NULL);

@@ -1,3 +1,6 @@
+* Mon Feb 6 2023 Alin Popa <alin.popa@fxdata.ro> - 1.1.0
+- Update to memory interface changes from libtaskmonitor 1.1.0
+
 * Mon Feb 6 2023 Alin Popa <alin.popa@fxdata.ro> - 1.0.4
 - UI improvements on Current values panel
 - Don't show Accounting data if empty data set
